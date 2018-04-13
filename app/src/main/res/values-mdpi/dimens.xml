@@ -1,2 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+
+    <!-- General Screen Margins -->
+    <dimen name="general_margin_small">4dp</dimen>
+    <dimen name="general_margin_medium">8dp</dimen>
+    <dimen name="general_margin_big">12dp</dimen>
+
+
+
+
+    <!-- Round EditText -->
+    <dimen name="corner_radius_round_et">16dp</dimen>
+    <dimen name="round_et_margin_horizontal">4dp</dimen>
+    <dimen name="round_et_margin_vertical">8dp</dimen>
+
+</resources>

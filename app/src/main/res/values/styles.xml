@@ -1,11 +1,31 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    
+
+
+
+    <style name="RoundEditText">
+        <item name="android:paddingStart">@dimen/round_et_margin_horizontal</item>
+        <item name="android:paddingEnd">@dimen/round_et_margin_horizontal</item>
+        <item name="android:paddingBottom">@dimen/round_et_margin_vertical</item>
+        <item name="android:paddingTop">@dimen/round_et_margin_vertical</item>
+    </style>
+    
+
+
+
+    <style name="LoginET" parent="@android:style/TextAppearance">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
     </style>
 
 </resources>

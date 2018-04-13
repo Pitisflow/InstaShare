@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical|center_horizontal"
+    android:background="@color/colorPrimary">
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/LoginET"
+        android:layout_marginEnd="@dimen/general_margin_big"
+        android:layout_marginStart="@dimen/general_margin_big"
+        android:layout_marginBottom="@dimen/general_margin_small"
+        android:hint="Email">
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/white"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/LoginET"
+        android:layout_marginEnd="@dimen/general_margin_big"
+        android:layout_marginStart="@dimen/general_margin_big"
+        android:layout_marginBottom="@dimen/general_margin_medium"
+        android:hint="Password">
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/white"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/general_margin_big"
+        android:layout_marginEnd="@dimen/general_margin_big"
+        android:layout_marginBottom="@dimen/general_margin_small"
+        android:background="@drawable/selector_button_login"
+        android:textColor="@color/white"
+        android:enabled="true"
+        android:text="Entrar"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/general_margin_big"
+        android:layout_marginEnd="@dimen/general_margin_big"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:text="¿Aún no estas registrado? Registrate."/>
+
+
+
+</LinearLayout>

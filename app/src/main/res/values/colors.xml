@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Primary colors -->
+    <!-- Primary / Secondary colors -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorPrimaryLight">#4F65D9</color>
+    <color name="colorPrimaryTransparent">#803F51B5</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="colorSecondaryDark">#507800</color>
+    <color name="colorSecondary">#669900</color>
+    <color name="colorSecondaryLight">#9FD434</color>
+    <color name="colorSecondaryTransparent">#80669900</color>
 
 
 
