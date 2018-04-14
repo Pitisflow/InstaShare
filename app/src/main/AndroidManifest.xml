@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.base.activity.MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
         </activity>
 

@@ -1,15 +1,10 @@
 package com.app.instashare.ui.signin.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import com.app.instashare.MainActivity;
 import com.app.instashare.ui.signin.view.SignInView;
 import com.app.instashare.ui.signup.activity.SignUpActivity;
-import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Created by Pitisflow on 13/4/18.

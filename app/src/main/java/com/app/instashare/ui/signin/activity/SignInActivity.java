@@ -15,23 +15,17 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.app.instashare.MainActivity;
+import com.app.instashare.ui.base.activity.MainActivity;
 import com.app.instashare.R;
 import com.app.instashare.ui.signin.presenter.SignInPresenter;
 import com.app.instashare.ui.signin.view.SignInView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by Pitisflow on 13/4/18.
