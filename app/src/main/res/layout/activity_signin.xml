@@ -49,6 +49,7 @@
 
 
     <Button
+        android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/general_margin_big"
@@ -56,18 +57,18 @@
         android:layout_marginBottom="@dimen/general_margin_small"
         android:background="@drawable/selector_button_login"
         android:textColor="@color/white"
-        android:enabled="true"
+        android:enabled="false"
         android:text="Entrar"/>
 
 
     <TextView
+        android:id="@+id/register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/general_margin_big"
         android:layout_marginEnd="@dimen/general_margin_big"
         android:gravity="center_horizontal"
-        android:textColor="@color/white"
-        android:text="¿Aún no estas registrado? Registrate."/>
+        android:textColor="@color/white"/>
 
 
 

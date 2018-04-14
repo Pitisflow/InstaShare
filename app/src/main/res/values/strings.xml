@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">InstaShare</string>
+
+    <string name="login_register_text">Still not registered? Register.</string>
 </resources>
