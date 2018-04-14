@@ -16,7 +16,7 @@
         android:layout_marginEnd="@dimen/general_margin_big"
         android:layout_marginStart="@dimen/general_margin_big"
         android:layout_marginBottom="@dimen/general_margin_small"
-        android:hint="Email">
+        android:hint="@string/login_email">
 
         <EditText
             android:id="@+id/email"
@@ -36,7 +36,7 @@
         android:layout_marginEnd="@dimen/general_margin_big"
         android:layout_marginStart="@dimen/general_margin_big"
         android:layout_marginBottom="@dimen/general_margin_medium"
-        android:hint="Password">
+        android:hint="@string/login_password">
 
         <EditText
             android:id="@+id/password"
@@ -58,7 +58,7 @@
         android:background="@drawable/selector_button_login"
         android:textColor="@color/white"
         android:enabled="false"
-        android:text="Entrar"/>
+        android:text="@string/login_login_text"/>
 
 
     <TextView
