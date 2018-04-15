@@ -22,7 +22,7 @@
             android:layout_marginEnd="@dimen/general_margin_big"
             android:layout_marginStart="@dimen/general_margin_big"
             android:layout_marginBottom="@dimen/general_margin_small"
-            android:hint="@string/login_email">
+            android:hint="@string/user_info_email">
 
             <EditText
                 android:id="@+id/email"
@@ -42,7 +42,7 @@
             android:layout_marginEnd="@dimen/general_margin_big"
             android:layout_marginStart="@dimen/general_margin_big"
             android:layout_marginBottom="@dimen/general_margin_medium"
-            android:hint="@string/login_password">
+            android:hint="@string/user_info_password">
 
             <EditText
                 android:id="@+id/password"

@@ -1,26 +1,37 @@
 package com.app.instashare.ui.signup.activity;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.instashare.R;
+import com.app.instashare.interactor.UserInteractor;
+import com.app.instashare.ui.base.activity.MainActivity;
+import com.app.instashare.ui.signup.presenter.SignUpPresenter;
+import com.app.instashare.ui.signup.view.SignUpView;
+import com.app.instashare.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Created by Pitisflow on 14/4/18.
  */
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
     private TextView usernameRequired;
@@ -33,6 +44,9 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText passwordET;
     private EditText repeatPasswordET;
 
+    private Button register;
+
+
 
 
     private String usernameState;
@@ -40,14 +54,11 @@ public class SignUpActivity extends AppCompatActivity {
     private String passwordState;
     private String repeatPasswordState;
 
-    private String usernameRequiredState;
-    private String emailRequiredState;
-    private String passwordRequiredState;
-    private String repeatPasswordRequiredState;
 
 
-
+    private SignUpPresenter presenter;
     private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener listener;
 
 
 
@@ -58,46 +69,52 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
 
-        System.out.println("CREATE");
 
-//        email = findViewById(R.id.email);
-//        password = findViewById(R.id.password);
-//        register = findViewById(R.id.register);
-//
-//
-//        firebaseAuth = FirebaseAuth.getInstance();
-//
-//
-//
-//        register.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-//                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<AuthResult> task) {
-//                                System.out.println("COMPLETED");
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                System.out.println(e.toString());
-//                            }
-//                        });
-//            }
-//        });
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        listener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null)
+                {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        };
+
 
 
         bindUsernameView();
         bindEmailView();
         bindPasswordView();
         bindRepeatPasswordView();
-
+        bindRegisterView();
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseAuth.addAuthStateListener(listener);
 
+        presenter = new SignUpPresenter(getApplicationContext(), this);
+        presenter.onInitialize();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuth.removeAuthStateListener(listener);
+
+        presenter = null;
+    }
 
     private void bindUsernameView()
     {
@@ -109,6 +126,7 @@ public class SignUpActivity extends AppCompatActivity {
         usernameRequired = usernameContainer.findViewById(R.id.textView);
 
         usernameET = usernameContainer.findViewById(R.id.editText);
+        usernameET.setHint(R.string.user_info_username);
 
         usernameET.addTextChangedListener(new TextWatcher() {
             @Override
@@ -119,7 +137,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 usernameState = charSequence.toString();
-                System.out.println(usernameState);
+                presenter.onUsernameChanged(charSequence.toString());
             }
 
             @Override
@@ -140,7 +158,9 @@ public class SignUpActivity extends AppCompatActivity {
         emailRequired = emailContainer.findViewById(R.id.textView);
 
         emailET = emailContainer.findViewById(R.id.editText);
+        emailET.setHint(R.string.user_info_email);
 
+        emailET.setInputType(InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
         emailET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -150,6 +170,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 emailState = charSequence.toString();
+                presenter.onEmailChanged(charSequence.toString());
             }
 
             @Override
@@ -170,6 +191,8 @@ public class SignUpActivity extends AppCompatActivity {
         passwordRequired = passwordContainer.findViewById(R.id.textView);
 
         passwordET = passwordContainer.findViewById(R.id.editText);
+        passwordET.setHint(R.string.user_info_password);
+
         passwordET.setTransformationMethod(PasswordTransformationMethod.getInstance());
         passwordET.addTextChangedListener(new TextWatcher() {
             @Override
@@ -180,6 +203,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 passwordState = charSequence.toString();
+                presenter.onPasswordChanged(charSequence.toString());
             }
 
             @Override
@@ -200,6 +224,8 @@ public class SignUpActivity extends AppCompatActivity {
         repeatPasswordRequired = repeatPasswordContainer.findViewById(R.id.textView);
 
         repeatPasswordET = repeatPasswordContainer.findViewById(R.id.editText);
+        repeatPasswordET.setHint(R.string.signup_repeat_password);
+
         repeatPasswordET.setTransformationMethod(PasswordTransformationMethod.getInstance());
         repeatPasswordET.addTextChangedListener(new TextWatcher() {
             @Override
@@ -210,6 +236,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 repeatPasswordState = charSequence.toString();
+                presenter.onRepeatPasswordChanged(charSequence.toString());
             }
 
             @Override
@@ -218,6 +245,52 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+    private void bindRegisterView()
+    {
+        register = findViewById(R.id.register);
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Dialog progressDialog = Utils.createProgressDialog(SignUpActivity.this,
+                        getString(R.string.signup_checking_infomartion));
+
+                UserInteractor.registerUser(firebaseAuth, emailState.trim(), passwordState,
+                        new UserInteractor.OnRegistrationProcess() {
+                            @Override
+                            public void registering() {
+                                progressDialog.show();
+                            }
+
+                            @Override
+                            public void registerSuccesfull() {
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void registerFailure() {
+                                presenter.emailInUse();
+                                progressDialog.dismiss();
+                            }
+                        });
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Override
@@ -239,5 +312,56 @@ public class SignUpActivity extends AppCompatActivity {
         emailET.setText(savedInstanceState.getString("email"));
         passwordET.setText(savedInstanceState.getString("password"));
         repeatPasswordET.setText(savedInstanceState.getString("repeatPassword"));
+    }
+
+
+
+    @Override
+    public void showUsernameAdvice(boolean advice) {
+        if (advice) usernameRequired.setVisibility(View.VISIBLE);
+        else usernameRequired.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmailAdvice(boolean advice) {
+        if (advice) emailRequired.setVisibility(View.VISIBLE);
+        else emailRequired.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showPasswordAdvice(boolean advice) {
+        if (advice) passwordRequired.setVisibility(View.VISIBLE);
+        else passwordRequired.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showRepeatPasswordAdvice(boolean advice) {
+        if (advice) repeatPasswordRequired.setVisibility(View.VISIBLE);
+        else repeatPasswordRequired.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void setUsernameAdvice(int advice) {
+        usernameRequired.setText(advice);
+    }
+
+    @Override
+    public void setEmailAdvice(int advice) {
+        emailRequired.setText(advice);
+    }
+
+    @Override
+    public void setPasswordAdvice(int advice) {
+        passwordRequired.setText(advice);
+    }
+
+    @Override
+    public void setRepeatPasswordAdvice(int advice) {
+        repeatPasswordRequired.setText(advice);
+    }
+
+    @Override
+    public void enableRegisterButton(boolean enabled) {
+        register.setEnabled(enabled);
     }
 }

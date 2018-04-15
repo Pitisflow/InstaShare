@@ -13,6 +13,24 @@
         android:gravity="center_horizontal">
 
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/user_info_text"
+            android:gravity="start"
+            android:textSize="22sp"
+            android:layout_marginTop="@dimen/general_margin_big"
+            android:layout_marginStart="@dimen/general_margin_small"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginBottom="@dimen/general_margin_small"/>
+
 
         <include
             android:id="@+id/username"
@@ -31,6 +49,25 @@
             layout="@layout/fields_signup"/>
 
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/user_info_personal"
+            android:gravity="start"
+            android:textSize="22sp"
+            android:layout_marginTop="@dimen/general_margin_big"
+            android:layout_marginStart="@dimen/general_margin_small"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginBottom="@dimen/general_margin_small"/>
+
+
         <Button
             android:id="@+id/register"
             android:layout_width="match_parent"
@@ -39,7 +76,8 @@
             android:background="@drawable/selector_button_login"
             android:textColor="@color/white"
             android:enabled="false"
-            android:text="Registrar"/>
+            android:text="@string/signup_register_text"/>
+
 
     </LinearLayout>
 </ScrollView>

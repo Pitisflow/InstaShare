@@ -54,7 +54,6 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-        presenter = new SignInPresenter(this, this);
 
         bindEmailView();
         bindPasswordView();
@@ -80,15 +79,19 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
     protected void onStart() {
         super.onStart();
         firebaseAuth.addAuthStateListener(listener);
+
+        presenter = new SignInPresenter(getApplicationContext(), this);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
+
 
         firebaseAuth.removeAuthStateListener(listener);
         presenter = null;
     }
+
 
 
 
@@ -199,6 +202,7 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
 
     private void startMainActivity()
     {
+        System.out.println("EFewfwefew");
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
         finish();
