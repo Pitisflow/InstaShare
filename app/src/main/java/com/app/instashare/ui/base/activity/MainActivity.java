@@ -24,32 +24,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        logout = findViewById(R.id.logout);
-
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                firebaseAuth.signOut();
-            }
-        });
-
-
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        listener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null)
-                {
-                    Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
-
-                    finish();
-                    startActivity(intent);
-                }
-            }
-        };
+//
+//        logout = findViewById(R.id.logout);
+//
+//
+//        logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                firebaseAuth.signOut();
+//            }
+//        });
+//
+//
+//        firebaseAuth = FirebaseAuth.getInstance();
+//
+//        listener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if (firebaseAuth.getCurrentUser() == null)
+//                {
+//                    Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+//
+//                    finish();
+//                    startActivity(intent);
+//                }
+//            }
+//        };
     }
 
 
@@ -57,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         System.out.println(listener);
-        firebaseAuth.addAuthStateListener(listener);
+//        firebaseAuth.addAuthStateListener(listener);
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        firebaseAuth.removeAuthStateListener(listener);
+    //    firebaseAuth.removeAuthStateListener(listener);
     }
 }

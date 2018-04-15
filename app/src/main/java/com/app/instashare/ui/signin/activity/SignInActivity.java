@@ -1,7 +1,6 @@
 package com.app.instashare.ui.signin.activity;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -209,14 +208,23 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
 
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("email", emailState);
+        outState.putString("password", passwordState);
+        outState.putBoolean("login", loginState);
+    }
+
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
 
-        email.setText(emailState);
-        password.setText(passwordState);
-        login.setEnabled(loginState);
+        email.setText(savedInstanceState.getString("email"));
+        password.setText(savedInstanceState.getString("password"));
+        login.setEnabled(savedInstanceState.getBoolean("login"));
     }
 
 

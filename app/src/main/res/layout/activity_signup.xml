@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
 
-
-    <EditText
-        android:id="@+id/email"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:hint="@string/login_email"/>
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="@string/login_password"/>
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
 
-    <Button
-        android:id="@+id/register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Registrar"/>
-</LinearLayout>
+
+        <include
+            android:id="@+id/username"
+            layout="@layout/fields_signup"/>
+
+        <include
+            android:id="@+id/email"
+            layout="@layout/fields_signup"/>
+
+        <include
+            android:id="@+id/password"
+            layout="@layout/fields_signup"/>
+
+        <include
+            android:id="@+id/repeat_password"
+            layout="@layout/fields_signup"/>
+
+
+        <Button
+            android:id="@+id/register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/general_margin_big"
+            android:background="@drawable/selector_button_login"
+            android:textColor="@color/white"
+            android:enabled="false"
+            android:text="Registrar"/>
+
+    </LinearLayout>
+</ScrollView>
