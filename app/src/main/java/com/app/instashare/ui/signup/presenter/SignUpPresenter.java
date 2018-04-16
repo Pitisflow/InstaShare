@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.signup.view.SignUpView;
+import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Validation;
 
 import java.util.HashMap;
@@ -191,15 +192,15 @@ public class SignUpPresenter {
 
 
 
-    private Map<String, String> generateInformationMap()
+    public Map<String, String> generateInformationMap()
     {
         Map<String, String> information = new HashMap<>();
 
-        information.put("name", name);
-        information.put("lastName", lastName);
-        information.put("birthdate", birthdate);
-        information.put("username", username);
-        information.put("email", email);
+        information.put(Constants.USER_NAME_K, name);
+        information.put(Constants.USER_LAST_NAME_K, lastName);
+        information.put(Constants.USER_BIRTHDATE_K, birthdate);
+        information.put(Constants.USERNAME_K, username);
+        information.put(Constants.USER_EMAIL_K, email);
         information.put("password", password);
 
 
@@ -216,6 +217,16 @@ public class SignUpPresenter {
         view.setEmailAdvice(R.string.signup_email_repeated);
 
         emailOk = false;
+        checkInformationOk();
+    }
+
+
+    public void usernameInUse()
+    {
+        view.showUsernameAdvice(true);
+        view.setUsernameAdvice(R.string.signup_username_repeated);
+
+        usernameOk = false;
         checkInformationOk();
     }
 

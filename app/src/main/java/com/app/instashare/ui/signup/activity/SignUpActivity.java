@@ -418,16 +418,17 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
     private void bindRegisterView()
     {
         register = findViewById(R.id.register);
-        presenter.onPhotoChanged(userImageState);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (userImageState != null) presenter.onPhotoChanged(userImageState);
+
 
                 final Dialog progressDialog = Utils.createProgressDialog(SignUpActivity.this,
                         getString(R.string.signup_checking_infomartion));
 
-                UserInteractor.registerUser(firebaseAuth, emailState.trim(), passwordState,
+                UserInteractor.registerUser(firebaseAuth, presenter.generateInformationMap(),
                         new UserInteractor.OnRegistrationProcess() {
                             @Override
                             public void registering() {
@@ -440,10 +441,18 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
                             }
 
                             @Override
-                            public void registerFailure() {
+                            public void emailInUse() {
                                 presenter.emailInUse();
                                 emailET.setFocusableInTouchMode(true);
                                 emailET.requestFocus();
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void usernameInUse() {
+                                presenter.usernameInUse();
+                                usernameET.setFocusableInTouchMode(true);
+                                usernameET.requestFocus();
                                 progressDialog.dismiss();
                             }
                         });
