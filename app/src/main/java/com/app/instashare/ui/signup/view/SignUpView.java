@@ -23,4 +23,6 @@ public interface SignUpView {
     void setRepeatPasswordAdvice(int advice);
 
     void enableRegisterButton(boolean enabled);
+
+    void showCurrentBirthdate(String birthdate);
 }

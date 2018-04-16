@@ -1,10 +1,15 @@
 package com.app.instashare.ui.signup.presenter;
 
 import android.content.Context;
+import android.icu.text.SymbolTable;
+import android.net.Uri;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.signup.view.SignUpView;
 import com.app.instashare.utils.Validation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Pitisflow on 15/4/18.
@@ -20,6 +25,11 @@ public class SignUpPresenter {
     private String email;
     private String password;
     private String repeatPassword;
+    private String name;
+    private String lastName;
+    private String birthdate;
+    private String photoURL;
+
 
     private boolean usernameOk = false;
     private boolean emailOk = false;
@@ -145,6 +155,59 @@ public class SignUpPresenter {
 
         checkInformationOk();
     }
+
+
+
+    public void onNameChanged(String name)
+    {
+        this.name = name.trim();
+    }
+
+
+
+    public void onLastNameChanged(String lastName)
+    {
+        this.lastName = lastName.trim();
+    }
+
+
+    public void onBirthdateChanged(String birthdate)
+    {
+        this.birthdate = birthdate.trim();
+    }
+
+
+    public void onPhotoChanged(Uri uri)
+    {
+        System.out.println(uri.getPath());
+        photoURL = uri.getPath();
+    }
+
+
+    public void onBirthdateSelected(int year, int month, int dayOfMonth){
+        birthdate = dayOfMonth + "/" + (month+1) + "/" + year;
+        view.showCurrentBirthdate(birthdate);
+    }
+
+
+
+    private Map<String, String> generateInformationMap()
+    {
+        Map<String, String> information = new HashMap<>();
+
+        information.put("name", name);
+        information.put("lastName", lastName);
+        information.put("birthdate", birthdate);
+        information.put("username", username);
+        information.put("email", email);
+        information.put("password", password);
+
+
+
+        return information;
+    }
+
+
 
 
     public void emailInUse()

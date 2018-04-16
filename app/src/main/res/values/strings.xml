@@ -8,6 +8,9 @@
     <string name="user_info_password">Password</string>
     <string name="user_info_email">Email</string>
     <string name="user_info_username">Username</string>
+    <string name="user_info_name">Name</string>
+    <string name="user_info_lastName">Last name</string>
+    <string name="user_info_birthdate">Birthdate</string>
     <string name="user_info_repeat_password">Repeat password</string>
     <string name="user_info_text">User information</string>
     <string name="user_info_personal">Personal information</string>

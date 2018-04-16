@@ -1,36 +1,29 @@
 package com.app.instashare.ui.signup.activity;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.PersistableBundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.instashare.R;
@@ -42,18 +35,15 @@ import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by Pitisflow on 14/4/18.
  */
 
-public class SignUpActivity extends AppCompatActivity implements SignUpView{
+public class SignUpActivity extends AppCompatActivity implements SignUpView, DatePickerDialog.OnDateSetListener{
 
 
     private TextView usernameRequired;
@@ -65,6 +55,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     private EditText emailET;
     private EditText passwordET;
     private EditText repeatPasswordET;
+    private EditText nameET;
+    private EditText lastNameET;
+    private EditText birthdateET;
 
 
     private Button register;
@@ -79,6 +72,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     private String emailState;
     private String passwordState;
     private String repeatPasswordState;
+    private String nameState;
+    private String lastNameState;
+    private String birthdateState;
     private Uri userImageState;
 
 
@@ -129,6 +125,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         bindEmailView();
         bindPasswordView();
         bindRepeatPasswordView();
+
+        bindNameView();
+        bindLastNameView();
+        bindBirthdateView();
+
         bindRegisterView();
         bindUserImageView();
         bindActionSheetView();
@@ -284,9 +285,140 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
 
+
+    private void bindNameView()
+    {
+        View nameContainer = findViewById(R.id.name);
+
+        ImageView icon = nameContainer.findViewById(R.id.icon);
+        icon.setImageResource(R.drawable.ic_account_circle_black_24dp);
+
+        nameET = nameContainer.findViewById(R.id.editText);
+        nameET.setHint(R.string.user_info_name);
+
+        nameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                nameState = charSequence.toString();
+                presenter.onNameChanged(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+    }
+
+
+
+
+    private void bindLastNameView()
+    {
+        View lastNameContainer = findViewById(R.id.last_name);
+
+        ImageView icon = lastNameContainer.findViewById(R.id.icon);
+        icon.setImageResource(R.drawable.ic_account_circle_black_24dp);
+
+        lastNameET = lastNameContainer.findViewById(R.id.editText);
+        lastNameET.setHint(R.string.user_info_lastName);
+
+        lastNameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                lastNameState = charSequence.toString();
+                presenter.onLastNameChanged(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+
+
+
+    private void bindBirthdateView()
+    {
+        View birthdateContainer = findViewById(R.id.birthdate);
+
+        ImageView icon = birthdateContainer.findViewById(R.id.icon);
+        icon.setImageResource(R.drawable.ic_today_black_24dp);
+
+        birthdateET = birthdateContainer.findViewById(R.id.editText);
+        birthdateET.setHint(R.string.user_info_birthdate);
+
+        birthdateET.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_date_range_black_24dp), null);
+
+        birthdateET.setInputType(InputType.TYPE_NULL);
+        birthdateET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                birthdateState = charSequence.toString();
+                presenter.onBirthdateChanged(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
+        birthdateET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    if(motionEvent.getRawX() >= (birthdateET.getRight() - birthdateET.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+
+                        DatePickerDialog dialog = new DatePickerDialog(SignUpActivity.this, SignUpActivity.this,
+                                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                                calendar.get(Calendar.DAY_OF_MONTH));
+                        dialog.show();
+
+
+                        return false;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+
+
+
     private void bindRegisterView()
     {
         register = findViewById(R.id.register);
+        presenter.onPhotoChanged(userImageState);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -310,6 +442,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
                             @Override
                             public void registerFailure() {
                                 presenter.emailInUse();
+                                emailET.setFocusableInTouchMode(true);
+                                emailET.requestFocus();
                                 progressDialog.dismiss();
                             }
                         });
@@ -400,6 +534,18 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -410,7 +556,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
                 URI uri = cameraUtils.moveImageToGallery(cameraUtils.getBitmapFromPhoto(userImage));
                 userImageState = Uri.parse(uri.toString());
-
                 userImage.setImageURI(Uri.parse(uri.toString()));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
@@ -419,10 +564,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
             }
         }
     }
-
-
-
-
 
 
 
@@ -464,6 +605,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         outState.putString("email", emailState);
         outState.putString("password", passwordState);
         outState.putString("repeatPassword", repeatPasswordState);
+        outState.putString("name", nameState);
+        outState.putString("lastName", lastNameState);
+        outState.putString("birthdate", birthdateState);
         outState.putParcelable("userImage", userImageState);
     }
 
@@ -478,10 +622,22 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         passwordET.setText(savedInstanceState.getString("password"));
         repeatPasswordET.setText(savedInstanceState.getString("repeatPassword"));
 
+        nameET.setText(savedInstanceState.getString("name"));
+        lastNameET.setText(savedInstanceState.getString("lastName"));
+        birthdateET.setText(savedInstanceState.getString("birthdate"));
+
 
         if (savedInstanceState.getParcelable("userImage") != null) {
             userImage.setImageURI((Uri) savedInstanceState.getParcelable("userImage"));
         }
+    }
+
+
+
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+        presenter.onBirthdateSelected(year, month, dayOfMonth);
     }
 
 
@@ -534,4 +690,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     public void enableRegisterButton(boolean enabled) {
         register.setEnabled(enabled);
     }
+
+    @Override
+    public void showCurrentBirthdate(String birthdate) {
+        this.birthdateET.setText(birthdate);
+    }
+
+
 }

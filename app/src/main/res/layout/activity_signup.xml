@@ -105,6 +105,31 @@
                 android:layout_marginBottom="@dimen/general_margin_small"/>
 
 
+
+            <include
+                android:id="@+id/name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="@dimen/general_margin_small"
+                layout="@layout/fields_signup"/>
+
+
+            <include
+                android:id="@+id/last_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="@dimen/general_margin_small"
+                layout="@layout/fields_signup"/>
+
+
+            <include
+                android:id="@+id/birthdate"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="@dimen/general_margin_small"
+                layout="@layout/fields_signup"/>
+
+
             <Button
                 android:id="@+id/register"
                 android:layout_width="match_parent"
