@@ -1,113 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
-
-    <LinearLayout
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/general_margin_medium">
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/userImage"
-                android:layout_width="@dimen/signup_image_dimen"
-                android:layout_height="150dp"
-                android:layout_centerHorizontal="true"
-                android:src="@mipmap/ic_launcher"
-                app:civ_border_width="2dp"
-                app:civ_border_color="@color/colorPrimary"
-                app:civ_circle_background_color="@color/colorPrimaryLight"/>
 
-            <ImageButton
-                android:id="@+id/takePhoto"
+
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignEnd="@id/userImage"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_camera_alt_black_24dp"/>
-        </RelativeLayout>
+                android:layout_marginTop="@dimen/general_margin_medium">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/userImage"
+                    android:layout_width="@dimen/signup_image_dimen"
+                    android:layout_height="@dimen/signup_image_dimen"
+                    android:layout_centerHorizontal="true"
+                    android:src="@mipmap/ic_launcher"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_circle_background_color="@color/colorPrimaryLight"/>
+
+                <ImageButton
+                    android:id="@+id/takePhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignEnd="@id/userImage"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_camera_alt_black_24dp"/>
+            </RelativeLayout>
 
 
 
 
-        <TextView
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/user_info_text"
+                android:gravity="start"
+                android:textSize="22sp"
+                android:layout_marginTop="@dimen/general_margin_big"
+                android:layout_marginStart="@dimen/general_margin_small"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary"
+                android:layout_marginStart="@dimen/general_margin_small"
+                android:layout_marginEnd="@dimen/general_margin_small"
+                android:layout_marginBottom="@dimen/general_margin_small"/>
+
+
+            <include
+                android:id="@+id/username"
+                layout="@layout/fields_signup"/>
+
+            <include
+                android:id="@+id/email"
+                layout="@layout/fields_signup"/>
+
+            <include
+                android:id="@+id/password"
+                layout="@layout/fields_signup"/>
+
+            <include
+                android:id="@+id/repeat_password"
+                layout="@layout/fields_signup"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/user_info_personal"
+                android:gravity="start"
+                android:textSize="22sp"
+                android:layout_marginTop="@dimen/general_margin_big"
+                android:layout_marginStart="@dimen/general_margin_small"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary"
+                android:layout_marginStart="@dimen/general_margin_small"
+                android:layout_marginEnd="@dimen/general_margin_small"
+                android:layout_marginBottom="@dimen/general_margin_small"/>
+
+
+            <Button
+                android:id="@+id/register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/general_margin_big"
+                android:background="@drawable/selector_button_login"
+                android:textColor="@color/white"
+                android:enabled="false"
+                android:text="@string/signup_register_text"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+    
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/design_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/signup_bottom_sheet_height"
+        android:background="@color/white"
+        android:clipToPadding="true"
+        app:behavior_peekHeight="0dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/user_info_text"
-            android:gravity="start"
-            android:textSize="22sp"
-            android:layout_marginTop="@dimen/general_margin_big"
-            android:layout_marginStart="@dimen/general_margin_small"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"
-            android:layout_marginStart="@dimen/general_margin_small"
-            android:layout_marginEnd="@dimen/general_margin_small"
-            android:layout_marginBottom="@dimen/general_margin_small"/>
+            android:orientation="vertical">
 
 
-        <include
-            android:id="@+id/username"
-            layout="@layout/fields_signup"/>
-
-        <include
-            android:id="@+id/email"
-            layout="@layout/fields_signup"/>
-
-        <include
-            android:id="@+id/password"
-            layout="@layout/fields_signup"/>
-
-        <include
-            android:id="@+id/repeat_password"
-            layout="@layout/fields_signup"/>
+            <TextView
+                android:id="@+id/camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/signup_bottom_sheet_textSize"
+                android:drawablePadding="@dimen/general_margin_small"
+                android:layout_marginStart="@dimen/general_margin_big"
+                android:layout_marginTop="@dimen/general_margin_small"
+                android:layout_marginBottom="@dimen/general_margin_small"
+                android:text="@string/signup_camera"/>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/user_info_personal"
-            android:gravity="start"
-            android:textSize="22sp"
-            android:layout_marginTop="@dimen/general_margin_big"
-            android:layout_marginStart="@dimen/general_margin_small"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"
-            android:layout_marginStart="@dimen/general_margin_small"
-            android:layout_marginEnd="@dimen/general_margin_small"
-            android:layout_marginBottom="@dimen/general_margin_small"/>
+            <TextView
+                android:id="@+id/gallery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/general_margin_small"
+                android:layout_marginStart="@dimen/general_margin_big"
+                android:textColor="@color/black"
+                android:textSize="@dimen/signup_bottom_sheet_textSize"
+                android:text="@string/signup_gallery"/>
 
 
-        <Button
-            android:id="@+id/register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/general_margin_big"
-            android:background="@drawable/selector_button_login"
-            android:textColor="@color/white"
-            android:enabled="false"
-            android:text="@string/signup_register_text"/>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
 
 
-    </LinearLayout>
-</ScrollView>
+

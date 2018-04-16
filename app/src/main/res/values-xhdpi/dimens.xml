@@ -19,6 +19,9 @@
 
 
     <!-- Sign up Screen dimens -->
-    <dimen name="signup_image_dimen">152dp</dimen>
+    <dimen name="signup_image_dimen">104dp</dimen>
+    <dimen name="signup_drawable_size">24dp</dimen>
+    <dimen name="signup_bottom_sheet_height">78dp</dimen>
+    <dimen name="signup_bottom_sheet_textSize">18sp</dimen>
 
 </resources>

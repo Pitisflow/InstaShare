@@ -45,6 +45,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -65,9 +66,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     private EditText passwordET;
     private EditText repeatPasswordET;
 
+
     private Button register;
     private ImageButton takePhoto;
     private ImageView userImage;
+    private BottomSheetBehavior bottomSheetBehavior;
 
 
 
@@ -76,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     private String emailState;
     private String passwordState;
     private String repeatPasswordState;
-    private Bitmap userImageState;
+    private Uri userImageState;
 
 
 
@@ -101,6 +104,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
         firebaseAuth = FirebaseAuth.getInstance();
+
 
         listener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -127,6 +131,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         bindRepeatPasswordView();
         bindRegisterView();
         bindUserImageView();
+        bindActionSheetView();
     }
 
 
@@ -321,25 +326,62 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+    }
+
+
+    private void bindActionSheetView()
+    {
+        View bottomSheet = findViewById(R.id.design_bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+        TextView camera = findViewById(R.id.camera);
+        TextView gallery = findViewById(R.id.gallery);
+
+
+
+        camera.setClickable(true);
+        camera.setCompoundDrawablesWithIntrinsicBounds(
+                Utils.changeDrawableSize(getDrawable(R.drawable.ic_camera_picture),
+                        getResources().getDimensionPixelSize(R.dimen.signup_drawable_size), this), null, null, null);
+
+
+
+        gallery.setClickable(true);
+        gallery.setCompoundDrawablesWithIntrinsicBounds(
+                Utils.changeDrawableSize(getDrawable(R.drawable.ic_gallery_picture),
+                        getResources().getDimensionPixelSize(R.dimen.signup_drawable_size), this), null, null, null);
+
+
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (Build.VERSION.SDK_INT >= 23) {
-//                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-//                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-//                    {
-//                        cameraUtils = new CameraUtils(getApplicationContext());
-//
-//
-//                        Intent intent = cameraUtils.getCameraIntent();
-//                        startActivityForResult(intent, REQUEST_CAMERA_CODE);
-//                    } else {
-//                        ActivityCompat.requestPermissions(SignUpActivity.this, new String[]{Manifest.permission.CAMERA
-//                                , Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSIONS);
-//                    }
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        cameraUtils = new CameraUtils(getApplicationContext());
 
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        Intent intent = cameraUtils.getCameraIntent();
+                        startActivityForResult(intent, REQUEST_CAMERA_CODE);
+                    } else {
+                        ActivityCompat.requestPermissions(SignUpActivity.this, new String[]{Manifest.permission.CAMERA
+                                , Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSIONS);
+                    }
+                }
+            }
+        });
 
-
-
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= 23) {
                     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         Intent intent = new Intent(Intent.ACTION_PICK);
                         intent.setType("image/*");
                         startActivityForResult(intent, REQUEST_GALLERY_CODE);
@@ -348,12 +390,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_GALLERY_CODE);
                     }
                 }
-
-
             }
         });
     }
-
 
 
 
@@ -368,19 +407,15 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         if(resultCode != RESULT_CANCELED) {
             if (requestCode == REQUEST_CAMERA_CODE) {
 
-                System.out.println("AKI");
-                userImageState = cameraUtils.getBitmapFromPhoto(userImage);
-                userImage.setImageBitmap(userImageState);
 
-                cameraUtils.moveImageToGallery(userImageState);
+                URI uri = cameraUtils.moveImageToGallery(cameraUtils.getBitmapFromPhoto(userImage));
+                userImageState = Uri.parse(uri.toString());
+
+                userImage.setImageURI(Uri.parse(uri.toString()));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
-                try {
-                    userImageState = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                userImage.setImageBitmap(userImageState);
+                userImageState = data.getData();
+                userImage.setImageURI(data.getData());
             }
         }
     }
@@ -442,7 +477,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         emailET.setText(savedInstanceState.getString("email"));
         passwordET.setText(savedInstanceState.getString("password"));
         repeatPasswordET.setText(savedInstanceState.getString("repeatPassword"));
-        userImage.setImageBitmap((Bitmap) savedInstanceState.getParcelable("userImage"));
+
+
+        if (savedInstanceState.getParcelable("userImage") != null) {
+            userImage.setImageURI((Uri) savedInstanceState.getParcelable("userImage"));
+        }
     }
 
 

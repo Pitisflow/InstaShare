@@ -38,4 +38,6 @@
     <string name="signup_passwords_not_matching">The passwords must match</string>
     <string name="signup_register_text">Register</string>
     <string name="signup_checking_infomartion">Checking information…</string>
+    <string name="signup_camera">Camera</string>
+    <string name="signup_gallery">Gallery</string>
 </resources>

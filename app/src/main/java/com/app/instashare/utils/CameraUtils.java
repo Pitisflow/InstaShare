@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -102,7 +103,7 @@ public class CameraUtils {
 
 
 
-    public void moveImageToGallery(Bitmap bitmap)
+    public URI moveImageToGallery(Bitmap bitmap)
     {
         String appDirectoryName = "InstaShare";
         File fileDir = new File(Environment.getExternalStoragePublicDirectory(
@@ -133,6 +134,8 @@ public class CameraUtils {
                         Log.i("ExternalStorage", "-> uri=" + uri);
                     }
                 });
+
+        return newFile.toURI();
     }
 
 
