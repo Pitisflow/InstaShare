@@ -16,6 +16,7 @@ import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +87,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
     private static final int REQUEST_CAMERA_CODE = 1;
+    private static final int REQUEST_GALLERY_CODE = 2;
+    private static final int REQUEST_WRITE_PERMISSIONS = 1;
+    private static final int REQUEST_READ_PERMISSIONS = 2;
 
 
 
@@ -318,19 +322,33 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
             @Override
             public void onClick(View view) {
                 if (Build.VERSION.SDK_INT >= 23) {
-                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+//                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+//                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+//                    {
+//                        cameraUtils = new CameraUtils(getApplicationContext());
+//
+//
+//                        Intent intent = cameraUtils.getCameraIntent();
+//                        startActivityForResult(intent, REQUEST_CAMERA_CODE);
+//                    } else {
+//                        ActivityCompat.requestPermissions(SignUpActivity.this, new String[]{Manifest.permission.CAMERA
+//                                , Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSIONS);
+//                    }
+
+
+
+
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                     {
-                        cameraUtils = new CameraUtils(getApplicationContext());
-
-
-                        Intent intent = cameraUtils.getCameraIntent();
-                        startActivityForResult(intent, REQUEST_CAMERA_CODE);
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");
+                        startActivityForResult(intent, REQUEST_GALLERY_CODE);
                     } else {
-                        ActivityCompat.requestPermissions(SignUpActivity.this, new String[]{Manifest.permission.CAMERA
-                                , Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                        ActivityCompat.requestPermissions(SignUpActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_GALLERY_CODE);
                     }
                 }
+
 
             }
         });
@@ -347,14 +365,22 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        System.out.println("Req: " + requestCode +" result: " + resultCode);
         if(resultCode != RESULT_CANCELED) {
             if (requestCode == REQUEST_CAMERA_CODE) {
 
+                System.out.println("AKI");
                 userImageState = cameraUtils.getBitmapFromPhoto(userImage);
                 userImage.setImageBitmap(userImageState);
 
                 cameraUtils.moveImageToGallery(userImageState);
+            } else if (requestCode == REQUEST_GALLERY_CODE)
+            {
+                try {
+                    userImageState = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                userImage.setImageBitmap(userImageState);
             }
         }
     }
@@ -363,7 +389,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
 
-    
+
 
 
 
@@ -375,7 +401,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (requestCode == REQUEST_WRITE_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
             cameraUtils = new CameraUtils(getApplicationContext());
@@ -384,27 +410,39 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
             Intent intent = cameraUtils.getCameraIntent();
             startActivityForResult(intent, REQUEST_CAMERA_CODE);
         }
+
+
+        if (requestCode == REQUEST_READ_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, REQUEST_GALLERY_CODE);
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+
         outState.putString("username", usernameState);
         outState.putString("email", emailState);
         outState.putString("password", passwordState);
         outState.putString("repeatPassword", repeatPasswordState);
+        outState.putParcelable("userImage", userImageState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        userImageState = savedInstanceState.getParcelable("userImage");
 
         usernameET.setText(savedInstanceState.getString("username"));
         emailET.setText(savedInstanceState.getString("email"));
         passwordET.setText(savedInstanceState.getString("password"));
         repeatPasswordET.setText(savedInstanceState.getString("repeatPassword"));
+        userImage.setImageBitmap((Bitmap) savedInstanceState.getParcelable("userImage"));
     }
 
 
