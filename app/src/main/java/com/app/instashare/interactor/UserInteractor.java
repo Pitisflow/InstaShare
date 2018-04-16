@@ -1,5 +1,7 @@
 package com.app.instashare.interactor;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.app.instashare.singleton.DatabaseSingleton;
@@ -8,6 +10,7 @@ import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +32,7 @@ public class UserInteractor {
 
 
 
-    public static String getUserId() {
+    public static String getUserKey() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         return (user != null) ? user.getUid() : null;
@@ -90,7 +94,8 @@ public class UserInteractor {
 
 
 
-    public static void registerUser(FirebaseAuth auth, Map<String, String> information, OnRegistrationProcess process)
+    public static void registerUser(FirebaseAuth auth, Map<String,
+            String> information, OnRegistrationProcess process)
     {
         process.registering();
 
@@ -99,7 +104,9 @@ public class UserInteractor {
 
 
 
-    private static void checkValidUsername(final FirebaseAuth auth, final Map<String, String> information, final OnRegistrationProcess process)
+    private static void checkValidUsername(final FirebaseAuth auth,
+                                           final Map<String, String> information,
+                                           final OnRegistrationProcess process)
     {
         String username = information.get("username");
 
@@ -124,7 +131,9 @@ public class UserInteractor {
     }
 
 
-    private static void startRegistration(final FirebaseAuth auth, final Map<String, String> information, final OnRegistrationProcess process)
+    private static void startRegistration(final FirebaseAuth auth,
+                                          final Map<String, String> information,
+                                          final OnRegistrationProcess process)
     {
         String email = information.get("email");
         String password = information.get("password");
@@ -182,14 +191,42 @@ public class UserInteractor {
         user.setBasicInfo(userBasic);
 
 
-        DatabaseSingleton.getDbInstance().child(Constants.USERS_T).child(getUserId()).setValue(user);
+        DatabaseSingleton.getDbInstance().child(Constants.USERS_T).child(getUserKey()).setValue(user);
 
         String pushKey = DatabaseSingleton.getDbInstance().push().getKey();
         DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
                 .child(pushKey).child(Constants.USERNAME_K).setValue(information.get(Constants.USERNAME_K).toLowerCase());
 
         DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
-                .child(pushKey).child(Constants.USERNAMES_USERKEY_K).setValue(getUserId());
+                .child(pushKey).child(Constants.USERNAMES_USERKEY_K).setValue(getUserKey());
+
+
+
+
+
+        if (information.containsKey(Constants.USER_MAIN_IMAGE_K))
+        {
+            Uri uri = Uri.parse("http://" + information.get(Constants.USER_MAIN_IMAGE_K));
+            String[] splitted = information.get(Constants.USER_MAIN_IMAGE_K).split("/");
+            String photoName = splitted[splitted.length - 1];
+
+
+            UploadTask task = DatabaseSingleton.getStorageInstance()
+                    .child(getUserKey()).child("images/" + photoName).putFile(uri);
+
+            task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    if (taskSnapshot.getDownloadUrl() != null) {
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        DatabaseSingleton.getDbInstance().child(Constants.USERS_T)
+                                .child(getUserKey()).child(Constants.USERS_BASIC_INFO_T)
+                                .child(Constants.USER_MAIN_IMAGE_K).setValue(downloadUrl.getPath());
+                    }
+                }
+            });
+        }
     }
 
 

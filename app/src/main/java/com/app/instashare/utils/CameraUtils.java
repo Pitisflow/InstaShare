@@ -2,7 +2,6 @@ package com.app.instashare.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
@@ -13,6 +12,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -74,9 +74,7 @@ public class CameraUtils {
 
 
 
-
-
-
+    
     public Bitmap getBitmapFromPhoto(ImageView imageContainer)
     {
         int targetW = imageContainer.getWidth();

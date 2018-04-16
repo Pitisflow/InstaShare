@@ -202,7 +202,6 @@ public class SignInActivity extends AppCompatActivity implements SignInView{
 
     private void startMainActivity()
     {
-        System.out.println("EFewfwefew");
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
         finish();

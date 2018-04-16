@@ -180,7 +180,6 @@ public class SignUpPresenter {
 
     public void onPhotoChanged(Uri uri)
     {
-        System.out.println(uri.getPath());
         photoURL = uri.getPath();
     }
 
