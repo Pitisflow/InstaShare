@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -11,6 +12,35 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal">
+
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/general_margin_medium">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userImage"
+                android:layout_width="@dimen/signup_image_dimen"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_circle_background_color="@color/colorPrimaryLight"/>
+
+            <ImageButton
+                android:id="@+id/takePhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignEnd="@id/userImage"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_camera_alt_black_24dp"/>
+        </RelativeLayout>
+
+
 
 
         <TextView

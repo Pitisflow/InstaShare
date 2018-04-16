@@ -16,4 +16,10 @@
     <dimen name="round_et_margin_vertical">32dp</dimen>
 
 
+
+
+    <!-- Sign up Screen dimens -->
+    <dimen name="signup_image_dimen">304dp</dimen>
+
+
 </resources>

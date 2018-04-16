@@ -1,20 +1,33 @@
 package com.app.instashare.ui.signup.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,8 +37,15 @@ import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.base.activity.MainActivity;
 import com.app.instashare.ui.signup.presenter.SignUpPresenter;
 import com.app.instashare.ui.signup.view.SignUpView;
+import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Pitisflow on 14/4/18.
@@ -45,6 +65,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     private EditText repeatPasswordET;
 
     private Button register;
+    private ImageButton takePhoto;
+    private ImageView userImage;
 
 
 
@@ -53,12 +75,17 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     private String emailState;
     private String passwordState;
     private String repeatPasswordState;
+    private Bitmap userImageState;
 
 
 
     private SignUpPresenter presenter;
+    private CameraUtils cameraUtils;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener listener;
+
+
+    private static final int REQUEST_CAMERA_CODE = 1;
 
 
 
@@ -67,7 +94,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
 
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -96,6 +122,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
         bindPasswordView();
         bindRepeatPasswordView();
         bindRegisterView();
+        bindUserImageView();
     }
 
 
@@ -282,6 +309,32 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
     }
 
 
+    private void bindUserImageView()
+    {
+        userImage = findViewById(R.id.userImage);
+        takePhoto = findViewById(R.id.takePhoto);
+
+        takePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    {
+                        cameraUtils = new CameraUtils(getApplicationContext());
+
+
+                        Intent intent = cameraUtils.getCameraIntent();
+                        startActivityForResult(intent, REQUEST_CAMERA_CODE);
+                    } else {
+                        ActivityCompat.requestPermissions(SignUpActivity.this, new String[]{Manifest.permission.CAMERA
+                                , Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                }
+
+            }
+        });
+    }
 
 
 
@@ -290,8 +343,48 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView{
 
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        System.out.println("Req: " + requestCode +" result: " + resultCode);
+        if(resultCode != RESULT_CANCELED) {
+            if (requestCode == REQUEST_CAMERA_CODE) {
+
+                userImageState = cameraUtils.getBitmapFromPhoto(userImage);
+                userImage.setImageBitmap(userImageState);
+
+                cameraUtils.moveImageToGallery(userImageState);
+            }
+        }
+    }
 
 
+
+
+
+    
+
+
+
+
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+        {
+            cameraUtils = new CameraUtils(getApplicationContext());
+
+
+            Intent intent = cameraUtils.getCameraIntent();
+            startActivityForResult(intent, REQUEST_CAMERA_CODE);
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
