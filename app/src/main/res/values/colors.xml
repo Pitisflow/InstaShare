@@ -18,6 +18,7 @@
     <!-- Support Colors -->
     <color name="black">#000</color>
     <color name="white">#FFF</color>
+    <color name="whiteTransparent">#80FFFFFF</color>
 
 
 

@@ -95,7 +95,7 @@ public class UserInteractor {
 
 
     public static void registerUser(FirebaseAuth auth, Map<String,
-            String> information, OnRegistrationProcess process)
+            Object> information, OnRegistrationProcess process)
     {
         process.registering();
 
@@ -105,10 +105,10 @@ public class UserInteractor {
 
 
     private static void checkValidUsername(final FirebaseAuth auth,
-                                           final Map<String, String> information,
+                                           final Map<String, Object> information,
                                            final OnRegistrationProcess process)
     {
-        String username = information.get("username");
+        String username = (String) information.get("username");
 
         DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
                 .orderByChild(Constants.USERNAME_K).startAt(username.toLowerCase()).endAt(username.toLowerCase() + "\uf8ff")
@@ -132,11 +132,11 @@ public class UserInteractor {
 
 
     private static void startRegistration(final FirebaseAuth auth,
-                                          final Map<String, String> information,
+                                          final Map<String, Object> information,
                                           final OnRegistrationProcess process)
     {
-        String email = information.get("email");
-        String password = information.get("password");
+        String email = (String) information.get("email");
+        String password = (String) information.get("password");
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -169,7 +169,7 @@ public class UserInteractor {
 
 
 
-    private static void createUserData(final Map<String, String> information)
+    private static void createUserData(final Map<String, Object> information)
     {
         User user = new User();
         UserBasic userBasic = new UserBasic();
@@ -183,8 +183,8 @@ public class UserInteractor {
         info.put(Constants.USER_FIRST_TIMESTAMP_K, System.currentTimeMillis());
 
 
-        userBasic.setName(information.get(Constants.USER_NAME_K));
-        userBasic.setName(information.get(Constants.USERNAME_K));
+        userBasic.setName((String) information.get(Constants.USER_NAME_K));
+        userBasic.setName((String) information.get(Constants.USERNAME_K));
 
 
         user.setInformation(info);
@@ -195,7 +195,7 @@ public class UserInteractor {
 
         String pushKey = DatabaseSingleton.getDbInstance().push().getKey();
         DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
-                .child(pushKey).child(Constants.USERNAME_K).setValue(information.get(Constants.USERNAME_K).toLowerCase());
+                .child(pushKey).child(Constants.USERNAME_K).setValue(((String) information.get(Constants.USERNAME_K)).toLowerCase());
 
         DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
                 .child(pushKey).child(Constants.USERNAMES_USERKEY_K).setValue(getUserKey());
@@ -204,15 +204,14 @@ public class UserInteractor {
 
 
 
-        if (information.containsKey(Constants.USER_MAIN_IMAGE_K))
+        if (information.containsKey(Constants.USER_MAIN_IMAGE_K)
+                && information.get((Constants.USER_MAIN_IMAGE_K)) != null)
         {
-            Uri uri = Uri.parse("http://" + information.get(Constants.USER_MAIN_IMAGE_K));
-            String[] splitted = information.get(Constants.USER_MAIN_IMAGE_K).split("/");
+            String[] splitted = ((Uri) information.get(Constants.USER_MAIN_IMAGE_K)).getPath().split("/");
             String photoName = splitted[splitted.length - 1];
 
-
             UploadTask task = DatabaseSingleton.getStorageInstance()
-                    .child(getUserKey()).child("images/" + photoName).putFile(uri);
+                    .child(getUserKey()).child("images/" + photoName).putFile((Uri) information.get(Constants.USER_MAIN_IMAGE_K));
 
             task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -224,6 +223,11 @@ public class UserInteractor {
                                 .child(getUserKey()).child(Constants.USERS_BASIC_INFO_T)
                                 .child(Constants.USER_MAIN_IMAGE_K).setValue(downloadUrl.getPath());
                     }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    System.out.println(e.getMessage());
                 }
             });
         }

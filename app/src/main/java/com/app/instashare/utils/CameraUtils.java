@@ -74,7 +74,7 @@ public class CameraUtils {
 
 
 
-    
+
     public Bitmap getBitmapFromPhoto(ImageView imageContainer)
     {
         int targetW = imageContainer.getWidth();

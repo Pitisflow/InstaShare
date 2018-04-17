@@ -3,26 +3,29 @@ package com.app.instashare.ui.base.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.singleton.DatabaseSingleton;
+import com.app.instashare.ui.base.fragment.MainFragment;
 import com.app.instashare.ui.signin.activity.SignInActivity;
+import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.utils.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.UploadTask;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Button logout;
-
-    private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener listener;
 
 
     @Override
@@ -31,69 +34,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        logout = findViewById(R.id.logout);
+        Fragment fragment = new MainFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 
 
-        logout.setOnClickListener(new View.OnClickListener() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setTitle("InstaShare");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+        }
+
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                firebaseAuth.signOut();
-            }
-        });
-
-
-        Button prueba = findViewById(R.id.prueba);
-
-        prueba.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Uri uri = Uri.parse("file:///storage/emulated/0/Pictures/InstaShare/JPEG_20180416_215632.jpg");
-                String[] splitted = "/storage/emulated/0/Pictures/InstaShare/JPEG_20180416_215632.jpg".split("/");
-                String photoName = splitted[splitted.length - 1];
-
-
-                UploadTask task = DatabaseSingleton.getStorageInstance()
-                        .child(UserInteractor.getUserKey()).child("images/" + photoName).putFile(uri);
-
-                task.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                });
-            }
-        });
-
-
-
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        listener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null)
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if(item.getItemId() == R.id.profile)
                 {
-                    Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
 
-                    finish();
                     startActivity(intent);
                 }
+
+                return true;
             }
-        };
+        });
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        System.out.println(listener);
-        firebaseAuth.addAuthStateListener(listener);
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        firebaseAuth.removeAuthStateListener(listener);
     }
 }

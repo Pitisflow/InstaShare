@@ -24,4 +24,14 @@
     <dimen name="signup_bottom_sheet_height">39dp</dimen>
     <dimen name="signup_bottom_sheet_textSize">9sp</dimen>
 
+
+
+
+    <!-- Material Design elevations -->
+    <dimen name="elevation_small_card">1dp</dimen>
+    <dimen name="elevation_medium_card">2dp</dimen>
+    <dimen name="elevation_toolbar">4dp</dimen>
+    <dimen name="elevation_bottom_navigation">8dp</dimen>
+    <dimen name="elevation_drawer">16dp</dimen>
+
 </resources>

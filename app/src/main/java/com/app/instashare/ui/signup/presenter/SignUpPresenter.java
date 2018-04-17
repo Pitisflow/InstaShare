@@ -29,7 +29,7 @@ public class SignUpPresenter {
     private String name;
     private String lastName;
     private String birthdate;
-    private String photoURL;
+    private Uri photoUri;
 
 
     private boolean usernameOk = false;
@@ -180,7 +180,7 @@ public class SignUpPresenter {
 
     public void onPhotoChanged(Uri uri)
     {
-        photoURL = uri.getPath();
+        photoUri = uri;
     }
 
 
@@ -191,15 +191,16 @@ public class SignUpPresenter {
 
 
 
-    public Map<String, String> generateInformationMap()
+    public Map<String, Object> generateInformationMap()
     {
-        Map<String, String> information = new HashMap<>();
+        Map<String, Object> information = new HashMap<>();
 
         information.put(Constants.USER_NAME_K, name);
         information.put(Constants.USER_LAST_NAME_K, lastName);
         information.put(Constants.USER_BIRTHDATE_K, birthdate);
         information.put(Constants.USERNAME_K, username);
         information.put(Constants.USER_EMAIL_K, email);
+        information.put(Constants.USER_MAIN_IMAGE_K, photoUri);
         information.put("password", password);
 
 
