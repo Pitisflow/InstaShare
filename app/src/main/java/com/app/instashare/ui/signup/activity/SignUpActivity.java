@@ -113,8 +113,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 
-                    finish();
                     startActivity(intent);
+                    finish();
                 }
             }
         };

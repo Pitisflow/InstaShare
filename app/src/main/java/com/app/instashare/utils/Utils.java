@@ -36,4 +36,18 @@ public class Utils {
 
         return d;
     }
+
+
+    public static String createChild(String... tree)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < tree.length; i++)
+        {
+            sb.append(tree[i]);
+            sb.append("/");
+        }
+
+        return sb.toString();
+    }
 }

@@ -19,7 +19,8 @@
             android:background="@color/colorPrimary"
             android:elevation="@dimen/elevation_toolbar"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:titleTextAppearance="@style/ToolbarTitle"/>
 
     </android.support.design.widget.AppBarLayout>
 

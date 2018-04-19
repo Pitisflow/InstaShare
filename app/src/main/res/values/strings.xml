@@ -43,4 +43,23 @@
     <string name="signup_checking_infomartion">Checking information…</string>
     <string name="signup_camera">Camera</string>
     <string name="signup_gallery">Gallery</string>
+
+
+
+
+    <!-- Menu drawer Strings -->
+    <string name="drawer_menu_posts">Posts</string>
+    <string name="drawer_menu_profile">User profile</string>
+    <string name="drawer_menu_notifications">Notifications</string>
+    <string name="drawer_menu_chats">Chats</string>
+    <string name="drawer_menu_share_app">Share application</string>
+    <string name="drawer_menu_contact_us">Contact us</string>
+
+
+
+    <!-- Bottom navigation Strings -->
+    <string name="bottom_navigation_home">Home</string>
+    <string name="bottom_navigation_following">Following</string>
+    <string name="bottom_navigation_search">Search</string>
+
 </resources>

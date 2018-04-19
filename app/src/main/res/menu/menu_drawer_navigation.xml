@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/profile"
-        android:title="Ejemplo 1"/>
+    <group android:checkableBehavior="single" android:id="@+id/info_group">
+        <item
+            android:id="@+id/posts"
+            android:title="@string/drawer_menu_posts"/>
 
-    <item
-        android:title="Ejemplo 2"/>
+        <item
+            android:id="@+id/notifications"
+            android:title="@string/drawer_menu_notifications"/>
 
-    <item
-        android:title="Ejemplo 3"/>
+        <item
+            android:id="@+id/chats"
+            android:title="@string/drawer_menu_chats"/>
 
-    <item
-        android:title="Ejemplo 4"/>
+        <item
+            android:id="@+id/profile"
+            android:title="@string/drawer_menu_profile"/>
+
+    </group>
 
 </menu>

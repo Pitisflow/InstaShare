@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.base.activity.MainActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:theme="@style/AppThemeTranslucent">
         </activity>
 

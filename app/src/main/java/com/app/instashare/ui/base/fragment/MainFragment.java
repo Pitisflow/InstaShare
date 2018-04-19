@@ -15,7 +15,7 @@ import com.app.instashare.R;
 import com.app.instashare.adapter.ViewPagerAdapter;
 import com.app.instashare.ui.post.fragment.ClosePostsFragment;
 import com.app.instashare.ui.post.fragment.FollowingPostsFragment;
-import com.app.instashare.ui.user.fragment.SearchUserFragment;
+import com.app.instashare.ui.user.fragment.SearchFragment;
 
 import java.util.ArrayList;
 
@@ -37,11 +37,12 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         fragments = new ArrayList<>();
         fragments.add(new ClosePostsFragment());
         fragments.add(new FollowingPostsFragment());
-        fragments.add(new SearchUserFragment());
+        fragments.add(new SearchFragment());
     }
 
 
@@ -70,6 +71,7 @@ public class MainFragment extends Fragment {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.setFragments(fragments);
+
 
         viewPager.setAdapter(adapter);
 

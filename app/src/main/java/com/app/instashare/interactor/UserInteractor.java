@@ -8,6 +8,7 @@ import com.app.instashare.singleton.DatabaseSingleton;
 import com.app.instashare.ui.user.model.User;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
+import com.app.instashare.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 
@@ -30,8 +32,6 @@ import java.util.Map;
 
 public class UserInteractor {
 
-
-
     public static String getUserKey() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -42,7 +42,64 @@ public class UserInteractor {
 
 
 
+    public static void searchUsersByUsername(String username, final OnBasicInfoFetched onBasicInfoFetched)
+    {
+        DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
+                .orderByChild(Constants.USERNAME_K)
+                .startAt(username.trim().toLowerCase())
+                .endAt(username.trim().toLowerCase() + "\uf8ff")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
 
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                onBasicInfoFetched.onSearchRefreshed();
+
+                if (dataSnapshot.exists())
+                {
+                    for (DataSnapshot child : dataSnapshot.getChildren())
+                    {
+                        GenericTypeIndicator<HashMap<String, Object>> t = new GenericTypeIndicator<HashMap<String, Object>>(){};
+                        HashMap<String, Object> map = child.getValue(t);
+
+                        fetchUserBasicInfo((String) map.get(Constants.USERNAMES_USERKEY_K), onBasicInfoFetched);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
+
+    public static void fetchUserBasicInfo(final String userKey, final OnBasicInfoFetched onBasicInfoFetched)
+    {
+        String route = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_BASIC_INFO_T);
+
+        DatabaseSingleton.getDbInstance().child(route).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    UserBasic user = dataSnapshot.getValue(UserBasic.class);
+                    user.setUserKey(userKey);
+
+                    onBasicInfoFetched.onUserBasicFetched(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 
 
@@ -184,7 +241,7 @@ public class UserInteractor {
 
 
         userBasic.setName((String) information.get(Constants.USER_NAME_K));
-        userBasic.setName((String) information.get(Constants.USERNAME_K));
+        userBasic.setUsername((String) information.get(Constants.USERNAME_K));
 
 
         user.setInformation(info);
@@ -221,7 +278,7 @@ public class UserInteractor {
 
                         DatabaseSingleton.getDbInstance().child(Constants.USERS_T)
                                 .child(getUserKey()).child(Constants.USERS_BASIC_INFO_T)
-                                .child(Constants.USER_MAIN_IMAGE_K).setValue(downloadUrl.getPath());
+                                .child(Constants.USER_MAIN_IMAGE_K).setValue(downloadUrl.toString());
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -231,6 +288,17 @@ public class UserInteractor {
                 }
             });
         }
+    }
+
+
+
+
+
+    public interface OnBasicInfoFetched {
+
+        void onSearchRefreshed();
+
+        void onUserBasicFetched(UserBasic user);
     }
 
 

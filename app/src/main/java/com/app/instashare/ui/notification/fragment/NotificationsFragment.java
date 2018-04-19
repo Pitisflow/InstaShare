@@ -1,4 +1,4 @@
-package com.app.instashare.ui.user.fragment;
+package com.app.instashare.ui.notification.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,16 +11,16 @@ import android.view.ViewGroup;
 import com.app.instashare.R;
 
 /**
- * Created by Pitisflow on 17/4/18.
+ * Created by Pitisflow on 18/4/18.
  */
 
-public class SearchUserFragment extends Fragment {
-
+public class NotificationsFragment extends Fragment {
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, null);
+        System.out.println("FRAGMENT: " + this);
+        return inflater.inflate(R.layout.fragment_following_posts, container, false);
     }
 }
