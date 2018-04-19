@@ -39,8 +39,16 @@ public class UsersRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
+    public void removeAllCards()
+    {
+        itemList = new ArrayList<>();
+        notifyDataSetChanged();
+    }
 
 
+    public ArrayList<Object> getItemList() {
+        return itemList;
+    }
 
     @NonNull
     @Override

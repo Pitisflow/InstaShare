@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools">
 
     <EditText
@@ -9,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/general_margin_medium"
-        android:layout_alignParentTop="true"
         android:theme="@style/RoundEditText"
         android:hint="Search here"
         android:textColor="@color/gray"
@@ -19,10 +20,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@+id/editText"
-        android:layout_alignParentBottom="true"
+        android:layout_height="match_parent"
         tools:listitem="@layout/item_user_basic_card"/>
 
 
-</RelativeLayout>
+</LinearLayout>
