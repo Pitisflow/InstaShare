@@ -34,4 +34,10 @@
     <dimen name="elevation_bottom_navigation">8dp</dimen>
     <dimen name="elevation_drawer">16dp</dimen>
 
+
+    <!-- Items general dimens -->
+    <dimen name="item_margin">2dp</dimen>
+    <dimen name="item_round_image">24dp</dimen>
+
+
 </resources>

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/general_margin_medium"
         android:theme="@style/RoundEditText"
-        android:hint="Search here"
+        android:hint="@string/search_fragment_search"
         android:textColor="@color/gray"
         android:background="@drawable/shape_round_box"/>
 

@@ -35,4 +35,9 @@
     <dimen name="elevation_drawer">16dp</dimen>
 
 
+    <!-- Items general dimens -->
+    <dimen name="item_margin">4dp</dimen>
+    <dimen name="item_round_image">96dp</dimen>
+
+
 </resources>

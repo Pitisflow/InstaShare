@@ -62,4 +62,8 @@
     <string name="bottom_navigation_following">Following</string>
     <string name="bottom_navigation_search">Search</string>
 
+
+    <!-- Search fragment Strings -->
+    <string name="search_fragment_search">Search here</string>
+
 </resources>

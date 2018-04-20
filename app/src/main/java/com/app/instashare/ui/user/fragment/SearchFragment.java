@@ -57,6 +57,10 @@ public class SearchFragment extends Fragment implements SearchView{
     private int orientationState = 0;
 
 
+    private static final int SPAN_COUNT_PORTRAIT = 1;
+    private static final int SPAN_COUNT_LANDSCAPE = 2;
+
+
 
     @Nullable
     @Override
@@ -68,48 +72,6 @@ public class SearchFragment extends Fragment implements SearchView{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
-
-
-//        UserBasic user = new UserBasic();
-//        user.setUsername("Pitisflow");
-//        user.setMainImage("https://i.pinimg.com/originals/c9/da/eb/c9daeb9cbe4c46ff950b29ed7143bb8a.jpg");
-//        user.setName("Javier Garcia");
-//
-//
-//        UserBasic user1 = new UserBasic();
-//        user1.setUsername("Maria234");
-//        user1.setMainImage("https://i.pinimg.com/originals/97/2a/5f/972a5faa34fa091f693ddc0a4d61c2ca.jpg");
-//        user1.setName("Maria Rodriguez");
-//
-//
-//        UserBasic user2 = new UserBasic();
-//        user2.setUsername("Laura29");
-//        user2.setMainImage("https://78.media.tumblr.com/c3d24f25012f919eb38b475ce028a1b3/tumblr_p5et2fwYSw1vb9vwto1_500.jpg");
-//
-//
-//        UserBasic user3 = new UserBasic();
-//        user3.setUsername("Raquel_S");
-//        user3.setMainImage("https://pics.pof.com/dating/112334/3tumqu2554vemqa1rprsu4fdr502645910.jpg");
-//        user3.setName("Raquel Sanchez");
-//
-//
-//        adapter.addCard(user);
-//        adapter.addCard(user1);
-//        adapter.addCard(user2);
-//        adapter.addCard(user3);
-//        adapter.addCard(user);
-//        adapter.addCard(user1);
-//        adapter.addCard(user2);
-//        adapter.addCard(user3);
-//        adapter.addCard(user);
-//        adapter.addCard(user1);
-//        adapter.addCard(user2);
-//        adapter.addCard(user3);
-
-
 
         if (savedInstanceState != null )
         {
@@ -130,11 +92,10 @@ public class SearchFragment extends Fragment implements SearchView{
 
 
 
-
     private void bindRecyclerView(View view)
     {
         recyclerView = view.findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT_PORTRAIT));
 
         recyclerView.setAdapter(new UsersRVAdapter());
     }
@@ -153,9 +114,7 @@ public class SearchFragment extends Fragment implements SearchView{
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (orientationState != 1) {
-                    presenter.onSearchChanged(charSequence.toString());
-                }
+                if (orientationState == 0) presenter.onSearchChanged(charSequence.toString());
             }
 
             @Override
@@ -165,6 +124,13 @@ public class SearchFragment extends Fragment implements SearchView{
         });
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        presenter = null;
+    }
 
 
 
@@ -181,13 +147,16 @@ public class SearchFragment extends Fragment implements SearchView{
                 }
 
                 recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
-                orientationState = 0;
                 editText.setText(searchState);
+
+                if (orientationState == Configuration.ORIENTATION_LANDSCAPE) {
+                    ((GridLayoutManager) recyclerView.getLayoutManager()).setSpanCount(SPAN_COUNT_LANDSCAPE);
+                } else ((GridLayoutManager) recyclerView.getLayoutManager()).setSpanCount(SPAN_COUNT_PORTRAIT);
+
+                orientationState = 0;
             }
         }
     }
-
-
 
 
     @Override
@@ -206,10 +175,15 @@ public class SearchFragment extends Fragment implements SearchView{
 
             outState.putParcelableArrayList("recyclerItems", users);
             outState.putParcelable("recycler", recyclerView.getLayoutManager().onSaveInstanceState());
-            outState.putInt("orientation", 1);
             outState.putString("search", editText.getText().toString());
+
+            if (getContext() != null) outState.putInt("orientation", getContext().getResources().getConfiguration().orientation);
         }
     }
+
+
+
+
 
     @Override
     public void refreshRecycler() {
