@@ -21,34 +21,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Pitisflow on 18/4/18.
  */
 
-public class UsersRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private ArrayList<Object> itemList;
+public class UsersRVAdapter extends BaseRVAdapter {
 
 
     public UsersRVAdapter() {
-        this.itemList = new ArrayList<>();
+        super();
     }
 
-
-
-    public void addCard(Object card)
-    {
-        itemList.add(card);
-        notifyItemInserted(itemList.size() - 1);
-    }
-
-
-    public void removeAllCards()
-    {
-        itemList = new ArrayList<>();
-        notifyDataSetChanged();
-    }
-
-
-    public ArrayList<Object> getItemList() {
-        return itemList;
-    }
 
     @NonNull
     @Override
@@ -64,11 +43,6 @@ public class UsersRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((BasicUserViewHolder) holder).bind((UserBasic) itemList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return itemList.size();
+        ((BasicUserViewHolder) holder).bind((UserBasic) getItemList().get(position));
     }
 }

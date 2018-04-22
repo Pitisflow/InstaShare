@@ -4,7 +4,8 @@
     <group android:checkableBehavior="single" android:id="@+id/info_group">
         <item
             android:id="@+id/posts"
-            android:title="@string/drawer_menu_posts"/>
+            android:title="@string/drawer_menu_posts"
+            android:checked="true"/>
 
         <item
             android:id="@+id/notifications"

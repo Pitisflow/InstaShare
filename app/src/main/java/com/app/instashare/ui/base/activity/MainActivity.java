@@ -1,9 +1,15 @@
 package com.app.instashare.ui.base.activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,30 +17,28 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 
 import com.app.instashare.R;
-import com.app.instashare.interactor.UserInteractor;
-import com.app.instashare.singleton.DatabaseSingleton;
 import com.app.instashare.ui.base.fragment.MainFragment;
+import com.app.instashare.ui.base.presenter.MainPresenter;
+import com.app.instashare.ui.base.view.MainView;
 import com.app.instashare.ui.notification.fragment.NotificationsFragment;
-import com.app.instashare.ui.signin.activity.SignInActivity;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
-import com.app.instashare.utils.Constants;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.UploadTask;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainView, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
 
 
+    private GoogleApiClient apiClient;
+    private MainPresenter presenter;
 
+    private static final int PERMISSION_LOCATION_CODE = 1;
+    private int isConnected = 0;
 
 
     @Override
@@ -42,13 +46,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        apiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
-        if (savedInstanceState == null) {
-            Fragment fragment = new MainFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        if (savedInstanceState != null && savedInstanceState.containsKey("isConnected")) {
+            isConnected = savedInstanceState.getInt("isConnected");
         }
+        if (isConnected == 0) apiClient.connect();
 
 
+        presenter = new MainPresenter(getApplicationContext(), this);
+
+
+        bindToolbarView();
+        bindDrawerView();
+        bindNavigationView();
+    }
+
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+
+
+
+    private void bindDrawerView()
+    {
+        drawerLayout = findViewById(R.id.drawer_layout);
+    }
+
+
+
+    private void bindToolbarView()
+    {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -58,17 +102,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
         }
-
-        bindDrawerView();
-        bindNavigationView();
-    }
-
-
-
-
-    private void bindDrawerView()
-    {
-        drawerLayout = findViewById(R.id.drawer_layout);
     }
 
 
@@ -83,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 
@@ -149,17 +183,65 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        //getSupportFragmentManager().putFragment(outState, "currentFragment", currentFragment);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        outState.putInt("isConnected", isConnected);
     }
 
 
+
+    @SuppressLint("MissingPermission")
     @Override
-    protected void onStop() {
-        super.onStop();
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_LOCATION_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+        {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+            Fragment fragment = new MainFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+            isConnected = 1;
+
+            presenter.setCurrentLocation(location);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+                    , Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION_CODE);
+        }
+    }
+
+
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Location location;
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                location = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+
+                Fragment fragment = new MainFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                isConnected = 1;
+
+                presenter.setCurrentLocation(location);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+                        , Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION_CODE);
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

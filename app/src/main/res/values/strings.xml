@@ -66,4 +66,10 @@
     <!-- Search fragment Strings -->
     <string name="search_fragment_search">Search here</string>
 
+
+    <!-- Post options Strings -->
+    <string name="post_options_comment">Comment</string>
+    <string name="post_options_like">Like</string>
+    <string name="post_options_share">Share</string>
+
 </resources>

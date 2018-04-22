@@ -1,6 +1,7 @@
 package com.app.instashare.interactor;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -101,6 +102,18 @@ public class UserInteractor {
         });
     }
 
+
+
+
+    public static void updateUserLocation(Location location)
+    {
+        HashMap<String, Object> mLocation = new HashMap<>();
+        mLocation.put(Constants.USER_LATITUDE_K, location.getLatitude());
+        mLocation.put(Constants.USER_LONGITUDE_K, location.getLongitude());
+
+        String route = Utils.createChild(Constants.USERS_T, getUserKey(), Constants.USERS_LOCACATION_T);
+        DatabaseSingleton.getDbInstance().child(route).updateChildren(mLocation);
+    }
 
 
 

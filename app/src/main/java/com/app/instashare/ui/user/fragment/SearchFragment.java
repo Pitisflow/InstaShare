@@ -2,6 +2,7 @@ package com.app.instashare.ui.user.fragment;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.icu.text.SymbolTable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -102,6 +103,7 @@ public class SearchFragment extends Fragment implements SearchView{
 
 
 
+
     private void bindEditView(View view)
     {
         editText = view.findViewById(R.id.editText);
@@ -138,12 +140,12 @@ public class SearchFragment extends Fragment implements SearchView{
     public void onResume() {
         super.onResume();
 
-        if (recyclerState != null && recyclerItemsState != null)
+        if (recyclerState != null && recyclerItemsState != null && orientationState != 0)
         {
             if (recyclerView.getAdapter() != null && recyclerView.getAdapter() instanceof UsersRVAdapter) {
                 for (Object user : recyclerItemsState)
                 {
-                    ((UsersRVAdapter) recyclerView.getAdapter()).addCard(user);
+                    ((UsersRVAdapter) recyclerView.getAdapter()).addCard(user, Constants.CARD_USER_BASIC);
                 }
 
                 recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
@@ -153,6 +155,9 @@ public class SearchFragment extends Fragment implements SearchView{
                     ((GridLayoutManager) recyclerView.getLayoutManager()).setSpanCount(SPAN_COUNT_LANDSCAPE);
                 } else ((GridLayoutManager) recyclerView.getLayoutManager()).setSpanCount(SPAN_COUNT_PORTRAIT);
 
+
+                recyclerState = null;
+                recyclerItemsState = null;
                 orientationState = 0;
             }
         }
@@ -162,7 +167,6 @@ public class SearchFragment extends Fragment implements SearchView{
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
 
         if (recyclerView.getAdapter() != null && recyclerView.getAdapter() instanceof UsersRVAdapter)
         {
@@ -195,7 +199,7 @@ public class SearchFragment extends Fragment implements SearchView{
     @Override
     public void addCard(UserBasic user) {
         if (recyclerView.getAdapter() != null && recyclerView.getAdapter() instanceof UsersRVAdapter) {
-            ((UsersRVAdapter) recyclerView.getAdapter()).addCard(user);
+            ((UsersRVAdapter) recyclerView.getAdapter()).addCard(user, Constants.CARD_USER_BASIC);
         }
     }
 }

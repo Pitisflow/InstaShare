@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/general_margin_small"
+    card_view:cardBackgroundColor="@color/white"
+    card_view:cardElevation="@dimen/elevation_card_small">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userImage"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"
+            tool:src="@mipmap/ic_launcher"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/userImage"
+            android:layout_toEndOf="@id/userImage"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tool:text="Pitisflow"/>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_alignStart="@id/title"
+            android:layout_marginTop="@dimen/item_margin"
+            tool:text="14:23"/>
+
+
+        <TextView
+            android:id="@+id/contentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/date"
+            android:layout_alignStart="@+id/userImage"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:textColor="@color/black"
+            tool:text="Cum hippotoxota accelerare, omnes nuclear vexatum iacerees promissio fortis, placidus consiliumes. Quadra peritus castor est. Accola, musa, et fiscina. Nunquam quaestio verpa. Est regius omnia, cesaris." />
+
+
+
+        <ImageView
+            android:id="@+id/contentImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contentText"
+            android:layout_marginTop="@dimen/general_margin_small"
+            android:layout_marginBottom="@dimen/general_margin_medium"
+            tool:src="@mipmap/ic_launcher"/>
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/contentImage"
+            android:layout_marginBottom="@dimen/general_margin_small"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:background="@color/grayLight"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/separator"
+            android:layout_marginBottom="@dimen/general_margin_small"
+            android:weightSum="3">
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="0dp"
+                android:background="@android:color/transparent"
+                android:text="@string/post_options_like"
+                tool:text="Like"/>
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="0dp"
+                android:background="@android:color/transparent"
+                android:text="@string/post_options_comment"
+                tool:text="Comment"/>
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="0dp"
+                android:background="@android:color/transparent"
+                android:text="@string/post_options_share"
+                tool:text="Share"/>
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>
