@@ -63,4 +63,11 @@
         <item name="android:background">@drawable/selector_task_button</item>
     </style>
 
+
+    <style name="PrimaryColorItem">
+        <item name="colorControlNormal">@color/colorPrimaryTransparent</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+    </style>
+
 </resources>

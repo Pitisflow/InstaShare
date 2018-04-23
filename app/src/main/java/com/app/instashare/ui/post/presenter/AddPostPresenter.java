@@ -30,7 +30,10 @@ public class AddPostPresenter {
 
     private String contentText;
     private String contentImage;
-    private boolean isUpSelected;
+    private boolean isUpSelected = true;
+    private boolean isShareWithAll = true;
+    private boolean isAnonymous = true;
+
 
 
     private static final int ET_MAX_LENGHT = 5000;
@@ -45,6 +48,10 @@ public class AddPostPresenter {
     public void onInitialize()
     {
         view.setMaxLettersText("0/" + ET_MAX_LENGHT);
+
+        isUpSelected = true;
+        isShareWithAll = true;
+        isAnonymous = true;
     }
 
 
@@ -72,9 +79,28 @@ public class AddPostPresenter {
 
     public void onAlignTextChanged(boolean isUp)
     {
-        if (isUp) isUpSelected = true;
-        else isUpSelected = false;
+        isUpSelected = isUp;
     }
+
+
+    public void onShareWithChanged(boolean isAll)
+    {
+        isShareWithAll = isAll;
+
+        if (isShareWithAll) view.enableShareAs(true);
+        else view.enableShareAs(false);
+    }
+
+
+    public void onShareAsChanged(boolean isAnonymous)
+    {
+        this.isAnonymous = isAnonymous;
+    }
+
+
+
+
+
 
 
     private void checkPostInformation()

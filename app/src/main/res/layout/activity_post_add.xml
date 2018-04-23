@@ -54,11 +54,12 @@
 
 
             <RadioGroup
-                android:id="@+id/radioGroup"
+                android:id="@+id/groupAlign"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:theme="@style/PrimaryColorItem">
 
                 <RadioButton
                     android:id="@+id/radioUp"
@@ -106,6 +107,102 @@
             tools:src="@mipmap/ic_launcher" />
 
 
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:text="@string/add_post_publication_opts"
+            android:textColor="@color/colorPrimary"
+            android:textSize="22sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/general_margin_small"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:background="@color/colorPrimary" />
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/general_margin_medium"
+            android:layout_marginStart="@dimen/general_margin_medium">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/add_post_share_with"
+                android:textColor="@color/black" />
+
+
+            <RadioGroup
+                android:id="@+id/groupShareWith"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:orientation="horizontal"
+                android:theme="@style/PrimaryColorItem">
+
+                <RadioButton
+                    android:id="@+id/shareWithAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/add_post_share_with_all"/>
+
+                <RadioButton
+                    android:id="@+id/shareWithFollowers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_post_share_with_followers"/>
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/general_margin_medium"
+            android:layout_marginStart="@dimen/general_margin_medium">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/add_post_share_as"
+                android:textColor="@color/black" />
+
+
+
+            <Switch
+                android:id="@+id/isAnonymous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:theme="@style/PrimaryColorItem"
+                android:checked="true"/>
+
+        </RelativeLayout>
+
+
+
+
         <Button
             android:id="@+id/publish"
             android:layout_width="match_parent"
@@ -115,7 +212,7 @@
             android:layout_marginStart="@dimen/general_margin_big"
             android:enabled="false"
             android:text="@string/add_post_publish"
-            style="@style/TaskButton" />
+            style="@style/TaskButton"/>
 
         <Button
             android:id="@+id/preview"

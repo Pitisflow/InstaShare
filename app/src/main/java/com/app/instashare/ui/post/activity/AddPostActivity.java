@@ -8,29 +8,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.post.presenter.AddPostPresenter;
 import com.app.instashare.ui.post.view.AddPostView;
-import com.app.instashare.ui.signup.activity.SignUpActivity;
 import com.app.instashare.utils.CameraUtils;
-import com.squareup.picasso.Picasso;
 
 import java.net.URI;
 
@@ -44,6 +41,8 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     private TextView contentMaxLetters;
     private ImageView contentImage;
     private RadioGroup contentAlign;
+    private RadioGroup publicationShareWith;
+    private Switch publicationShareAs;
     private Button publishPost;
     private Button previewPost;
 
@@ -51,6 +50,8 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
     private String contentTextState;
     private String contentImageState;
+    private boolean shareAllState = true;
+    private boolean isUpState = true;
 
 
 
@@ -79,6 +80,8 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         bindContentTextView();
         bindPublishView();
         bindPreviewView();
+        bindShareWithView();
+        bindShareAsView();
     }
 
     @Override
@@ -141,7 +144,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
     private void bindContentAlignView()
     {
-        contentAlign = findViewById(R.id.radioGroup);
+        contentAlign = findViewById(R.id.groupAlign);
 
         contentAlign.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -150,10 +153,12 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
                 switch (i)
                 {
                     case R.id.radioUp:
+                        isUpState = true;
                         presenter.onAlignTextChanged(true);
                         break;
 
                     case R.id.radioDown:
+                        isUpState = false;
                         presenter.onAlignTextChanged(false);
                         break;
                 }
@@ -190,6 +195,44 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     }
 
 
+    private void bindShareWithView()
+    {
+        publicationShareWith = findViewById(R.id.groupShareWith);
+
+        publicationShareWith.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+
+                switch (i)
+                {
+                    case R.id.shareWithAll:
+                        shareAllState = true;
+                        presenter.onShareWithChanged(true);
+                        break;
+
+                    case R.id.shareWithFollowers:
+                        shareAllState = false;
+                        presenter.onShareWithChanged(false);
+                        break;
+                }
+            }
+        });
+    }
+
+
+    private void bindShareAsView()
+    {
+        publicationShareAs = findViewById(R.id.isAnonymous);
+
+        publicationShareAs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                presenter.onShareAsChanged(b);
+            }
+        });
+    }
+
+
 
 
     @Override
@@ -221,6 +264,9 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         outState.putString("ImageState", contentImageState);
         outState.putString("ContentState", contentTextState);
         outState.putBoolean("PublishState", publishPost.isEnabled());
+        outState.putBoolean("ShareAsAnonymous", publicationShareAs.isChecked());
+        outState.putBoolean("ShareWithAll", shareAllState);
+        outState.putBoolean("IsUp", isUpState);
     }
 
     @Override
@@ -231,6 +277,23 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
         contentET.setText(savedInstanceState.getString("ContentState"));
         publishPost.setEnabled(savedInstanceState.getBoolean("PublishState"));
+
+
+        if (savedInstanceState.getBoolean("ShareWithAll"))
+        {
+            publicationShareWith.check(R.id.shareWithAll);
+            publicationShareAs.setEnabled(true);
+        } else {
+            publicationShareWith.check(R.id.shareWithFollowers);
+            publicationShareAs.setEnabled(false);
+        }
+
+        if (savedInstanceState.getBoolean("IsUp")) contentAlign.check(R.id.radioUp);
+        else contentAlign.check(R.id.radioDown);
+
+        publicationShareAs.setChecked(savedInstanceState.getBoolean("ShareAsAnonymous"));
+
+
 
         if (contentImageState != null)
         {
@@ -324,5 +387,15 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     @Override
     public View getContentText() {
         return findViewById(R.id.postContentText);
+    }
+
+    @Override
+    public void enableShareAs(boolean enable) {
+        publicationShareAs.setEnabled(enable);
+
+        if (!enable) publicationShareAs.setChecked(false);
+        else publicationShareAs.setChecked(true);
+
+        shareAllState = enable;
     }
 }

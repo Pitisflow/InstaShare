@@ -78,6 +78,11 @@
     <string name="add_post_align_text">Align the text in the post:</string>
     <string name="add_post_align_up">Up</string>
     <string name="add_post_align_down">Down</string>
+    <string name="add_post_publication_opts">Publication options</string>
+    <string name="add_post_share_with">Share with: </string>
+    <string name="add_post_share_with_all">All</string>
+    <string name="add_post_share_with_followers">Followers</string>
+    <string name="add_post_share_as">Share as anonymous:</string>
 
 
 

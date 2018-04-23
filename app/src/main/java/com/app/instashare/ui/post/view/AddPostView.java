@@ -10,6 +10,8 @@ public interface AddPostView {
 
     void enablePublishButton(boolean enable);
 
+    void enableShareAs(boolean enable);
+
     void setMaxLettersText(String text);
 
     View getContentImage();
