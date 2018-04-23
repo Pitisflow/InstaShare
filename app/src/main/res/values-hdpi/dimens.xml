@@ -23,6 +23,13 @@
     <dimen name="signup_drawable_size">18dp</dimen>
     <dimen name="signup_bottom_sheet_height">52dp</dimen>
     <dimen name="signup_bottom_sheet_textSize">12sp</dimen>
+
+
+
+
+    <!-- Add post Screen dimens -->
+    <dimen name="addpost_et_min_height">78dp</dimen>
+    <dimen name="addpost_image_size">150dp</dimen>
     
     
     

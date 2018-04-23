@@ -41,8 +41,6 @@
     <string name="signup_passwords_not_matching">The passwords must match</string>
     <string name="signup_register_text">Register</string>
     <string name="signup_checking_infomartion">Checking information…</string>
-    <string name="signup_camera">Camera</string>
-    <string name="signup_gallery">Gallery</string>
 
 
 
@@ -71,5 +69,29 @@
     <string name="post_options_comment">Comment</string>
     <string name="post_options_like">Like</string>
     <string name="post_options_share">Share</string>
+
+
+    <!-- Add post Strings -->
+    <string name="add_post_share">Share a content</string>
+    <string name="add_post_publish">Publish</string>
+    <string name="add_post_preview">Preview</string>
+    <string name="add_post_align_text">Align the text in the post:</string>
+    <string name="add_post_align_up">Up</string>
+    <string name="add_post_align_down">Down</string>
+
+
+
+
+    <!-- User actions Strings -->
+    <string name="action_use_camera">Camera</string>
+    <string name="action_use_gallery">Gallery</string>
+    <string name="action_write_something">Write something…</string>
+
+
+
+
+    <!-- Others -->
+    <string name="image_transition" translatable="false">image_transition</string>
+    <string name="text_transition" translatable="false">text_transition</string>
 
 </resources>

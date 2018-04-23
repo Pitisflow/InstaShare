@@ -1,8 +1,10 @@
 package com.app.instashare.ui.post.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.adapter.UsersRVAdapter;
+import com.app.instashare.ui.post.activity.AddPostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.user.model.UserBasic;
 
@@ -75,5 +78,15 @@ public class ClosePostsFragment extends Fragment {
         adapter.addCard(post2);
 
 
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), AddPostActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 }

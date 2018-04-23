@@ -27,6 +27,13 @@
 
 
 
+    <!-- Add post Screen dimens -->
+    <dimen name="addpost_et_min_height">52dp</dimen>
+    <dimen name="addpost_image_size">100dp</dimen>
+
+
+
+
     <!-- Material Design elevations -->
     <dimen name="elevation_card_small">1dp</dimen>
     <dimen name="elevation_card_medium">2dp</dimen>

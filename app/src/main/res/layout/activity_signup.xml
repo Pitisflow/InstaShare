@@ -173,7 +173,7 @@
                 android:layout_marginStart="@dimen/general_margin_big"
                 android:layout_marginTop="@dimen/general_margin_small"
                 android:layout_marginBottom="@dimen/general_margin_small"
-                android:text="@string/signup_camera"/>
+                android:text="@string/action_use_camera"/>
 
 
             <TextView
@@ -184,7 +184,7 @@
                 android:layout_marginStart="@dimen/general_margin_big"
                 android:textColor="@color/black"
                 android:textSize="@dimen/signup_bottom_sheet_textSize"
-                android:text="@string/signup_gallery"/>
+                android:text="@string/action_use_gallery"/>
 
 
         </LinearLayout>

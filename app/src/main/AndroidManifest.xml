@@ -48,6 +48,14 @@
 
         <activity android:name=".ui.user.activity.UserProfileActivity"/>
 
+        <activity
+            android:name=".ui.post.activity.AddPostActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
+        <activity
+            android:name=".ui.post.activity.PostActivity"
+            android:theme="@style/AppTheme.Detail"/>
+
 
 
 

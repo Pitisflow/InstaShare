@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+
+        <EditText
+            android:id="@+id/postContentText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:background="@android:color/transparent"
+            android:gravity="top|start"
+            android:transitionName="@string/text_transition"
+            android:hint="@string/action_write_something"
+            android:maxLength="5000"
+            android:minHeight="@dimen/addpost_et_min_height"
+            android:padding="@dimen/general_margin_small" />
+
+
+        <TextView
+            android:id="@+id/postMaxLetters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/general_margin_small"
+            android:layout_marginEnd="@dimen/general_margin_small" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/general_margin_medium">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/add_post_align_text"
+                android:textColor="@color/black" />
+
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radioUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/add_post_align_up" />
+
+                <RadioButton
+                    android:id="@+id/radioDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_post_align_down" />
+
+            </RadioGroup>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:text="@string/add_post_share"
+            android:textColor="@color/colorPrimary"
+            android:textSize="22sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/general_margin_medium"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:background="@color/colorPrimary" />
+
+
+        <ImageView
+            android:id="@+id/postContentImage"
+            android:layout_width="@dimen/addpost_image_size"
+            android:layout_height="@dimen/addpost_image_size"
+            android:layout_marginBottom="@dimen/general_margin_small"
+            android:transitionName="@string/image_transition"
+            android:background="@drawable/shape_square_box"
+            android:src="@android:drawable/ic_menu_camera"
+            tools:src="@mipmap/ic_launcher" />
+
+
+        <Button
+            android:id="@+id/publish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/general_margin_big"
+            android:layout_marginEnd="@dimen/general_margin_big"
+            android:layout_marginStart="@dimen/general_margin_big"
+            android:enabled="false"
+            android:text="@string/add_post_publish"
+            style="@style/TaskButton" />
+
+        <Button
+            android:id="@+id/preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/general_margin_big"
+            android:background="@android:color/transparent"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/add_post_preview"/>
+
+
+    </LinearLayout>
+
+</ScrollView>
