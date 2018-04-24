@@ -83,6 +83,29 @@
     <string name="add_post_share_with_all">All</string>
     <string name="add_post_share_with_followers">Followers</string>
     <string name="add_post_share_as">Share as anonymous:</string>
+    <string name="add_post_tags">Publication tags</string>
+    <string name="add_post_write_tags">Write publication tags</string>
+
+
+
+
+    <string-array name="post_tags">
+        <item name="travel">Travel</item>
+        <item name="sport">Sport</item>
+        <item name="entertaiment">Entertaiment</item>
+        <item name="groups">Groups</item>
+        <item name="photo">Photo</item>
+        <item name="video">Video</item>
+        <item name="curiosities">Curiosities</item>
+        <item name="places">Places</item>
+        <item name="party">Party</item>
+        <item name="lifestyle">Lifestyle</item>
+        <item name="meetings">Meetings</item>
+        <item name="work">Work</item>
+        <item name="food">Food</item>
+        <item name="politic">Politic</item>
+        <item name="social">Social</item>
+    </string-array>
 
 
 
@@ -91,6 +114,7 @@
     <string name="action_use_camera">Camera</string>
     <string name="action_use_gallery">Gallery</string>
     <string name="action_write_something">Write something…</string>
+    <string name="action_add">Add</string>
 
 
 

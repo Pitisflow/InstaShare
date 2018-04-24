@@ -7,12 +7,18 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.app.instashare.R;
+import com.app.instashare.adapter.TagRVAdapter;
 import com.app.instashare.ui.post.activity.PostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.AddPostView;
+import com.app.instashare.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Pitisflow on 23/4/18.
@@ -33,15 +39,20 @@ public class AddPostPresenter {
     private boolean isUpSelected = true;
     private boolean isShareWithAll = true;
     private boolean isAnonymous = true;
+    private ArrayList<String> tags;
 
 
 
     private static final int ET_MAX_LENGHT = 5000;
+    private static ArrayList<String> tagNames;
 
 
     public AddPostPresenter(Context context, AddPostView view) {
         this.context = context;
         this.view = view;
+        tags = new ArrayList<>();
+
+        tagNames = new ArrayList<>(Arrays.asList(context.getResources().getStringArray(R.array.post_tags)));
     }
 
 
@@ -52,6 +63,15 @@ public class AddPostPresenter {
         isUpSelected = true;
         isShareWithAll = true;
         isAnonymous = true;
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_dropdown_item, tagNames);
+        view.setAutoCompleteAdapter(adapter);
+
+
+        TagRVAdapter tagRVAdapter = new TagRVAdapter();
+        view.setTagRecyclerAdapter(tagRVAdapter);
     }
 
 
@@ -100,6 +120,18 @@ public class AddPostPresenter {
 
 
 
+
+    public void addTagToRecycler(String tag)
+    {
+        String tagTrimmed = tag.trim();
+        String tagCapitalized = Utils.capitalize(tagTrimmed);
+
+        if (!tags.contains(tagTrimmed) && tagNames.contains(tagCapitalized))
+        {
+            tags.add(tagCapitalized);
+            view.addTagToAdapter(tagCapitalized);
+        }
+    }
 
 
 

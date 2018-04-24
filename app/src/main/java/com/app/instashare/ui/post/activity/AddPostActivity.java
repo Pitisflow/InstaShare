@@ -11,10 +11,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -24,12 +28,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.app.instashare.R;
+import com.app.instashare.adapter.TagRVAdapter;
 import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.post.presenter.AddPostPresenter;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.utils.CameraUtils;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Pitisflow on 22/4/18.
@@ -43,6 +50,11 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     private RadioGroup contentAlign;
     private RadioGroup publicationShareWith;
     private Switch publicationShareAs;
+    private RecyclerView publicationTagsRecycler;
+    private AutoCompleteTextView publicationTagsET;
+
+
+    private Button addTag;
     private Button publishPost;
     private Button previewPost;
 
@@ -82,6 +94,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         bindPreviewView();
         bindShareWithView();
         bindShareAsView();
+        bindTagsView();
     }
 
     @Override
@@ -233,6 +246,26 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     }
 
 
+    private void bindTagsView()
+    {
+        publicationTagsRecycler = findViewById(R.id.tagsRecycler);
+        publicationTagsET = findViewById(R.id.tagET);
+        addTag = findViewById(R.id.addTag);
+
+        publicationTagsRecycler.setLayoutManager(new StaggeredGridLayoutManager(3,
+                StaggeredGridLayoutManager.HORIZONTAL));
+
+
+        addTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.addTagToRecycler(publicationTagsET.getText().toString());
+            }
+        });
+    }
+
+
+
 
 
     @Override
@@ -377,6 +410,23 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     @Override
     public void setMaxLettersText(String text) {
         contentMaxLetters.setText(text);
+    }
+
+    @Override
+    public void setAutoCompleteAdapter(ArrayAdapter<String> adapter) {
+        publicationTagsET.setAdapter(adapter);
+    }
+
+    @Override
+    public void setTagRecyclerAdapter(TagRVAdapter adapter) {
+        publicationTagsRecycler.setAdapter(adapter);
+    }
+
+    @Override
+    public void addTagToAdapter(String tag) {
+        if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof TagRVAdapter) {
+            ((TagRVAdapter) publicationTagsRecycler.getAdapter()).addTag(tag);
+        }
     }
 
     @Override

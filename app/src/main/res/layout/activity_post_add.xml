@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
 
@@ -199,6 +200,71 @@
                 android:checked="true"/>
 
         </RelativeLayout>
+
+
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:text="@string/add_post_tags"
+            android:textColor="@color/colorPrimary"
+            android:textSize="22sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/general_margin_small"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:background="@color/colorPrimary" />
+
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tagsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_marginStart="@dimen/general_margin_small"/>
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/general_margin_small">
+
+
+            <com.app.instashare.custom.InstantAutoComplete
+                android:id="@+id/tagET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:hint="@string/add_post_write_tags"
+                android:layout_toStartOf="@id/addTag"/>
+
+
+            <Button
+                android:id="@+id/addTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:background="@android:color/transparent"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/action_add"/>
+
+        </RelativeLayout>
+
+
+
+
+
+
 
 
 

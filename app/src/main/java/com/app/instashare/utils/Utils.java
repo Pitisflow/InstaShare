@@ -50,4 +50,11 @@ public class Utils {
 
         return sb.toString();
     }
+
+
+    public static String capitalize(String string)
+    {
+        String lowerCase = string.toLowerCase();
+        return Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
+    }
 }
