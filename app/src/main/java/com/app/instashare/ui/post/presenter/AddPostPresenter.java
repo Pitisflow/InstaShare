@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.app.instashare.R;
-import com.app.instashare.adapter.TagRVAdapter;
+import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.ui.post.activity.PostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.AddPostView;
@@ -70,8 +70,8 @@ public class AddPostPresenter {
         view.setAutoCompleteAdapter(adapter);
 
 
-        TagRVAdapter tagRVAdapter = new TagRVAdapter();
-        view.setTagRecyclerAdapter(tagRVAdapter);
+        PostRVAdapter tagAapter = new PostRVAdapter();
+        view.setTagRecyclerAdapter(tagAapter);
     }
 
 

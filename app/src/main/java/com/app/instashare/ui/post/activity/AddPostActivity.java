@@ -28,15 +28,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.app.instashare.R;
-import com.app.instashare.adapter.TagRVAdapter;
+import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.post.presenter.AddPostPresenter;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.utils.CameraUtils;
+import com.app.instashare.utils.Constants;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Pitisflow on 22/4/18.
@@ -260,6 +259,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
             @Override
             public void onClick(View view) {
                 presenter.addTagToRecycler(publicationTagsET.getText().toString());
+                publicationTagsET.setText("");
             }
         });
     }
@@ -418,14 +418,14 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     }
 
     @Override
-    public void setTagRecyclerAdapter(TagRVAdapter adapter) {
+    public void setTagRecyclerAdapter(PostRVAdapter adapter) {
         publicationTagsRecycler.setAdapter(adapter);
     }
 
     @Override
     public void addTagToAdapter(String tag) {
-        if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof TagRVAdapter) {
-            ((TagRVAdapter) publicationTagsRecycler.getAdapter()).addTag(tag);
+        if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof PostRVAdapter) {
+            ((PostRVAdapter) publicationTagsRecycler.getAdapter()).addCard(tag, Constants.CARD_POST_TAG);
         }
     }
 

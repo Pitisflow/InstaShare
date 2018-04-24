@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import com.app.instashare.R;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.view_holders.PostViewHolder;
+import com.app.instashare.ui.view_holders.TagViewHolder;
+import com.app.instashare.utils.Constants;
 
 import java.util.ArrayList;
 
@@ -16,23 +18,12 @@ import java.util.ArrayList;
  * Created by Pitisflow on 20/4/18.
  */
 
-public class PostRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private ArrayList<Object> itemList;
-
+public class PostRVAdapter extends BaseRVAdapter {
 
 
     public PostRVAdapter() {
-        itemList = new ArrayList<>();
+        super();
     }
-
-
-    public void addCard(Object card)
-    {
-        itemList.add(card);
-    }
-
-
 
 
 
@@ -40,20 +31,44 @@ public class PostRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView;
-        itemView = LayoutInflater
-                .from(parent.getContext())
-                .inflate(R.layout.item_post, parent, false);
 
-        return new PostViewHolder(itemView);
+        switch (viewType)
+        {
+            case Constants.CARD_POST:
+                itemView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.item_post, parent, false);
+
+                return new PostViewHolder(itemView);
+
+
+            case Constants.CARD_POST_TAG:
+                itemView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.item_tag, parent, false);
+
+                return new TagViewHolder(itemView);
+
+
+            default:
+                return null;
+        }
     }
+
+
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((PostViewHolder) holder).bind((Post) itemList.get(position));
-    }
 
-    @Override
-    public int getItemCount() {
-        return itemList.size();
+        switch (holder.getItemViewType())
+        {
+            case Constants.CARD_POST:
+                ((PostViewHolder) holder).bind((Post) getItemList().get(position));
+                break;
+
+            case Constants.CARD_POST_TAG:
+                ((TagViewHolder) holder).bind((String) getItemList().get(position));
+                break;
+        }
     }
 }

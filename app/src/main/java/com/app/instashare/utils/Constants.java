@@ -11,6 +11,7 @@ public class Constants {
     //********************************************
     public static final int CARD_USER_BASIC = 10001;
     public static final int CARD_POST = 20001;
+    public static final int CARD_POST_TAG = 20002;
 
 
 

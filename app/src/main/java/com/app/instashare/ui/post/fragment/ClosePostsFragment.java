@@ -18,6 +18,7 @@ import com.app.instashare.adapter.UsersRVAdapter;
 import com.app.instashare.ui.post.activity.AddPostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.user.model.UserBasic;
+import com.app.instashare.utils.Constants;
 
 /**
  * Created by Pitisflow on 17/4/18.
@@ -73,9 +74,9 @@ public class ClosePostsFragment extends Fragment {
 
 
 
-        adapter.addCard(post);
-        adapter.addCard(post1);
-        adapter.addCard(post2);
+        adapter.addCard(post, Constants.CARD_POST);
+        adapter.addCard(post1, Constants.CARD_POST);
+        adapter.addCard(post2, Constants.CARD_POST);
 
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
