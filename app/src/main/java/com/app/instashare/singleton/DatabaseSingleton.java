@@ -2,6 +2,7 @@ package com.app.instashare.singleton;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -15,6 +16,7 @@ public class DatabaseSingleton {
 
 
     private static DatabaseReference databaseRef;
+    private static FirebaseFirestore firestoreRef;
     private static StorageReference storageRef;
 
     public static DatabaseReference getDbInstance() {
@@ -38,4 +40,13 @@ public class DatabaseSingleton {
 
         return storageRef;
     }
+
+
+    public static FirebaseFirestore getFirestoreInstance() {
+
+        if (firestoreRef == null) firestoreRef = FirebaseFirestore.getInstance();
+
+        return firestoreRef;
+    }
+
 }

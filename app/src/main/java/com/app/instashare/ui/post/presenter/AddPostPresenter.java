@@ -27,7 +27,7 @@ import java.util.Arrays;
  * Created by Pitisflow on 23/4/18.
  */
 
-public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
+public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, UserData.OnUserDataFetched{
 
     private Context context;
     private AddPostView view;
@@ -44,6 +44,9 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
     private boolean isAnonymous = true;
     private ArrayList<String> tags;
 
+
+    private PostRVAdapter tagAdapter;
+    private OnRequestPost listener;
 
 
     private static final int ET_MAX_LENGHT = 5000;
@@ -73,11 +76,11 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
         view.setAutoCompleteAdapter(adapter);
 
 
-        PostRVAdapter tagAapter = new PostRVAdapter();
-        tagAapter.setDeleteTagListener(this);
-        tagAapter.setDeletableTag(true);
+        tagAdapter = new PostRVAdapter();
+        tagAdapter.setDeleteTagListener(this);
+        tagAdapter.setDeletableTag(true);
 
-        view.setTagRecyclerAdapter(tagAapter);
+        view.setTagRecyclerAdapter(tagAdapter);
     }
 
 
@@ -164,11 +167,29 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
     }
 
 
-    public Post generatePost()
+    public Post generatePost(OnRequestPost listener)
     {
+        this.listener = listener;
+
         Post post = new Post();
 
-        post.setUser(UserData.getUser().getBasicInfo());
+        if (UserData.getUser() != null) {
+            post.setUser(UserData.getUser().getBasicInfo());
+            setPostInfo(post);
+
+            listener.getPost(post);
+        } else {
+            UserData.getInstance(this);
+        }
+
+
+        return null;
+    }
+
+
+
+    private void setPostInfo(Post post)
+    {
         post.setTimestamp(System.currentTimeMillis());
         post.setContentText(contentText);
         post.setMediaURL(contentImage);
@@ -184,16 +205,42 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
         post.setNumShares(0L);
 
         post.setTags(Utils.getTagsMapFromStrings(tags, context));
-
-
-        return null;
     }
 
+
+
+
+
+    public void terminate()
+    {
+        UserData.removeListener(this);
+        tagAdapter.removeDeleteTagListener();
+        listener = null;
+    }
 
 
     @Override
     public void deleteTag(String tagName) {
         tags.remove(tagName);
         view.deleteTagFromAdapter(tagName);
+    }
+
+    @Override
+    public void updateUserInfo() {
+        User user = UserData.getUser();
+
+        if (user != null)
+        {
+            Post post = new Post();
+            post.setUser(user.getBasicInfo());
+            setPostInfo(post);
+
+            listener.getPost(post);
+        }
+    }
+
+
+    public interface OnRequestPost{
+        void getPost(Post post);
     }
 }

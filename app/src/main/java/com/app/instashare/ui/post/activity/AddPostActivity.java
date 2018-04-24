@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.ui.other.fragment.BottomSheetFragment;
+import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.AddPostPresenter;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.utils.CameraUtils;
@@ -110,6 +111,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     protected void onStop() {
         super.onStop();
 
+        presenter.terminate();
         presenter = null;
     }
 
@@ -187,6 +189,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
             @Override
             public void onClick(View view) {
 
+                presenter.generatePost(new AddPostPresenter.OnRequestPost() {
+                    @Override
+                    public void getPost(Post post) {
+                        System.out.println(post.getTags());
+                        System.out.println(post.getUser().getName());
+                    }
+                });
             }
         });
     }

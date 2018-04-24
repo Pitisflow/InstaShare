@@ -43,6 +43,7 @@ public class UserInteractor {
 
 
 
+
     public static void searchUsersByUsername(String username, final OnBasicInfoFetched onBasicInfoFetched)
     {
         DatabaseSingleton.getDbInstance().child(Constants.USERNAMES_T)
@@ -77,8 +78,6 @@ public class UserInteractor {
 
 
 
-
-
     public static void fetchUserBasicInfo(final String userKey, final OnBasicInfoFetched onBasicInfoFetched)
     {
         String route = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_BASIC_INFO_T);
@@ -103,8 +102,6 @@ public class UserInteractor {
     }
 
 
-
-
     public static void updateUserLocation(Location location)
     {
         HashMap<String, Object> mLocation = new HashMap<>();
@@ -122,48 +119,6 @@ public class UserInteractor {
 
 
 
-
-
-
-
-
-
-
-
-    public static void registerUser(FirebaseAuth auth, String email, String password, final OnRegistrationProcess process)
-    {
-        process.registering();
-
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful())
-                        {
-                            process.registerSuccesfull();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        try
-                        {
-                            throw e;
-                        } catch(FirebaseAuthUserCollisionException e1)
-                        {
-                            process.emailInUse();
-                        } catch (Exception e2) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                });
-
-    }
-
-
-
     public static void registerUser(FirebaseAuth auth, Map<String,
             Object> information, OnRegistrationProcess process)
     {
@@ -171,7 +126,6 @@ public class UserInteractor {
 
         checkValidUsername(auth, information, process);
     }
-
 
 
     private static void checkValidUsername(final FirebaseAuth auth,
@@ -235,8 +189,6 @@ public class UserInteractor {
 
                 });
     }
-
-
 
 
     private static void createUserData(final Map<String, Object> information)

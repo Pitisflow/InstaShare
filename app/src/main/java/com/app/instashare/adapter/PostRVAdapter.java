@@ -86,6 +86,10 @@ public class PostRVAdapter extends BaseRVAdapter {
         this.deleteTagListener = deleteTagListener;
     }
 
+    public void removeDeleteTagListener() {
+        deleteTagListener = null;
+    }
+
 
     public interface OnDeleteTagListener {
         void deleteTag(String tagName);
