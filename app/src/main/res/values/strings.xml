@@ -88,23 +88,40 @@
 
 
 
+    <!-- Tags Strings -->
+    <string name="tag_travel">Travel</string>
+    <string name="tag_sport">Sport</string>
+    <string name="tag_entertaiment">Entertaiment</string>
+    <string name="tag_groups">Groups</string>
+    <string name="tag_photo">Photo</string>
+    <string name="tag_video">Video</string>
+    <string name="tag_curiosities">Curiosities</string>
+    <string name="tag_places">Places</string>
+    <string name="tag_party">Party</string>
+    <string name="tag_lifestyle">Lifestyle</string>
+    <string name="tag_meetings">Meetings</string>
+    <string name="tag_work">Work</string>
+    <string name="tag_food">Food</string>
+    <string name="tag_politic">Politic</string>
+    <string name="tag_social">Social</string>
 
-    <string-array name="post_tags">
-        <item name="travel">Travel</item>
-        <item name="sport">Sport</item>
-        <item name="entertaiment">Entertaiment</item>
-        <item name="groups">Groups</item>
-        <item name="photo">Photo</item>
-        <item name="video">Video</item>
-        <item name="curiosities">Curiosities</item>
-        <item name="places">Places</item>
-        <item name="party">Party</item>
-        <item name="lifestyle">Lifestyle</item>
-        <item name="meetings">Meetings</item>
-        <item name="work">Work</item>
-        <item name="food">Food</item>
-        <item name="politic">Politic</item>
-        <item name="social">Social</item>
+
+    <string-array name="tags">
+        <item name="travel">@string/tag_travel</item>
+        <item name="sport">@string/tag_sport</item>
+        <item name="entertaiment">@string/tag_entertaiment</item>
+        <item name="groups">@string/tag_groups</item>
+        <item name="photo">@string/tag_photo</item>
+        <item name="video">@string/tag_video</item>
+        <item name="curiosities">@string/tag_curiosities</item>
+        <item name="places">@string/tag_places</item>
+        <item name="party">@string/tag_party</item>
+        <item name="lifestyle">@string/tag_lifestyle</item>
+        <item name="meetings">@string/tag_meetings</item>
+        <item name="work">@string/tag_work</item>
+        <item name="food">@string/tag_food</item>
+        <item name="politic">@string/tag_politic</item>
+        <item name="social">@string/tag_social</item>
     </string-array>
 
 

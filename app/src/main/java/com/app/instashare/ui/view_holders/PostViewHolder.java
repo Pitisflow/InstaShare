@@ -45,11 +45,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Post post)
     {
-        Picasso.get().load(post.getUserImageURL()).into(userImage);
-        username.setText(post.getUsername());
-        date.setText(post.getDate());
+        Picasso.get().load(post.getUser().getMainImage()).into(userImage);
+        username.setText(post.getUser().getMainImage());
+        date.setText("14:23");
         contentText.setText(post.getContentText());
-        Picasso.get().load(post.getContentImageURL()).into(contentImage);
+        Picasso.get().load(post.getMediaURL()).into(contentImage);
     }
 
 }

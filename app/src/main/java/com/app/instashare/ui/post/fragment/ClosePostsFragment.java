@@ -47,36 +47,7 @@ public class ClosePostsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
-        Post post = new Post();
-        post.setUserImageURL("https://i.pinimg.com/originals/c9/da/eb/c9daeb9cbe4c46ff950b29ed7143bb8a.jpg");
-        post.setUsername("Pitisflow");
-        post.setDate("14:23");
-        post.setContentText("Cum turpis ortum, omnes nuptiaes anhelare domesticus, fidelis tumultumquees. Cur ratione trabem? Gratis idoleum velox manifestums gallus est. Cur impositio ortum? Heu. Scutums sunt buxums de rusticus historia. Eheu. Nomen, valebat, et cedrium.");
-        post.setContentImageURL("https://i.pinimg.com/originals/97/2a/5f/972a5faa34fa091f693ddc0a4d61c2ca.jpg");
 
-
-
-        Post post1 = new Post();
-        post1.setUserImageURL("https://i.pinimg.com/originals/97/2a/5f/972a5faa34fa091f693ddc0a4d61c2ca.jpg");
-        post1.setUsername("Carlos");
-        post1.setDate("15:16");
-        post1.setContentText("Cum turpis ortum, omnes nuptiaes anhelare domesticus, fidelis tumultumquees. Cur ratione trabem? Gratis idoleum velox manifestums gallus est. Cur impositio ortum? Heu. Scutums sunt buxums de rusticus historia. Eheu. Nomen, valebat, et cedrium.");
-        post1.setContentImageURL("https://78.media.tumblr.com/c3d24f25012f919eb38b475ce028a1b3/tumblr_p5et2fwYSw1vb9vwto1_500.jpg");
-
-
-
-        Post post2 = new Post();
-        post2.setUserImageURL("https://78.media.tumblr.com/c3d24f25012f919eb38b475ce028a1b3/tumblr_p5et2fwYSw1vb9vwto1_500.jpg");
-        post2.setUsername("Marina");
-        post2.setDate("15:48");
-        post2.setContentText("Cum turpis ortum, omnes nuptiaes anhelare domesticus, fidelis tumultumquees. Cur ratione trabem? Gratis idoleum velox manifestums gallus est. Cur impositio ortum? Heu. Scutums sunt buxums de rusticus historia. Eheu. Nomen, valebat, et cedrium.");
-        post2.setContentImageURL("https://pics.pof.com/dating/112334/3tumqu2554vemqa1rprsu4fdr502645910.jpg");
-
-
-
-        adapter.addCard(post, Constants.CARD_POST);
-        adapter.addCard(post1, Constants.CARD_POST);
-        adapter.addCard(post2, Constants.CARD_POST);
 
 
         FloatingActionButton fab = view.findViewById(R.id.fab);

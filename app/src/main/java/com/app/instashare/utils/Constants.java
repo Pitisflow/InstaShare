@@ -44,4 +44,24 @@ public class Constants {
     public static final String USER_LATITUDE_K = "latitude";
     public static final String USER_LONGITUDE_K = "longitude";
 
+
+
+
+    //Tags tree keys
+    public static final String TAG_TRAVEL_K = "travel";
+    public static final String TAG_SPORT_K = "sport";
+    public static final String TAG_ENTERTAIMENT_K = "entertaiment";
+    public static final String TAG_GROUPS_K = "groups";
+    public static final String TAG_PHOTO_K = "photo";
+    public static final String TAG_VIDEO_K = "video";
+    public static final String TAG_CURIOSITIES_K = "curiosities";
+    public static final String TAG_PLACES_K = "places";
+    public static final String TAG_PARTY_K = "party";
+    public static final String TAG_LIFESTYLE_K = "lifestyle";
+    public static final String TAG_MEETINGS_K = "meetings";
+    public static final String TAG_WORK_K = "work";
+    public static final String TAG_FOOD_K = "food";
+    public static final String TAG_POLITIC_K = "politic";
+    public static final String TAG_SOCIAL_K = "social";
+
 }

@@ -12,9 +12,12 @@ import android.widget.ImageView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
+import com.app.instashare.interactor.UserInteractor;
+import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.post.activity.PostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.AddPostView;
+import com.app.instashare.ui.user.model.User;
 import com.app.instashare.utils.Utils;
 
 import java.util.ArrayList;
@@ -52,7 +55,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
         this.view = view;
         tags = new ArrayList<>();
 
-        tagNames = new ArrayList<>(Arrays.asList(context.getResources().getStringArray(R.array.post_tags)));
+        tagNames = new ArrayList<>(Arrays.asList(context.getResources().getStringArray(R.array.tags)));
     }
 
 
@@ -163,6 +166,25 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
 
     public Post generatePost()
     {
+        Post post = new Post();
+
+        post.setUser(UserData.getUser().getBasicInfo());
+        post.setTimestamp(System.currentTimeMillis());
+        post.setContentText(contentText);
+        post.setMediaURL(contentImage);
+        post.setType("example");
+
+
+        post.setAlignUp(isUpSelected);
+        post.setAnonymous(isAnonymous);
+        post.setForAll(isShareWithAll);
+
+        post.setNumComments(0L);
+        post.setNumLikes(0L);
+        post.setNumShares(0L);
+
+        post.setTags(Utils.getTagsMapFromStrings(tags, context));
+
 
         return null;
     }
