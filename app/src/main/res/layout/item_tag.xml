@@ -17,7 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="@dimen/general_margin_medium"
         android:textColor="@color/white"
         tools:text="Entertaiment" />
 
@@ -26,6 +25,7 @@
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/general_margin_medium"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_backspace_white_24dp" />
 

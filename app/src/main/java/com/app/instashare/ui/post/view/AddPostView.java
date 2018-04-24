@@ -23,6 +23,8 @@ public interface AddPostView {
 
     void addTagToAdapter(String tag);
 
+    void deleteTagFromAdapter(String tag);
+
     View getContentImage();
 
     View getContentText();

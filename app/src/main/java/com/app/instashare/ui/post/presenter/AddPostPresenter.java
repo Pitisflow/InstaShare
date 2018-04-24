@@ -24,7 +24,7 @@ import java.util.Arrays;
  * Created by Pitisflow on 23/4/18.
  */
 
-public class AddPostPresenter {
+public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener{
 
     private Context context;
     private AddPostView view;
@@ -71,6 +71,9 @@ public class AddPostPresenter {
 
 
         PostRVAdapter tagAapter = new PostRVAdapter();
+        tagAapter.setDeleteTagListener(this);
+        tagAapter.setDeletableTag(true);
+
         view.setTagRecyclerAdapter(tagAapter);
     }
 
@@ -124,12 +127,14 @@ public class AddPostPresenter {
     public void addTagToRecycler(String tag)
     {
         String tagTrimmed = tag.trim();
-        String tagCapitalized = Utils.capitalize(tagTrimmed);
 
-        if (!tags.contains(tagTrimmed) && tagNames.contains(tagCapitalized))
-        {
-            tags.add(tagCapitalized);
-            view.addTagToAdapter(tagCapitalized);
+        if (tagTrimmed.length() != 0) {
+            String tagCapitalized = Utils.capitalize(tagTrimmed);
+
+            if (!tags.contains(tagTrimmed) && tagNames.contains(tagCapitalized)) {
+                tags.add(tagCapitalized);
+                view.addTagToAdapter(tagCapitalized);
+            }
         }
     }
 
@@ -164,4 +169,9 @@ public class AddPostPresenter {
 
 
 
+    @Override
+    public void deleteTag(String tagName) {
+        tags.remove(tagName);
+        view.deleteTagFromAdapter(tagName);
+    }
 }

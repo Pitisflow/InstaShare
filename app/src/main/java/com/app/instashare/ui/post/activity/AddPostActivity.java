@@ -36,6 +36,7 @@ import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Constants;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Created by Pitisflow on 22/4/18.
@@ -300,6 +301,17 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         outState.putBoolean("ShareAsAnonymous", publicationShareAs.isChecked());
         outState.putBoolean("ShareWithAll", shareAllState);
         outState.putBoolean("IsUp", isUpState);
+
+        if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof PostRVAdapter) {
+            ArrayList<String> tags = new ArrayList<>();
+            for (Object tag : ((PostRVAdapter) publicationTagsRecycler.getAdapter()).getItemList())
+            {
+                if (tag instanceof String) tags.add((String) tag);
+            }
+
+            outState.putStringArrayList("Tags", tags);
+            outState.putParcelable("Recycler", publicationTagsRecycler.getLayoutManager().onSaveInstanceState());
+        }
     }
 
     @Override
@@ -326,7 +338,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
         publicationShareAs.setChecked(savedInstanceState.getBoolean("ShareAsAnonymous"));
 
+        if (savedInstanceState.containsKey("Tags") && savedInstanceState.getStringArrayList("Tags") != null) {
+            for (String tag : savedInstanceState.getStringArrayList("Tags")) {
+                presenter.addTagToRecycler(tag);
+            }
+        }
 
+        publicationTagsRecycler.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable("Recycler"));
 
         if (contentImageState != null)
         {
@@ -426,6 +444,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     public void addTagToAdapter(String tag) {
         if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof PostRVAdapter) {
             ((PostRVAdapter) publicationTagsRecycler.getAdapter()).addCard(tag, Constants.CARD_POST_TAG);
+        }
+    }
+
+    @Override
+    public void deleteTagFromAdapter(String tag) {
+        if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof PostRVAdapter) {
+            ((PostRVAdapter) publicationTagsRecycler.getAdapter()).removeCard(tag);
         }
     }
 

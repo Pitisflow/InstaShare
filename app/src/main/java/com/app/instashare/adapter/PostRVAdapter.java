@@ -20,6 +20,9 @@ import java.util.ArrayList;
 
 public class PostRVAdapter extends BaseRVAdapter {
 
+    private boolean isDeletableTag;
+    private OnDeleteTagListener deleteTagListener;
+
 
     public PostRVAdapter() {
         super();
@@ -67,8 +70,24 @@ public class PostRVAdapter extends BaseRVAdapter {
                 break;
 
             case Constants.CARD_POST_TAG:
-                ((TagViewHolder) holder).bind((String) getItemList().get(position));
+                ((TagViewHolder) holder).bind((String) getItemList().get(position), deleteTagListener, isDeletableTag);
                 break;
         }
+    }
+
+
+
+
+    public void setDeletableTag(boolean deletableTag) {
+        isDeletableTag = deletableTag;
+    }
+
+    public void setDeleteTagListener(OnDeleteTagListener deleteTagListener) {
+        this.deleteTagListener = deleteTagListener;
+    }
+
+
+    public interface OnDeleteTagListener {
+        void deleteTag(String tagName);
     }
 }
