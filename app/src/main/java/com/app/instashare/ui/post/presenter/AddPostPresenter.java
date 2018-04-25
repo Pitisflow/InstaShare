@@ -73,7 +73,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
         isAnonymous = true;
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_dropdown_item, tagNames);
         view.setAutoCompleteAdapter(adapter);
 
@@ -84,6 +84,8 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
 
         view.setTagRecyclerAdapter(tagAdapter);
     }
+
+
 
 
     public void onContentTextChanged(String content)
@@ -102,6 +104,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     public void onContentImageChanged(String url)
     {
         contentImage = url;
+        isContentImageEmpty = false;
 
         checkPostInformation();
     }
@@ -143,12 +146,14 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
                 view.addTagToAdapter(tagCapitalized);
             }
         }
+
+        checkPostInformation();
     }
 
 
     private void checkPostInformation()
     {
-        if (!isContentImageEmpty || !isContentTextEmpty) view.enablePublishButton(true);
+        if ((!isContentImageEmpty || !isContentTextEmpty) && tags.size() != 0) view.enablePublishButton(true);
         else view.enablePublishButton(false);
     }
 
@@ -219,6 +224,8 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     public void deleteTag(String tagName) {
         tags.remove(tagName);
         view.deleteTagFromAdapter(tagName);
+
+        checkPostInformation();
     }
 
     @Override

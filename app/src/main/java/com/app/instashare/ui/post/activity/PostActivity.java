@@ -22,7 +22,6 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        System.out.println("efewfwef");
 
         Post post = getIntent().getParcelableExtra("miau");
 

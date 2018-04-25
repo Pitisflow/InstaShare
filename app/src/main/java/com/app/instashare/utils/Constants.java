@@ -16,6 +16,11 @@ public class Constants {
 
 
 
+    //********************************************
+    //Card type IDs
+    //********************************************
+    public static final int CODE_COMES_FROM_ACTIVITY = 1000;
+
 
 
 

@@ -65,7 +65,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     private String contentImageState;
     private boolean shareAllState = true;
     private boolean isUpState = true;
-    private String imagePathState;
+    private String imagePathState;      //Used when taking a photo
 
 
 
@@ -81,14 +81,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_add);
 
         cameraUtils = new CameraUtils(getApplicationContext());
-
+        presenter = new AddPostPresenter(getApplicationContext(), this);
 
         bindContentAlignView();
         bindContentImageView();
@@ -98,25 +97,26 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         bindShareWithView();
         bindShareAsView();
         bindTagsView();
+
+        presenter.onInitialize();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        presenter = new AddPostPresenter(getApplicationContext(), this);
-        presenter.onInitialize();
+        if (contentImageState != null) presenter.onContentImageChanged(contentImageState);
     }
 
 
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
         presenter.terminate();
         presenter = null;
     }
-
 
 
 
@@ -209,7 +209,6 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
             @Override
             public void onClick(View view) {
 
-                presenter.onContentImageChanged(contentImageState);
                 presenter.generatePost(new AddPostPresenter.OnRequestPost() {
                     @Override
                     public void getPost(Post post) {
@@ -288,23 +287,19 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(resultCode != RESULT_CANCELED) {
             if (requestCode == REQUEST_CAMERA_CODE) {
 
-
-                System.out.println(cameraUtils);
-                System.out.println(imagePathState);
                 URI uri = cameraUtils.moveImageToGallery(imagePathState, cameraUtils.getBitmapFromPhoto(imagePathState));
 
                 contentImageState = uri.toString();
-                System.out.println(contentImageState);
-                System.out.println(contentImage);
                 contentImage.setImageURI(Uri.parse(uri.toString()));
+                contentImage.setBackgroundColor(getResources().getColor(R.color.black));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
                 contentImageState = data.getData().toString();
                 contentImage.setImageURI(data.getData());
+                contentImage.setBackgroundColor(getResources().getColor(R.color.black));
             }
         }
     }
@@ -341,6 +336,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         super.onRestoreInstanceState(savedInstanceState);
 
         contentImageState = savedInstanceState.getString("ImageState");
+        presenter.onContentImageChanged(contentImageState);
 
         contentET.setText(savedInstanceState.getString("ContentState"));
         publishPost.setEnabled(savedInstanceState.getBoolean("PublishState"));
