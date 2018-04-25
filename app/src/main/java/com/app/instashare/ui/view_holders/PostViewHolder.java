@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.post.model.Post;
+import com.app.instashare.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,7 +49,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         Picasso.get().load(post.getUser().getMainImage()).into(userImage);
         username.setText(post.getUser().getMainImage());
         date.setText("14:23");
+
         contentText.setText(post.getContentText());
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) Utils.justify(contentText);
+
         Picasso.get().load(post.getMediaURL()).into(contentImage);
     }
 

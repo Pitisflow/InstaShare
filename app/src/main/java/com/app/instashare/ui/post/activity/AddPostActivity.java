@@ -212,10 +212,8 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
                 presenter.generatePost(new AddPostPresenter.OnRequestPost() {
                     @Override
                     public void getPost(Post post) {
-                        Intent intent = new Intent(getApplicationContext(), PostActivity.class);
-                        intent.putExtra("miau", post);
-
-                        startActivity(intent, presenter.generateOptions(AddPostActivity.this).toBundle());
+                        startActivity(PostActivity.newInstance(getApplicationContext(), post, false),
+                                presenter.generateOptions(AddPostActivity.this).toBundle());
                     }
                 });
             }
