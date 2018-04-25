@@ -563,7 +563,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
             if (requestCode == REQUEST_CAMERA_CODE) {
 
 
-                URI uri = cameraUtils.moveImageToGallery(cameraUtils.getBitmapFromPhoto(userImage));
+                URI uri = cameraUtils.moveImageToGallery("miau", cameraUtils.getBitmapFromPhoto("miau"));
                 userImageState = Uri.parse(uri.toString());
                 userImage.setImageURI(Uri.parse(uri.toString()));
             } else if (requestCode == REQUEST_GALLERY_CODE)

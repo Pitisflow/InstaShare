@@ -62,6 +62,8 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
+
+
     public void onInitialize()
     {
         view.setMaxLettersText("0/" + ET_MAX_LENGHT);
@@ -84,7 +86,6 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
-
     public void onContentTextChanged(String content)
     {
         contentText = content.trim();
@@ -98,9 +99,9 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
-    public void onContentImageChanged()
+    public void onContentImageChanged(String url)
     {
-
+        contentImage = url;
 
         checkPostInformation();
     }
@@ -145,7 +146,6 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
-
     private void checkPostInformation()
     {
         if (!isContentImageEmpty || !isContentTextEmpty) view.enablePublishButton(true);
@@ -157,13 +157,10 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
 
     public ActivityOptionsCompat generateOptions(AppCompatActivity activity)
     {
-        Pair[] pairs = new Pair[2];
+        Pair[] pairs = new Pair[1];
         pairs[0] = new Pair<>(view.getContentImage(), context.getString(R.string.image_transition));
-        pairs[1] = new Pair<>(view.getContentText(), context.getString(R.string.text_transition));
 
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-
-        return options;
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
     }
 
 
@@ -185,7 +182,6 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
 
         return null;
     }
-
 
 
     private void setPostInfo(Post post)

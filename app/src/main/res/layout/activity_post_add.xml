@@ -23,7 +23,6 @@
             android:layout_marginTop="@dimen/general_margin_medium"
             android:background="@android:color/transparent"
             android:gravity="top|start"
-            android:transitionName="@string/text_transition"
             android:hint="@string/action_write_something"
             android:maxLength="5000"
             android:minHeight="@dimen/addpost_et_min_height"

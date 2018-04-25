@@ -65,6 +65,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     private String contentImageState;
     private boolean shareAllState = true;
     private boolean isUpState = true;
+    private String imagePathState;
 
 
 
@@ -86,6 +87,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_add);
 
+        cameraUtils = new CameraUtils(getApplicationContext());
 
 
         bindContentAlignView();
@@ -189,13 +191,12 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
             @Override
             public void onClick(View view) {
 
-                presenter.generatePost(new AddPostPresenter.OnRequestPost() {
-                    @Override
-                    public void getPost(Post post) {
-                        System.out.println(post.getTags());
-                        System.out.println(post.getUser().getName());
-                    }
-                });
+            presenter.generatePost(new AddPostPresenter.OnRequestPost() {
+                @Override
+                public void getPost(Post post) {
+
+                }
+            });
             }
         });
     }
@@ -207,11 +208,17 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         previewPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PostActivity.class);
-                intent.putExtra("miau", contentET.getText().toString());
 
+                presenter.onContentImageChanged(contentImageState);
+                presenter.generatePost(new AddPostPresenter.OnRequestPost() {
+                    @Override
+                    public void getPost(Post post) {
+                        Intent intent = new Intent(getApplicationContext(), PostActivity.class);
+                        intent.putExtra("miau", post);
 
-                startActivity(intent, presenter.generateOptions(AddPostActivity.this).toBundle());
+                        startActivity(intent, presenter.generateOptions(AddPostActivity.this).toBundle());
+                    }
+                });
             }
         });
     }
@@ -286,8 +293,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
             if (requestCode == REQUEST_CAMERA_CODE) {
 
 
-                URI uri = cameraUtils.moveImageToGallery(cameraUtils.getBitmapFromPhoto(contentImage));
+                System.out.println(cameraUtils);
+                System.out.println(imagePathState);
+                URI uri = cameraUtils.moveImageToGallery(imagePathState, cameraUtils.getBitmapFromPhoto(imagePathState));
+
                 contentImageState = uri.toString();
+                System.out.println(contentImageState);
+                System.out.println(contentImage);
                 contentImage.setImageURI(Uri.parse(uri.toString()));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
@@ -310,6 +322,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         outState.putBoolean("ShareAsAnonymous", publicationShareAs.isChecked());
         outState.putBoolean("ShareWithAll", shareAllState);
         outState.putBoolean("IsUp", isUpState);
+        outState.putString("ImagePathState", imagePathState);
 
         if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof PostRVAdapter) {
             ArrayList<String> tags = new ArrayList<>();
@@ -331,6 +344,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
         contentET.setText(savedInstanceState.getString("ContentState"));
         publishPost.setEnabled(savedInstanceState.getBoolean("PublishState"));
+        imagePathState = savedInstanceState.getString("ImagePathState");
 
 
         if (savedInstanceState.getBoolean("ShareWithAll"))
@@ -374,10 +388,9 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
                 if (Build.VERSION.SDK_INT >= 23) {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                             && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        cameraUtils = new CameraUtils(getApplicationContext());
-
 
                         Intent intent = cameraUtils.getCameraIntent();
+                        imagePathState = cameraUtils.getmCurrentPhotoPath();
                         startActivityForResult(intent, REQUEST_CAMERA_CODE);
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA
@@ -411,10 +424,9 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         if (requestCode == REQUEST_WRITE_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
-            cameraUtils = new CameraUtils(getApplicationContext());
-
 
             Intent intent = cameraUtils.getCameraIntent();
+            imagePathState = cameraUtils.getmCurrentPhotoPath();
             startActivityForResult(intent, REQUEST_CAMERA_CODE);
         }
 

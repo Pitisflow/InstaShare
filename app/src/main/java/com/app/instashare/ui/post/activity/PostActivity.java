@@ -1,5 +1,6 @@
 package com.app.instashare.ui.post.activity;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.instashare.R;
+import com.app.instashare.ui.post.model.Post;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -22,10 +24,13 @@ public class PostActivity extends AppCompatActivity {
 
         System.out.println("efewfwef");
 
+        Post post = getIntent().getParcelableExtra("miau");
+
         ImageView imageView = findViewById(R.id.postImage);
-        Picasso.get().load("https://images-production.global.ssl.fastly.net/uploads/posts/teaser_image/150328/instagram-models-january-2018-teaser.png").into(imageView);
+        imageView.setImageURI(Uri.parse(post.getMediaURL()));
 
         TextView textView = findViewById(R.id.postContent);
-        textView.setText(getIntent().getStringExtra("miau"));
+        textView.setText(post.getContentText());
+
     }
 }

@@ -75,43 +75,43 @@ public class CameraUtils {
 
 
 
-    public Bitmap getBitmapFromPhoto(ImageView imageContainer)
+    public Bitmap getBitmapFromPhoto(String path)
     {
-        int targetW = imageContainer.getWidth();
-        int targetH = imageContainer.getHeight();
-
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        BitmapFactory.decodeFile(path, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
 
+
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        int scaleFactor = Math.min(photoW / 600, photoH / 600);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
 
-        if (mCurrentPhotoPath != null) return BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        if (path != null) return BitmapFactory.decodeFile(path, bmOptions);
         else return null;
     }
 
 
 
-    public URI moveImageToGallery(Bitmap bitmap)
+    public URI moveImageToGallery(String path, Bitmap bitmap)
     {
         String appDirectoryName = "InstaShare";
+
+        String[] imageName = path.split("/");
         File fileDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), appDirectoryName);
 
 
 
         fileDir.mkdir();
-        File newFile = new File(fileDir, imageFileName);
-        File oldFile = new File(mCurrentPhotoPath);
+        File newFile = new File(fileDir, imageName[imageName.length - 1]);
+        File oldFile = new File(path);
 
         oldFile.delete();
 
@@ -158,5 +158,10 @@ public class CameraUtils {
         mCurrentPhotoPath = mediaFile.getAbsolutePath();
 
         return mediaFile;
+    }
+
+
+    public String getmCurrentPhotoPath() {
+        return mCurrentPhotoPath;
     }
 }
