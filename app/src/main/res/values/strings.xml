@@ -104,6 +104,7 @@
     <string name="tag_food">Food</string>
     <string name="tag_politic">Politic</string>
     <string name="tag_social">Social</string>
+    <string name="tag_animals">Animals</string>
 
 
     <string-array name="tags">
@@ -122,6 +123,7 @@
         <item name="food">@string/tag_food</item>
         <item name="politic">@string/tag_politic</item>
         <item name="social">@string/tag_social</item>
+        <item name="animals">@string/tag_animals</item>
     </string-array>
 
 

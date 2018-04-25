@@ -86,6 +86,7 @@ public class Utils {
         if (tags.contains(res.getString(R.string.tag_politic))) tagsMap.put(Constants.TAG_POLITIC_K, true);
         if (tags.contains(res.getString(R.string.tag_social))) tagsMap.put(Constants.TAG_SOCIAL_K, true);
         if (tags.contains(res.getString(R.string.tag_curiosities))) tagsMap.put(Constants.TAG_CURIOSITIES_K, true);
+        if (tags.contains(res.getString(R.string.tag_animals))) tagsMap.put(Constants.TAG_ANIMALS_K, true);
 
         return tagsMap;
     }
@@ -112,6 +113,7 @@ public class Utils {
         if (tags.containsKey(Constants.TAG_POLITIC_K)) tagsArray.add(res.getString(R.string.tag_politic));
         if (tags.containsKey(Constants.TAG_SOCIAL_K)) tagsArray.add(res.getString(R.string.tag_social));
         if (tags.containsKey(Constants.TAG_CURIOSITIES_K)) tagsArray.add(res.getString(R.string.tag_curiosities));
+        if (tags.containsKey(Constants.TAG_ANIMALS_K)) tagsArray.add(res.getString(R.string.tag_animals));
 
         return tagsArray;
     }

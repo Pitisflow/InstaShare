@@ -68,5 +68,6 @@ public class Constants {
     public static final String TAG_FOOD_K = "food";
     public static final String TAG_POLITIC_K = "politic";
     public static final String TAG_SOCIAL_K = "social";
+    public static final String TAG_ANIMALS_K = "animals";
 
 }
