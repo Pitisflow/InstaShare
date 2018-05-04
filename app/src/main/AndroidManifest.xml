@@ -22,6 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+
+
         <activity
             android:name=".ui.base.activity.MainActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
@@ -53,7 +56,8 @@
             android:windowSoftInputMode="stateAlwaysHidden"/>
 
         <activity
-            android:name=".ui.post.activity.PostActivity"
+            android:name=".ui.post.activity.PreviewPostActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:theme="@style/AppTheme.Detail"/>
 
 

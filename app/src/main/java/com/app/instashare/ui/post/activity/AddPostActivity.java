@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -148,37 +149,28 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     {
         contentImage = findViewById(R.id.postContentImage);
 
-        contentImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(new BottomSheetFragment(), "bottom_sheet")
-                        .commit();
-            }
-        });
+        contentImage.setOnClickListener(view -> getSupportFragmentManager()
+                .beginTransaction()
+                .add(new BottomSheetFragment(), "bottom_sheet")
+                .commit());
     }
 
     private void bindContentAlignView()
     {
         contentAlign = findViewById(R.id.groupAlign);
 
-        contentAlign.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        contentAlign.setOnCheckedChangeListener((radioGroup, i) -> {
+            switch (i)
+            {
+                case R.id.radioUp:
+                    isUpState = true;
+                    presenter.onAlignTextChanged(true);
+                    break;
 
-                switch (i)
-                {
-                    case R.id.radioUp:
-                        isUpState = true;
-                        presenter.onAlignTextChanged(true);
-                        break;
-
-                    case R.id.radioDown:
-                        isUpState = false;
-                        presenter.onAlignTextChanged(false);
-                        break;
-                }
+                case R.id.radioDown:
+                    isUpState = false;
+                    presenter.onAlignTextChanged(false);
+                    break;
             }
         });
     }
@@ -187,60 +179,34 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     {
         publishPost = findViewById(R.id.publish);
 
-        publishPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        publishPost.setOnClickListener(view -> presenter.generatePost(post -> {
 
-            presenter.generatePost(new AddPostPresenter.OnRequestPost() {
-                @Override
-                public void getPost(Post post) {
-
-                }
-            });
-            }
-        });
+        }));
     }
 
     private void bindPreviewView()
     {
         previewPost = findViewById(R.id.preview);
 
-        previewPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                presenter.generatePost(new AddPostPresenter.OnRequestPost() {
-                    @Override
-                    public void getPost(Post post) {
-                        startActivity(PostActivity.newInstance(getApplicationContext(), post, false),
-                                presenter.generateOptions(AddPostActivity.this).toBundle());
-                    }
-                });
-            }
-        });
+        previewPost.setOnClickListener(view -> presenter.generatePost(this::navigateToPreviewPostActivity));
     }
-
 
     private void bindShareWithView()
     {
         publicationShareWith = findViewById(R.id.groupShareWith);
 
-        publicationShareWith.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        publicationShareWith.setOnCheckedChangeListener((radioGroup, i) -> {
+            switch (i)
+            {
+                case R.id.shareWithAll:
+                    shareAllState = true;
+                    presenter.onShareWithChanged(true);
+                    break;
 
-                switch (i)
-                {
-                    case R.id.shareWithAll:
-                        shareAllState = true;
-                        presenter.onShareWithChanged(true);
-                        break;
-
-                    case R.id.shareWithFollowers:
-                        shareAllState = false;
-                        presenter.onShareWithChanged(false);
-                        break;
-                }
+                case R.id.shareWithFollowers:
+                    shareAllState = false;
+                    presenter.onShareWithChanged(false);
+                    break;
             }
         });
     }
@@ -250,12 +216,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     {
         publicationShareAs = findViewById(R.id.isAnonymous);
 
-        publicationShareAs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                presenter.onShareAsChanged(b);
-            }
-        });
+        publicationShareAs.setOnCheckedChangeListener((compoundButton, b) -> presenter.onShareAsChanged(b));
     }
 
 
@@ -269,15 +230,20 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
                 StaggeredGridLayoutManager.HORIZONTAL));
 
 
-        addTag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.addTagToRecycler(publicationTagsET.getText().toString());
-                publicationTagsET.setText("");
-            }
+        addTag.setOnClickListener(view -> {
+            presenter.addTagToRecycler(publicationTagsET.getText().toString());
+            publicationTagsET.setText("");
         });
     }
 
+
+
+
+    @SuppressWarnings("unchecked")
+    private void navigateToPreviewPostActivity(Post post) {
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+        ActivityCompat.startActivity(this, PreviewPostActivity.newInstance(getApplicationContext(), post), options.toBundle());
+    }
 
 
 

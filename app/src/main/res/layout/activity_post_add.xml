@@ -101,10 +101,8 @@
             android:layout_width="@dimen/addpost_image_size"
             android:layout_height="@dimen/addpost_image_size"
             android:layout_marginBottom="@dimen/general_margin_small"
-            android:transitionName="@string/image_transition"
             android:background="@drawable/shape_image_add"
-            android:src="@android:drawable/ic_menu_camera"
-            tools:src="@mipmap/ic_launcher" />
+            android:src="@drawable/ic_crop_original_black_24dp" />
 
 
 

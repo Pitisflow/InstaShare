@@ -52,7 +52,9 @@ public class UserData {
 
 
     public static void addListener(OnUserDataFetched onUserDataFetched) {
-        listeners.add(onUserDataFetched);
+        if (!listeners.contains(onUserDataFetched)) {
+            listeners.add(onUserDataFetched);
+        }
     }
 
     public static void removeListener(OnUserDataFetched onUserDataFetched) {

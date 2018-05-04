@@ -1,20 +1,14 @@
 package com.app.instashare.ui.post.presenter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
-import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.singleton.UserData;
-import com.app.instashare.ui.post.activity.PostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.ui.user.model.User;
@@ -93,7 +87,10 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
         contentText = content.trim();
 
         if (contentText.length() != 0) isContentTextEmpty = false;
-        else isContentTextEmpty = true;
+        else {
+            isContentTextEmpty = true;
+            contentText = null;
+        }
 
         view.setMaxLettersText(content.length() + "/" + ET_MAX_LENGHT);
 
@@ -158,17 +155,6 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
-
-
-    public ActivityOptionsCompat generateOptions(AppCompatActivity activity)
-    {
-        Pair[] pairs = new Pair[1];
-        pairs[0] = new Pair<>(view.getContentImage(), context.getString(R.string.image_transition));
-
-        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-    }
-
-
     public Post generatePost(OnRequestPost listener)
     {
         this.listener = listener;
@@ -215,7 +201,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     public void terminate()
     {
         UserData.removeListener(this);
-        tagAdapter.removeDeleteTagListener();
+        tagAdapter.removeTagListener();
         listener = null;
     }
 

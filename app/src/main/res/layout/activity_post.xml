@@ -1,56 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:transitionGroup="true">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
 
 
-    <ScrollView
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/elevation_toolbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:title="Publicación"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/ToolbarTitle" />
 
-        <android.support.v7.widget.CardView
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@id/separator"
+        android:layout_below="@id/toolbar">
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card_view:cardBackgroundColor="@color/white"
-            card_view:cardElevation="@dimen/elevation_card_small">
+            android:descendantFocusability="blocksDescendants">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/general_margin_small"
+                android:layout_marginTop="@dimen/general_margin_small"
+                android:src="@mipmap/ic_launcher"
+                app:civ_circle_background_color="@android:color/holo_red_dark"
+                tools:src="@mipmap/ic_launcher"/>
+
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/userImage"
+                android:layout_toEndOf="@id/userImage"
+                android:layout_marginTop="@dimen/item_margin"
+                android:layout_marginStart="@dimen/general_margin_small"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:text="Pitisflow"
+                tools:text="Pitisflow"/>
+
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/username"
+                android:layout_alignStart="@id/username"
+                android:layout_marginTop="@dimen/item_margin"
+                android:text="23:10"
+                tools:text="23:14"/>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/userImage"
+                android:layout_marginTop="@dimen/general_margin_small"
                 android:orientation="vertical"
                 android:transitionGroup="true">
 
 
-                <TextView
-                    android:id="@+id/postContentUp"
+
+
+                <me.biubiubiu.justifytext.library.JustifyTextView
+                    android:id="@+id/contentTextUp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:layout_margin="@dimen/general_margin_small"/>
-
-                <EditText
-                    android:id="@+id/editText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_marginBottom="@dimen/general_margin_small"
+                    android:layout_marginEnd="@dimen/general_margin_small"
+                    android:layout_marginStart="@dimen/general_margin_small"
+                    android:textColor="@color/black"/>
 
 
                 <ImageView
-                    android:id="@+id/postImage"
+                    android:id="@+id/contentImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:adjustViewBounds="true"
-                    android:transitionName="@string/image_transition"
-                    />
+                    android:layout_marginBottom="@dimen/general_margin_small"
+                    android:adjustViewBounds="true"/>
+
+
+
+                <me.biubiubiu.justifytext.library.JustifyTextView
+                    android:id="@+id/contentTextDown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/general_margin_small"
+                    android:layout_marginEnd="@dimen/general_margin_small"
+                    android:textColor="@color/black"/>
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/tagsRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/general_margin_small"
+                    android:layout_marginStart="@dimen/general_margin_small"
+                    android:layout_marginTop="@dimen/general_margin_small"/>
+
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/general_margin_medium"
+                    android:layout_marginBottom="@dimen/general_margin_small"
+                    android:layout_marginEnd="@dimen/general_margin_small"
+                    android:layout_marginStart="@dimen/general_margin_small"
+                    android:background="@color/grayLight"/>
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/general_margin_small"
+                    android:weightSum="3">
+
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="0dp"
+                        android:background="@android:color/transparent"
+                        android:text="@string/post_options_like"
+                        tools:text="Like"/>
+
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="0dp"
+                        android:background="@android:color/transparent"
+                        android:text="@string/post_options_comment"
+                        tools:text="Comment"/>
+
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="0dp"
+                        android:background="@android:color/transparent"
+                        android:text="@string/post_options_share"
+                        tools:text="Share"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/general_margin_small"
+                    android:background="@color/grayLight"/>
+
+
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
 
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
 
-    </ScrollView>
 
-</android.support.design.widget.CoordinatorLayout>
+
+
+
+
+
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+    <EditText
+        android:id="@+id/commentET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/item_margin"
+        android:layout_marginEnd="@dimen/general_margin_small"
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:layout_marginTop="@dimen/item_margin"
+        android:layout_toEndOf="@id/camera"
+        android:background="@drawable/shape_round_box"
+        android:hint="Escribe un comentario"
+        android:textColor="@color/black"
+        android:theme="@style/RoundET" />
+
+
+    <ImageButton
+        android:id="@+id/camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/commentET"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@id/commentET"
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_camera_alt_black_24dp" />
+
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/commentET"
+        android:background="@color/grayLight" />
+
+
+</RelativeLayout>

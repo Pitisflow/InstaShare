@@ -106,9 +106,7 @@ public class MainFragment extends Fragment {
         navigationView = view.findViewById(R.id.navigation);
 
         navigationView.setOnNavigationItemSelectedListener(
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item -> {
                     switch (item.getItemId()) {
                         case R.id.home:
                             viewPager.setCurrentItem(0);
@@ -123,7 +121,6 @@ public class MainFragment extends Fragment {
                             break;
                     }
                     return false;
-                }
-            });
+                });
     }
 }

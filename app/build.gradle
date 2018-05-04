@@ -17,11 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 
 ext {
-    googleLibrariesVersion = '15.0.0'
     supportLibrariesVersion = '27.1.1'
 }
 
@@ -39,22 +43,24 @@ dependencies {
 
 
     //Location and Maps libraries
-    implementation "com.google.android.gms:play-services-maps:$googleLibrariesVersion"
-    implementation "com.google.android.gms:play-services-location:$googleLibrariesVersion"
+    implementation 'com.google.android.gms:play-services-maps:15.0.0'
+    implementation 'com.google.android.gms:play-services-location:15.0.0'
 
 
     //Firebase libraries
-    implementation "com.google.firebase:firebase-core:$googleLibrariesVersion"
-    implementation "com.google.firebase:firebase-database:$googleLibrariesVersion"
-    implementation "com.google.firebase:firebase-firestore:$googleLibrariesVersion"
-    implementation "com.google.firebase:firebase-messaging:$googleLibrariesVersion"
-    implementation "com.google.firebase:firebase-auth:$googleLibrariesVersion"
-    implementation "com.google.firebase:firebase-storage:$googleLibrariesVersion"
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-database:15.0.0'
+    implementation 'com.google.firebase:firebase-firestore:15.0.0'
+    implementation 'com.google.firebase:firebase-messaging:15.0.2'
+    implementation 'com.google.firebase:firebase-auth:15.1.0'
+    implementation 'com.google.firebase:firebase-storage:15.0.2'
 
 
     //External libraries
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'me.biubiubiu.justifytext:library:1.1'
+
 
 
 
