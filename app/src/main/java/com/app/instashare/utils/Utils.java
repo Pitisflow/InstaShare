@@ -5,9 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -49,6 +54,15 @@ public class Utils {
         Drawable d = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, size, size, true));
 
         return d;
+    }
+
+
+
+
+    public static Drawable changeDrawableColor(Drawable drawable, int color, Context context){
+
+        drawable.setColorFilter(ContextCompat.getColor(context, color), PorterDuff.Mode.MULTIPLY);
+        return drawable;
     }
 
 

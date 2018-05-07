@@ -3,10 +3,15 @@ package com.app.instashare.ui.post.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,10 +64,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
     private RecyclerView tagsRecycler;
 
-
-
-    private UsersRVAdapter adapter;
-
+    private PreviewPostPresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         setContentView(R.layout.activity_post);
 
         Post post = null;
-        PreviewPostPresenter presenter = new PreviewPostPresenter(getApplicationContext(), this);
+        presenter = new PreviewPostPresenter(getApplicationContext(), this);
 
 
         if (getIntent().getExtras() != null && getIntent().hasExtra("post"))
@@ -88,7 +90,12 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
 
+        presenter = null;
+    }
 
     private void bindTextViews()
     {
