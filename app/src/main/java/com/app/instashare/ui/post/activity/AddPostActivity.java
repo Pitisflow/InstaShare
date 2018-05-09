@@ -1,8 +1,10 @@
 package com.app.instashare.ui.post.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -30,21 +33,28 @@ import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
+import com.app.instashare.interactor.PostInteractor;
+import com.app.instashare.ui.base.fragment.MainFragment;
 import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.AddPostPresenter;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Constants;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Pitisflow on 22/4/18.
  */
 
-public class AddPostActivity extends AppCompatActivity implements AddPostView, NavigationView.OnNavigationItemSelectedListener{
+public class AddPostActivity extends AppCompatActivity implements AddPostView,
+        NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private EditText contentET;
     private TextView contentMaxLetters;
@@ -72,6 +82,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
     private AddPostPresenter presenter;
     private CameraUtils cameraUtils;
+    private GoogleApiClient apiClient;
 
 
 
@@ -79,6 +90,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     private static final int REQUEST_GALLERY_CODE = 2;
     private static final int REQUEST_WRITE_PERMISSIONS = 1;
     private static final int REQUEST_READ_PERMISSIONS = 2;
+    private static final int REQUEST_LOCATION_PERMISSION = 3;
 
 
 
@@ -89,6 +101,15 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
 
         cameraUtils = new CameraUtils(getApplicationContext());
         presenter = new AddPostPresenter(getApplicationContext(), this);
+
+        apiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+
+
 
         bindContentAlignView();
         bindContentImageView();
@@ -178,17 +199,14 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
     private void bindPublishView()
     {
         publishPost = findViewById(R.id.publish);
-
-        publishPost.setOnClickListener(view -> presenter.generatePost(post -> {
-
-        }));
+        publishPost.setOnClickListener(view -> apiClient.connect());
     }
 
     private void bindPreviewView()
     {
         previewPost = findViewById(R.id.preview);
 
-        previewPost.setOnClickListener(view -> presenter.generatePost(this::navigateToPreviewPostActivity));
+        previewPost.setOnClickListener(view -> presenter.generatePost(null, this::navigateToPreviewPostActivity));
     }
 
     private void bindShareWithView()
@@ -332,6 +350,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
         if (contentImageState != null)
         {
             contentImage.setImageURI(Uri.parse(contentImageState));
+            contentImage.setBackgroundColor(getResources().getColor(R.color.black));
         }
     }
 
@@ -397,8 +416,55 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView, N
             intent.setType("image/*");
             startActivityForResult(intent, REQUEST_GALLERY_CODE);
         }
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+        {
+            publishPost();
+        } else if (requestCode == REQUEST_LOCATION_PERMISSION){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+                    , Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        }
     }
 
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                publishPost();
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+                        , Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private void publishPost()
+    {
+        HashMap<String, Double> locationMap = new HashMap<>();
+        Location location = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+        locationMap.put(Constants.USER_LONGITUDE_K, location.getLongitude());
+        locationMap.put(Constants.USER_LATITUDE_K, location.getLatitude());
+
+        presenter.generatePost(locationMap, null);
+    }
 
 
     @Override

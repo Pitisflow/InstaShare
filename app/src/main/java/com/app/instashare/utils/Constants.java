@@ -70,4 +70,23 @@ public class Constants {
     public static final String TAG_SOCIAL_K = "social";
     public static final String TAG_ANIMALS_K = "animals";
 
+
+
+
+    //Post keys tree keys
+    public static final String POSTS_T = "posts";
+    public static final String POST_CONTENT_TEXT_K = "contentText";
+    public static final String POST_CONTENT_IMAGE_K = "mediaURL";
+    public static final String POST_USER_K = "user";
+    public static final String POST_TIMESTAMP_K = "timestamp";
+    public static final String POST_TYPE_K = "type";
+    public static final String POST_ALIGNUP_K = "isAlignUp";
+    public static final String POST_ANONYMOUS_K = "isAnonymous";
+    public static final String POST_PUBLIC_K = "isForAll";
+    public static final String POST_LOCATION_K = "location";
+    public static final String POST_TAGS_K = "tags";
+    public static final String POST_LIKES_K = "numLikes";
+    public static final String POST_COMMENTS_K = "numComments";
+    public static final String POST_SHARES_K = "numShares";
+
 }

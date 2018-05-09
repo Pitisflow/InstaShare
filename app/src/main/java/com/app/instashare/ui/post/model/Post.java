@@ -25,7 +25,7 @@ public class Post implements Parcelable {
     private boolean isAlignUp;
     private boolean isAnonymous;                //Filter
     private boolean isForAll;
-    private HashMap<String, Long> location;     //Filter
+    private HashMap<String, Double> location;     //Filter
     private HashMap<String, Boolean> tags;      //Filter
 
 
@@ -106,11 +106,11 @@ public class Post implements Parcelable {
         isForAll = forAll;
     }
 
-    public HashMap<String, Long> getLocation() {
+    public HashMap<String, Double> getLocation() {
         return location;
     }
 
-    public void setLocation(HashMap<String, Long> location) {
+    public void setLocation(HashMap<String, Double> location) {
         this.location = location;
     }
 
@@ -179,7 +179,7 @@ public class Post implements Parcelable {
         this.isAlignUp = in.readByte() != 0;
         this.isAnonymous = in.readByte() != 0;
         this.isForAll = in.readByte() != 0;
-        this.location = (HashMap<String, Long>) in.readSerializable();
+        this.location = (HashMap<String, Double>) in.readSerializable();
         this.tags = (HashMap<String, Boolean>) in.readSerializable();
         this.numLikes = (Long) in.readValue(Long.class.getClassLoader());
         this.numComments = (Long) in.readValue(Long.class.getClassLoader());

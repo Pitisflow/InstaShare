@@ -82,6 +82,7 @@ public class UserData {
 
                     if (u != null) {
                         user = u;
+                        user.getBasicInfo().setUserKey(UserInteractor.getUserKey());
                         notifyUserDataChanged();
                     }
                 }

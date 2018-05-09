@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
+import com.app.instashare.interactor.PostInteractor;
 import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.AddPostView;
@@ -16,6 +17,7 @@ import com.app.instashare.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by Pitisflow on 23/4/18.
@@ -37,6 +39,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     private boolean isShareWithAll = true;
     private boolean isAnonymous = true;
     private ArrayList<String> tags;
+    private HashMap<String, Double> locationMap;
 
 
     private PostRVAdapter tagAdapter;
@@ -155,23 +158,22 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
-    public Post generatePost(OnRequestPost listener)
+    public void generatePost(HashMap<String, Double> locationMap, OnRequestPost listener)
     {
         this.listener = listener;
-
+        this.locationMap = locationMap;
         Post post = new Post();
 
         if (UserData.getUser() != null) {
             post.setUser(UserData.getUser().getBasicInfo());
+            post.setLocation(locationMap);
             setPostInfo(post);
 
-            listener.getPost(post);
+            if (locationMap != null) PostInteractor.publishPost(post);
+            else listener.getPost(post);
         } else {
             UserData.getInstance(this);
         }
-
-
-        return null;
     }
 
 
@@ -222,9 +224,11 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
         {
             Post post = new Post();
             post.setUser(user.getBasicInfo());
+            post.setLocation(locationMap);
             setPostInfo(post);
 
-            listener.getPost(post);
+            if (locationMap != null) PostInteractor.publishPost(post);
+            else listener.getPost(post);
         }
     }
 

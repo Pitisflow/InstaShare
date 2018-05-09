@@ -2,6 +2,7 @@ package com.app.instashare.ui.post.presenter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Patterns;
 
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.ui.post.model.Post;
@@ -14,6 +15,7 @@ import com.app.instashare.utils.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -98,5 +100,16 @@ public class PreviewPostPresenter {
         adapter.addCards(objectsTag, Constants.CARD_POST_TAG);
 
         view.setTagsRecyclerAdapter(adapter);
+    }
+
+
+    private void urlChecker(String contentText)
+    {
+        String[] words = contentText.split(" ");
+
+        for (String word : words)
+        {
+            System.out.println(word + " " + Patterns.WEB_URL.matcher(word).matches());
+        }
     }
 }

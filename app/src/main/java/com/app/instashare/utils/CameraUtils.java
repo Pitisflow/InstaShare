@@ -126,11 +126,9 @@ public class CameraUtils {
         }
 
         MediaScannerConnection.scanFile(context, new String[]{newFile.toString()}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.i("ExternalStorage", "Scanned " + path + ":");
-                        Log.i("ExternalStorage", "-> uri=" + uri);
-                    }
+                (path1, uri) -> {
+                    Log.i("ExternalStorage", "Scanned " + path1 + ":");
+                    Log.i("ExternalStorage", "-> uri=" + uri);
                 });
 
         return newFile.toURI();

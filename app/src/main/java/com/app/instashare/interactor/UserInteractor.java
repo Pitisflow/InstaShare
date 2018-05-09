@@ -233,7 +233,9 @@ public class UserInteractor {
             String photoName = splitted[splitted.length - 1];
 
             UploadTask task = DatabaseSingleton.getStorageInstance()
-                    .child(getUserKey()).child("images/" + photoName).putFile((Uri) information.get(Constants.USER_MAIN_IMAGE_K));
+                    .child(Constants.USERS_T)
+                    .child(getUserKey())
+                    .child("images/" + photoName).putFile((Uri) information.get(Constants.USER_MAIN_IMAGE_K));
 
             task.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
