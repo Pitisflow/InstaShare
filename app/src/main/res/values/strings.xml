@@ -162,4 +162,11 @@
     <string name="image_transition" translatable="false">image_transition</string>
     <string name="text_transition" translatable="false">text_transition</string>
 
+
+    <!-- File strings -->
+    <string name="file_images_sent" translatable="false">Media/InstaShare Images</string>
+    <string name="file_provider" translatable="false">com.app.instashare.fileprovider</string>
+
+
+
 </resources>

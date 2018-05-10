@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.base.activity.MainActivity;
+import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.signup.presenter.SignUpPresenter;
 import com.app.instashare.ui.signup.view.SignUpView;
 import com.app.instashare.utils.CameraUtils;
@@ -43,7 +46,8 @@ import java.util.TimeZone;
  * Created by Pitisflow on 14/4/18.
  */
 
-public class SignUpActivity extends AppCompatActivity implements SignUpView, DatePickerDialog.OnDateSetListener{
+public class SignUpActivity extends AppCompatActivity implements SignUpView,
+        DatePickerDialog.OnDateSetListener, NavigationView.OnNavigationItemSelectedListener{
 
 
     private TextView usernameRequired;
@@ -75,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
     private String nameState;
     private String lastNameState;
     private String birthdateState;
-    private Uri userImageState;
+    private String imagePathState;
 
 
 
@@ -98,28 +102,24 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-
         firebaseAuth = FirebaseAuth.getInstance();
+        listener = firebaseAuth -> {
+            if (firebaseAuth.getCurrentUser() != null)
+            {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 
-        listener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null)
-                {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
-                    startActivity(intent);
-                    finish();
-                }
+                startActivity(intent);
+                finish();
             }
         };
 
 
+
+        presenter = new SignUpPresenter(getApplicationContext(), this);
 
         bindUsernameView();
         bindEmailView();
@@ -133,6 +133,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         bindRegisterView();
         bindUserImageView();
         bindActionSheetView();
+
+        presenter.onInitialize();
     }
 
 
@@ -140,18 +142,22 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
     protected void onStart() {
         super.onStart();
         firebaseAuth.addAuthStateListener(listener);
-
-        presenter = new SignUpPresenter(getApplicationContext(), this);
-        presenter.onInitialize();
+        presenter.onPhotoChanged(imagePathState);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         firebaseAuth.removeAuthStateListener(listener);
+    }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         presenter = null;
     }
+
 
     private void bindUsernameView()
     {
@@ -422,7 +428,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (userImageState != null) presenter.onPhotoChanged(userImageState);
+                if (imagePathState != null) presenter.onPhotoChanged(imagePathState);
 
 
                 final Dialog progressDialog = Utils.createProgressDialog(SignUpActivity.this,
@@ -466,12 +472,10 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         userImage = findViewById(R.id.userImage);
         takePhoto = findViewById(R.id.takePhoto);
 
-        takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
+        takePhoto.setOnClickListener(view -> getSupportFragmentManager()
+            .beginTransaction()
+            .add(new BottomSheetFragment(), "bottom_sheet")
+            .commit());
     }
 
 
@@ -508,7 +512,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
                         cameraUtils = new CameraUtils(getApplicationContext());
 
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        Intent intent = cameraUtils.getCameraIntent();
+                        Intent intent = cameraUtils.getCameraIntent(null, null);
                         startActivityForResult(intent, REQUEST_CAMERA_CODE);
                     } else {
                         ActivityCompat.requestPermissions(SignUpActivity.this, new String[]{Manifest.permission.CAMERA
@@ -543,6 +547,43 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
 
 
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.camera:
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+                        Intent intent = CameraUtils.getCameraIntent(getApplicationContext(), path -> imagePathState = path);
+                        startActivityForResult(intent, REQUEST_CAMERA_CODE);
+                    } else {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA
+                                , Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSIONS);
+                    }
+                }
+                return true;
+
+            case R.id.gallery:
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");
+                        startActivityForResult(intent, REQUEST_GALLERY_CODE);
+                    } else {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_GALLERY_CODE);
+                    }
+                }
+                return true;
+        }
+
+        return false;
+    }
+
+
 
 
 
@@ -563,12 +604,12 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
             if (requestCode == REQUEST_CAMERA_CODE) {
 
 
-                URI uri = cameraUtils.moveImageToGallery("miau", cameraUtils.getBitmapFromPhoto("miau"));
-                userImageState = Uri.parse(uri.toString());
-                userImage.setImageURI(Uri.parse(uri.toString()));
+                CameraUtils.moveImageToGallery(imagePathState, getApplicationContext());
+                CameraUtils.compressImage(imagePathState);
+                userImage.setImageURI(Uri.parse(imagePathState));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
-                userImageState = data.getData();
+                imagePathState = data.getData().toString();
                 userImage.setImageURI(data.getData());
             }
         }
@@ -589,10 +630,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         if (requestCode == REQUEST_WRITE_PERMISSIONS && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
-            cameraUtils = new CameraUtils(getApplicationContext());
-
-
-            Intent intent = cameraUtils.getCameraIntent();
+            Intent intent = CameraUtils.getCameraIntent(getApplicationContext(), path -> imagePathState = path);
             startActivityForResult(intent, REQUEST_CAMERA_CODE);
         }
 
@@ -609,7 +647,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-
         outState.putString("username", usernameState);
         outState.putString("email", emailState);
         outState.putString("password", passwordState);
@@ -617,14 +654,15 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         outState.putString("name", nameState);
         outState.putString("lastName", lastNameState);
         outState.putString("birthdate", birthdateState);
-        outState.putParcelable("userImage", userImageState);
+        outState.putString("imagePath", imagePathState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        userImageState = savedInstanceState.getParcelable("userImage");
+        imagePathState = savedInstanceState.getString("imagePath");
+        presenter.onPhotoChanged(imagePathState);
 
         usernameET.setText(savedInstanceState.getString("username"));
         emailET.setText(savedInstanceState.getString("email"));
@@ -636,8 +674,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
         birthdateET.setText(savedInstanceState.getString("birthdate"));
 
 
-        if (savedInstanceState.getParcelable("userImage") != null) {
-            userImage.setImageURI((Uri) savedInstanceState.getParcelable("userImage"));
+        if (imagePathState != null) {
+            userImage.setImageURI(Uri.parse(imagePathState));
         }
     }
 
@@ -704,6 +742,4 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView, Dat
     public void showCurrentBirthdate(String birthdate) {
         this.birthdateET.setText(birthdate);
     }
-
-
 }

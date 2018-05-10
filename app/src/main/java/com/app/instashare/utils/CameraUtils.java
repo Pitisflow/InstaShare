@@ -9,9 +9,13 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v4.graphics.BitmapCompat;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.app.instashare.R;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,20 +25,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Pitisflow on 16/4/18.
  */
 
 public class CameraUtils {
-
-
-    private String mCurrentPhotoPath;
-    private String imageFileName;
-
-    private Bitmap bitmap;
-
-
 
     private Context context;
 
@@ -45,24 +42,29 @@ public class CameraUtils {
 
 
 
-    public Intent getCameraIntent()
+    public static Intent getCameraIntent(Context context, OnImagePathCreated listener)
     {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File photoFile = null;
 
-
-        try {
-            photoFile = createImageFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        photoFile = createImageFile(context, listener);
 
 
         if (photoFile != null) {
             Uri photoURI = FileProvider.getUriForFile(context,
-                    "com.app.instashare.fileprovider",
+                    context.getString(R.string.file_provider),
                     photoFile);
+
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+
+            MediaScannerConnection.scanFile(context, new String[]{photoFile.toString()}, null,
+                    (path1, uri) -> {
+                        Log.i("ExternalStorage", "Scanned " + path1 + ":");
+                        Log.i("ExternalStorage", "-> uri=" + uri);
+                    });
+
+
 
             return takePictureIntent;
         } else return null;
@@ -72,6 +74,20 @@ public class CameraUtils {
 
 
 
+    public static void compressImage(String path)
+    {
+        Bitmap bmp = BitmapFactory.decodeFile(path);
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(path);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 18, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -99,39 +115,15 @@ public class CameraUtils {
 
 
 
-    public URI moveImageToGallery(String path, Bitmap bitmap)
+    public static void moveImageToGallery(String path, Context context)
     {
-        String appDirectoryName = "InstaShare";
+        File file = new File(path);
 
-        String[] imageName = path.split("/");
-        File fileDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), appDirectoryName);
-
-
-
-        fileDir.mkdir();
-        File newFile = new File(fileDir, imageName[imageName.length - 1]);
-        File oldFile = new File(path);
-
-        oldFile.delete();
-
-
-        try {
-            FileOutputStream out = new FileOutputStream(newFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        MediaScannerConnection.scanFile(context, new String[]{newFile.toString()}, null,
+        MediaScannerConnection.scanFile(context, new String[]{file.toString()}, null,
                 (path1, uri) -> {
                     Log.i("ExternalStorage", "Scanned " + path1 + ":");
                     Log.i("ExternalStorage", "-> uri=" + uri);
                 });
-
-        return newFile.toURI();
     }
 
 
@@ -140,26 +132,33 @@ public class CameraUtils {
 
 
 
-    private File createImageFile() throws IOException {
+    private static File createImageFile(Context context, OnImagePathCreated listener) {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        imageFileName = "JPEG_" + timeStamp + ".jpg";
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + ".jpg";
 
-        File fileDir = new File(Environment.getExternalStorageDirectory()
-                + "/data/"
-                + context.getPackageName()
-                + "/files/Pictures");
 
+        File fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator
+                + context.getString(R.string.app_name)
+                + File.separator
+                + context.getString(R.string.file_images_sent));
+
+
+
+        if (fileDir.mkdirs()) Log.d("FileMkdirs", "Succesfull");
+        else Log.d("FileMkdirs", "Already exists");
 
 
         File mediaFile = new File(fileDir.getPath() + File.separator + imageFileName);
-        mCurrentPhotoPath = mediaFile.getAbsolutePath();
+        listener.pathCreated(mediaFile.getAbsolutePath());
+
 
         return mediaFile;
     }
 
 
-    public String getmCurrentPhotoPath() {
-        return mCurrentPhotoPath;
+    public interface OnImagePathCreated{
+        void pathCreated(String path);
     }
 }

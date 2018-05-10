@@ -1,7 +1,6 @@
 package com.app.instashare.ui.signup.presenter;
 
 import android.content.Context;
-import android.icu.text.SymbolTable;
 import android.net.Uri;
 
 import com.app.instashare.R;
@@ -29,7 +28,7 @@ public class SignUpPresenter {
     private String name;
     private String lastName;
     private String birthdate;
-    private Uri photoUri;
+    private String photoPath;
 
 
     private boolean usernameOk = false;
@@ -178,9 +177,9 @@ public class SignUpPresenter {
     }
 
 
-    public void onPhotoChanged(Uri uri)
+    public void onPhotoChanged(String imagePath)
     {
-        photoUri = uri;
+        photoPath = imagePath;
     }
 
 
@@ -191,16 +190,16 @@ public class SignUpPresenter {
 
 
 
-    public Map<String, Object> generateInformationMap()
+    public Map<String, String> generateInformationMap()
     {
-        Map<String, Object> information = new HashMap<>();
+        Map<String, String> information = new HashMap<>();
 
         information.put(Constants.USER_NAME_K, name);
         information.put(Constants.USER_LAST_NAME_K, lastName);
         information.put(Constants.USER_BIRTHDATE_K, birthdate);
         information.put(Constants.USERNAME_K, username);
         information.put(Constants.USER_EMAIL_K, email);
-        information.put(Constants.USER_MAIN_IMAGE_K, photoUri);
+        information.put(Constants.USER_MAIN_IMAGE_K, photoPath);
         information.put("password", password);
 
 

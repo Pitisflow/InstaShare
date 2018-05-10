@@ -73,7 +73,6 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
 
 
     private String contentTextState;
-    private String contentImageState;
     private boolean shareAllState = true;
     private boolean isUpState = true;
     private String imagePathState;      //Used when taking a photo
@@ -81,7 +80,6 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
 
 
     private AddPostPresenter presenter;
-    private CameraUtils cameraUtils;
     private GoogleApiClient apiClient;
 
 
@@ -99,9 +97,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_add);
 
-        cameraUtils = new CameraUtils(getApplicationContext());
         presenter = new AddPostPresenter(getApplicationContext(), this);
-
         apiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -127,7 +123,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     protected void onStart() {
         super.onStart();
 
-        if (contentImageState != null) presenter.onContentImageChanged(contentImageState);
+        if (imagePathState != null) presenter.onContentImageChanged(imagePathState);
     }
 
 
@@ -272,14 +268,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
         if(resultCode != RESULT_CANCELED) {
             if (requestCode == REQUEST_CAMERA_CODE) {
 
-                URI uri = cameraUtils.moveImageToGallery(imagePathState, cameraUtils.getBitmapFromPhoto(imagePathState));
-
-                contentImageState = uri.toString();
-                contentImage.setImageURI(Uri.parse(uri.toString()));
+                CameraUtils.moveImageToGallery(imagePathState, getApplicationContext());
+                CameraUtils.compressImage(imagePathState);
+                contentImage.setImageURI(Uri.parse(imagePathState));
                 contentImage.setBackgroundColor(getResources().getColor(R.color.black));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
-                contentImageState = data.getData().toString();
+                imagePathState = data.getData().toString();
                 contentImage.setImageURI(data.getData());
                 contentImage.setBackgroundColor(getResources().getColor(R.color.black));
             }
@@ -293,7 +288,6 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString("ImageState", contentImageState);
         outState.putString("ContentState", contentTextState);
         outState.putBoolean("PublishState", publishPost.isEnabled());
         outState.putBoolean("ShareAsAnonymous", publicationShareAs.isChecked());
@@ -317,13 +311,13 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        contentImageState = savedInstanceState.getString("ImageState");
-        presenter.onContentImageChanged(contentImageState);
+
+        imagePathState = savedInstanceState.getString("ImagePathState");
+        presenter.onContentImageChanged(imagePathState);
+
 
         contentET.setText(savedInstanceState.getString("ContentState"));
         publishPost.setEnabled(savedInstanceState.getBoolean("PublishState"));
-        imagePathState = savedInstanceState.getString("ImagePathState");
-
 
         if (savedInstanceState.getBoolean("ShareWithAll"))
         {
@@ -347,9 +341,9 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
 
         publicationTagsRecycler.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable("Recycler"));
 
-        if (contentImageState != null)
+        if (imagePathState != null)
         {
-            contentImage.setImageURI(Uri.parse(contentImageState));
+            contentImage.setImageURI(Uri.parse(imagePathState));
             contentImage.setBackgroundColor(getResources().getColor(R.color.black));
         }
     }
@@ -368,8 +362,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                             && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
-                        Intent intent = cameraUtils.getCameraIntent();
-                        imagePathState = cameraUtils.getmCurrentPhotoPath();
+                        Intent intent = CameraUtils.getCameraIntent(getApplicationContext(), path -> imagePathState = path);
                         startActivityForResult(intent, REQUEST_CAMERA_CODE);
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA
@@ -404,8 +397,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
 
-            Intent intent = cameraUtils.getCameraIntent();
-            imagePathState = cameraUtils.getmCurrentPhotoPath();
+            Intent intent = CameraUtils.getCameraIntent(getApplicationContext(), path -> imagePathState = path);
             startActivityForResult(intent, REQUEST_CAMERA_CODE);
         }
 
