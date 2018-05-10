@@ -230,7 +230,7 @@ public class UserInteractor {
         if (information.containsKey(Constants.USER_MAIN_IMAGE_K)
                 && information.get((Constants.USER_MAIN_IMAGE_K)) != null)
         {
-            String storageRoute = Utils.createChild(Constants.USERS_T, getUserKey(), "images");
+            String storageRoute = Utils.createChild(Constants.USERS_T, getUserKey(), Constants.GENERAL_IMAGES);
             String imagesRoute = Utils.createChild(Constants.USER_IMAGES_T,
                     getUserKey(), String.valueOf(System.currentTimeMillis()), Constants.USER_IMAGES_NAME_T);
 

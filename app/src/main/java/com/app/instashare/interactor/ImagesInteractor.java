@@ -8,6 +8,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Pitisflow on 10/5/18.
@@ -18,7 +20,7 @@ public class ImagesInteractor {
 
 
     public static void addImage(String imagePath, String storageRoute,
-                                ArrayList<String> databaseRoutes, ArrayList<String> firestoreRoutes)
+                                ArrayList<String> databaseRoutes, String document)
     {
         String[] splitted = imagePath.split("/");
         String photoName = splitted[splitted.length - 1];
@@ -48,11 +50,12 @@ public class ImagesInteractor {
                         DatabaseSingleton.getDbInstance().child(route).setValue(downloadURL);
                     }
                 }
-                if (firestoreRoutes != null && firestoreRoutes.size() != 0) {
-                    for (String route : firestoreRoutes)
-                    {
-                        DatabaseSingleton.getFirestoreInstance().document(route).set(downloadURL);
-                    }
+                if (document != null) {
+                    Map<String, Object> photo = new HashMap<>();
+                    photo.put(Constants.POST_CONTENT_IMAGE_K, downloadURL);
+
+                    DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T)
+                            .document(document).update(photo);
                 }
             }
 

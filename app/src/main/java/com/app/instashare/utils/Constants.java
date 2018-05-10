@@ -93,4 +93,7 @@ public class Constants {
     public static final String POST_COMMENTS_K = "numComments";
     public static final String POST_SHARES_K = "numShares";
 
+
+    //General keys
+    public static final String GENERAL_IMAGES = "images";
 }
