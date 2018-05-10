@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Patterns;
 
+import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.PreviewPostView;
@@ -54,8 +55,9 @@ public class PreviewPostPresenter {
         else view.enableTagsRecycler(false);
 
 
-        //Set current Timestamp
+        //Set current Timestamp and Distance
         view.setDate(DateUtils.getPostDateFromTimestamp(post.getTimestamp(), context));
+        view.setDistance(context.getString(R.string.distance_less_a_km));
     }
 
 

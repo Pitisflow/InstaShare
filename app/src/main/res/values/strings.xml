@@ -66,9 +66,12 @@
 
 
     <!-- Post options Strings -->
+    <string name="post_post">Post</string>
     <string name="post_options_comment">Comment</string>
     <string name="post_options_like">Like</string>
     <string name="post_options_share">Share</string>
+
+
 
 
     <!-- Add post Strings -->
@@ -137,13 +140,20 @@
 
 
     <!-- DateUtils Strings -->
-    <string name="dateutils_post_while_ago">A while ago</string>
-    <string name="dateutils_post_minute_ago">1 minute ago</string>
-    <string name="dateutils_post_minutes_ago">%1$d minutes ago</string>
-    <string name="dateutils_post_hour_ago">1 hour ago</string>
-    <string name="dateutils_post_hours_ago">%1$d hours ago</string>
-    <string name="dateutils_post_day_ago">1 day ago</string>
-    <string name="dateutils_post_days_ago">%1$d days ago</string>
+    <string name="dateutils_while_ago">A while ago</string>
+    <string name="dateutils_minute_ago">1 minute ago</string>
+    <string name="dateutils_minutes_ago">%1$d minutes ago</string>
+    <string name="dateutils_hour_ago">1 hour ago</string>
+    <string name="dateutils_hours_ago">%1$d hours ago</string>
+    <string name="dateutils_day_ago">1 day ago</string>
+    <string name="dateutils_days_ago">%1$d days ago</string>
+
+
+    <!-- Distance Strings -->
+    <string name="distance_less_a_km">Less than a km</string>
+    <string name="distance_a_km">1 km</string>
+    <string name="distance_more_a_km">%1$d kms</string>
+
 
 
 

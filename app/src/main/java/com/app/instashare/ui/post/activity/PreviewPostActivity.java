@@ -59,6 +59,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
     private TextView userName;
     private TextView date;
+    private TextView distance;
     private TextView contentTextUp;
     private TextView contentTextDown;
 
@@ -101,6 +102,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     {
         userName = findViewById(R.id.username);
         date = findViewById(R.id.date);
+        distance = findViewById(R.id.distance);
 
         contentTextDown = findViewById(R.id.contentTextDown);
         contentTextUp = findViewById(R.id.contentTextUp);
@@ -139,7 +141,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         setSupportActionBar(toolbar);
 
 
-        getSupportActionBar().setTitle("Post");
+        getSupportActionBar().setTitle(getString(R.string.post_post));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
     }
@@ -211,6 +213,11 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     @Override
     public void setDate(String date) {
         this.date.setText(date);
+    }
+
+    @Override
+    public void setDistance(String distance) {
+        this.distance.setText(distance);
     }
 
     @Override

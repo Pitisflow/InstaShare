@@ -30,5 +30,7 @@ public interface PreviewPostView {
 
     void setDate(String date);
 
+    void setDistance(String distance);
+
     void setTagsRecyclerAdapter(PostRVAdapter tagsRecyclerAdapter);
 }

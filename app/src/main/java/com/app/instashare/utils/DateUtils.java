@@ -32,18 +32,18 @@ public class DateUtils {
 
 
 
-        if (difference < MINUTE) return context.getString(R.string.dateutils_post_while_ago);
+        if (difference < MINUTE) return context.getString(R.string.dateutils_while_ago);
         else if ((difference >= MINUTE) && (difference < HOUR)) {
-            if (difference >= MINUTE && difference <= MINUTE * 2) return context.getString(R.string.dateutils_post_minute_ago);
-            else return context.getString(R.string.dateutils_post_minutes_ago, difference / MINUTE);
+            if (difference >= MINUTE && difference <= MINUTE * 2) return context.getString(R.string.dateutils_minute_ago);
+            else return context.getString(R.string.dateutils_minutes_ago, difference / MINUTE);
         }
         else if ((difference >= HOUR) && (difference < DAY)) {
-            if (difference >= HOUR && difference <= HOUR * 2) return context.getString(R.string.dateutils_post_hour_ago);
-            else return context.getString(R.string.dateutils_post_hours_ago, difference / HOUR);
+            if (difference >= HOUR && difference <= HOUR * 2) return context.getString(R.string.dateutils_hour_ago);
+            else return context.getString(R.string.dateutils_hours_ago, difference / HOUR);
         }
         else if ((difference >= DAY) && (difference < DAY * 6)) {
-            if (difference >= DAY && difference <= DAY * 2) return context.getString(R.string.dateutils_post_day_ago);
-            else return context.getString(R.string.dateutils_post_days_ago, difference / DAY);
+            if (difference >= DAY && difference <= DAY * 2) return context.getString(R.string.dateutils_day_ago);
+            else return context.getString(R.string.dateutils_days_ago, difference / DAY);
         }
         else return format.format(date);
     }

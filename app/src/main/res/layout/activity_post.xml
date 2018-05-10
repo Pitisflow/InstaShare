@@ -49,15 +49,15 @@
 
             <TextView
                 android:id="@+id/username"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/userImage"
                 android:layout_toEndOf="@id/userImage"
+                android:layout_toStartOf="@id/distance"
                 android:layout_marginTop="@dimen/item_margin"
                 android:layout_marginStart="@dimen/general_margin_small"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:text="Pitisflow"
                 tools:text="Pitisflow"/>
 
 
@@ -68,8 +68,18 @@
                 android:layout_below="@id/username"
                 android:layout_alignStart="@id/username"
                 android:layout_marginTop="@dimen/item_margin"
-                android:text="23:10"
                 tools:text="23:14"/>
+
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBaseline="@id/username"
+                android:layout_marginEnd="@dimen/general_margin_small"
+                tools:text="1km"/>
+
 
 
 
