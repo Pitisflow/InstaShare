@@ -26,6 +26,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -225,37 +226,23 @@ public class UserInteractor {
 
 
 
+
         if (information.containsKey(Constants.USER_MAIN_IMAGE_K)
                 && information.get((Constants.USER_MAIN_IMAGE_K)) != null)
         {
-            String[] splitted = information.get(Constants.USER_MAIN_IMAGE_K).split("/");
-            String photoName = splitted[splitted.length - 1];
-            Uri photoUri;
+            String storageRoute = Utils.createChild(Constants.USERS_T, getUserKey(), "images");
+            String imagesRoute = Utils.createChild(Constants.USER_IMAGES_T,
+                    getUserKey(), String.valueOf(System.currentTimeMillis()), Constants.USER_IMAGES_NAME_T);
+
+            String mainImageRoute = Utils.createChild(Constants.USERS_T, getUserKey(), Constants.USERS_BASIC_INFO_T, Constants.USER_MAIN_IMAGE_K);
+
+            ArrayList<String> routes = new ArrayList<>();
+            routes.add(imagesRoute);
+            routes.add(mainImageRoute);
 
 
-            if (!information.get(Constants.USER_MAIN_IMAGE_K).contains(":"))
-            {
-                File file = new File(information.get((Constants.USER_MAIN_IMAGE_K)));
-                photoUri = Uri.parse(file.toURI().toString());
-            } else photoUri = Uri.parse(information.get((Constants.USER_MAIN_IMAGE_K)));
-
-
-            UploadTask task = DatabaseSingleton.getStorageInstance()
-                    .child(Constants.USERS_T)
-                    .child(getUserKey())
-                    .child("images/" + photoName).putFile(photoUri);
-
-            task.addOnSuccessListener(taskSnapshot -> {
-
-                if (taskSnapshot.getDownloadUrl() != null) {
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                    DatabaseSingleton.getDbInstance().child(Constants.USERS_T)
-                            .child(getUserKey()).child(Constants.USERS_BASIC_INFO_T)
-                            .child(Constants.USER_MAIN_IMAGE_K).setValue(downloadUrl.toString());
-                }
-
-            }).addOnFailureListener(e -> System.out.println(e.getMessage()));
+            ImagesInteractor.addImage(information.get(Constants.USER_MAIN_IMAGE_K),
+                    storageRoute, routes, null);
         }
     }
 

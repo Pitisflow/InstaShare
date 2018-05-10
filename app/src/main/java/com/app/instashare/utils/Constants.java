@@ -50,6 +50,10 @@ public class Constants {
     public static final String USER_LONGITUDE_K = "longitude";
 
 
+    public static final String USER_IMAGES_T = "users-images";
+    public static final String USER_IMAGES_NAME_T = "name";
+
+
 
 
     //Tags tree keys
