@@ -61,7 +61,7 @@ public class Utils {
 
     public static Drawable changeDrawableColor(Drawable drawable, int color, Context context){
 
-        drawable.setColorFilter(ContextCompat.getColor(context, color), PorterDuff.Mode.MULTIPLY);
+        drawable.setColorFilter(ContextCompat.getColor(context, color), PorterDuff.Mode.SRC_ATOP);
         return drawable;
     }
 

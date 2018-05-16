@@ -9,13 +9,13 @@
 
 
     <ImageButton
-        android:id="@+id/playStop"
+        android:id="@+id/playPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_margin="@dimen/general_margin_small"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_camera_alt_black_24dp"/>
+        tools:src="@drawable/ic_play_arrow_black_36"/>
 
 
 
@@ -23,9 +23,18 @@
         android:id="@+id/audio"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/playStop"
+        android:layout_toEndOf="@id/playPause"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@id/iconAudio"/>
+
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/playPause"
+        tools:text="00:00" />
 
 
 
@@ -35,6 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/general_margin_small"
-        android:src="@drawable/ic_camera_alt_black_24dp"/>
+        tools:src="@drawable/ic_keyboard_voice_black_36"/>
 
 </merge>

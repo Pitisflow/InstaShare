@@ -47,4 +47,13 @@ public class DateUtils {
         }
         else return format.format(date);
     }
+
+
+    public static String getAudioDurationFromMillis(int milliseconds)
+    {
+        Date date = new Date(milliseconds);
+        DateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
+
+        return format.format(date);
+    }
 }

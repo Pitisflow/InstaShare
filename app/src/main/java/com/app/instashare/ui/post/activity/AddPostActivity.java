@@ -33,6 +33,7 @@ import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
+import com.app.instashare.custom.AudioBar;
 import com.app.instashare.interactor.PostInteractor;
 import com.app.instashare.ui.base.fragment.MainFragment;
 import com.app.instashare.ui.other.fragment.BottomSheetFragment;
