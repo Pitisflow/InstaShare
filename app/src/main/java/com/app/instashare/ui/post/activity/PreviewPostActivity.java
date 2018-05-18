@@ -141,9 +141,11 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         setSupportActionBar(toolbar);
 
 
-        getSupportActionBar().setTitle(getString(R.string.post_post));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getString(R.string.post_post));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        }
     }
 
 

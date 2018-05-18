@@ -15,7 +15,6 @@
         android:background="@color/colorPrimary"
         android:elevation="@dimen/elevation_toolbar"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:title="Publicación"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:titleTextAppearance="@style/ToolbarTitle" />
 

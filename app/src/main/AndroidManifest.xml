@@ -61,7 +61,8 @@
             android:theme="@style/AppTheme.Detail"/>
 
 
-
+        <activity
+            android:name=".ui.other.activity.WebViewActivity"/>
 
 
 

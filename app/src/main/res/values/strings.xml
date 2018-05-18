@@ -156,6 +156,18 @@
 
 
 
+    <!-- FAB menu Strings -->
+    <string name="fab_menu_favorites">Favorites</string>
+    <string name="fab_menu_add">Add post</string>
+    <string name="fab_menu_saved">Saved</string>
+
+
+
+    <!-- WebView Screen Strings -->
+    <string name="webview_loading">Loading</string>
+    <string name="webview_wait">Please wait…</string>
+
+
 
 
     <!-- Others -->

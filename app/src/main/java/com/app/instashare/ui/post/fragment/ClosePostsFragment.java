@@ -12,10 +12,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.adapter.UsersRVAdapter;
+import com.app.instashare.ui.other.activity.WebViewActivity;
 import com.app.instashare.ui.post.activity.AddPostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.user.model.UserBasic;
@@ -101,7 +103,8 @@ public class ClosePostsFragment extends Fragment {
         });
 
         fabFavorites.setOnClickListener(v -> {
-
+            Intent intent = WebViewActivity.newInstance(getContext(), "https://stackoverflow.com/questions/7746409/android-webview-launches-browser-when-calling-loadurl");
+            startActivity(intent);
         });
 
         fabSaved.setOnClickListener(v -> {
