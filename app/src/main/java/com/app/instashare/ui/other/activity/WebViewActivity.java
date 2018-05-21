@@ -24,6 +24,8 @@ public class WebViewActivity extends AppCompatActivity {
 
     public static Intent newInstance(Context context, String url)
     {
+        if (!url.contains("http")) url = "https://" + url;
+
         Intent intent = new Intent(context, WebViewActivity.class);
         intent.putExtra(EXTRA_URL, url);
         return intent;

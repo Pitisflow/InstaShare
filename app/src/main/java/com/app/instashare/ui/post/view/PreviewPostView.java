@@ -18,9 +18,9 @@ public interface PreviewPostView {
 
     void enableTagsRecycler(boolean enable);
 
-    void setTextUp(String text);
+    void setTextUp(CharSequence text);
 
-    void setTextDown(String text);
+    void setTextDown(CharSequence text);
 
     void setContentImage(Uri uri);
 

@@ -17,7 +17,9 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
+import android.view.View;
 import android.widget.TextView;
 
 import com.app.instashare.R;
@@ -151,6 +153,42 @@ public class Utils {
     }
 
 
+
+
+    public static SpannableString getSpannableFromString(String string, int color,
+                                                         boolean isLink, SpannableAction action)
+    {
+        SpannableString ss = new SpannableString(string);
+
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                action.onSpannableClicked();
+            }
+
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                if (isLink) {
+                    ds.setUnderlineText(true);
+                } else {
+                    ds.setUnderlineText(false);
+                    ds.setFakeBoldText(true);
+                }
+
+                ds.setColor(color);
+            }
+        };
+
+        ss.setSpan(clickableSpan, 0, string.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return ss;
+    }
+
+
+
+
+
     public static HashMap<String, Boolean> getTagsMapFromStrings(ArrayList<String> tags, Context context)
     {
         HashMap<String, Boolean> tagsMap = new HashMap<>();
@@ -200,5 +238,12 @@ public class Utils {
         if (tags.containsKey(Constants.TAG_ANIMALS_K)) tagsArray.add(res.getString(R.string.tag_animals));
 
         return tagsArray;
+    }
+
+
+
+
+    public interface SpannableAction {
+        void onSpannableClicked();
     }
 }

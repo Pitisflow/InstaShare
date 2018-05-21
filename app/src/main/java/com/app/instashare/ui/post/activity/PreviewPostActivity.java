@@ -18,6 +18,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -107,6 +110,9 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         contentTextDown = findViewById(R.id.contentTextDown);
         contentTextUp = findViewById(R.id.contentTextUp);
 
+        contentTextDown.setMovementMethod(LinkMovementMethod.getInstance());
+        contentTextUp.setMovementMethod(LinkMovementMethod.getInstance());
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             contentTextDown.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
@@ -188,12 +194,12 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     }
 
     @Override
-    public void setTextUp(String text) {
+    public void setTextUp(CharSequence text) {
         contentTextUp.setText(text);
     }
 
     @Override
-    public void setTextDown(String text) {
+    public void setTextDown(CharSequence text) {
         contentTextDown.setText(text);
     }
 

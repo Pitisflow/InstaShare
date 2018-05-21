@@ -1,11 +1,15 @@
 package com.app.instashare.ui.post.presenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
+import com.app.instashare.ui.other.activity.WebViewActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.PreviewPostView;
 import com.app.instashare.ui.user.model.UserBasic;
@@ -67,11 +71,11 @@ public class PreviewPostPresenter {
         if (isUp) {
             view.enableTextUp(true);
             view.enableTextDown(false);
-            view.setTextUp(text + "\n");
+            view.setTextUp(urlChecker(text));
         } else {
             view.enableTextUp(false);
             view.enableTextDown(true);
-            view.setTextDown(text + "\n");
+            view.setTextDown(urlChecker(text));
         }
     }
 
@@ -105,13 +109,28 @@ public class PreviewPostPresenter {
     }
 
 
-    private void urlChecker(String contentText)
+    private CharSequence urlChecker(String contentText)
     {
         String[] words = contentText.split(" ");
+        CharSequence sequence = "";
 
         for (String word : words)
         {
-            System.out.println(word + " " + Patterns.WEB_URL.matcher(word).matches());
+            if (Patterns.WEB_URL.matcher(word).matches()) {
+                SpannableString spannableString =  Utils.getSpannableFromString(word,
+                    context.getResources().getColor(R.color.colorPrimary), true, () -> {
+                        Intent intent = WebViewActivity.newInstance(context, word);
+                        context.startActivity(intent);
+                    });
+
+                sequence = TextUtils.concat(sequence, " ", spannableString);
+                continue;
+            }
+
+            sequence = TextUtils.concat(sequence, " ", word);
         }
+
+        sequence = TextUtils.concat(sequence, "\n");
+        return sequence;
     }
 }
