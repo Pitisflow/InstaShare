@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.adapter.UsersRVAdapter;
+import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.other.activity.WebViewActivity;
 import com.app.instashare.ui.post.activity.AddPostActivity;
 import com.app.instashare.ui.post.model.Post;
@@ -108,7 +109,8 @@ public class ClosePostsFragment extends Fragment {
         });
 
         fabSaved.setOnClickListener(v -> {
-
+            Intent intent = PhotoViewActivity.newInstance(getContext(), "https://i.ytimg.com/vi/6VLxwPs-bpw/maxresdefault.jpg", null, false);
+            startActivity(intent);
         });
     }
 

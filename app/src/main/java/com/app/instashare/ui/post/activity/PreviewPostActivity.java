@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.adapter.UsersRVAdapter;
+import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.PreviewPostPresenter;
 import com.app.instashare.ui.post.view.PreviewPostView;
@@ -68,6 +71,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
     private RecyclerView tagsRecycler;
 
+    private Post post;
     private PreviewPostPresenter presenter;
 
     @Override
@@ -75,8 +79,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        Post post = null;
-        presenter = new PreviewPostPresenter(getApplicationContext(), this);
+        post = null;
 
 
         if (getIntent().getExtras() != null && getIntent().hasExtra("post"))
@@ -89,10 +92,15 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         bindTextViews();
         bindToolbarView();
         bindRecyclerView();
-
-        presenter.onInitialize(post);
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        presenter = new PreviewPostPresenter(getApplicationContext(), this);
+        presenter.onInitialize(post);
+    }
 
     @Override
     protected void onStop() {
@@ -100,6 +108,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
         presenter = null;
     }
+
 
     private void bindTextViews()
     {
@@ -129,6 +138,8 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         contentImage = findViewById(R.id.contentImage);
         contentImage.getLayoutParams().width = metrics.widthPixels > metrics.heightPixels ?
                 metrics.heightPixels : metrics.widthPixels;
+
+        contentImage.setOnClickListener(view -> presenter.onImageClicked());
     }
 
 

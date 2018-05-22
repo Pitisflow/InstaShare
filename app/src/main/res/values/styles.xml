@@ -41,7 +41,7 @@
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
     </style>
-    
+
 
     <style name="RoundET">
         <item name="android:paddingStart">@dimen/round_et_margin_vertical</item>

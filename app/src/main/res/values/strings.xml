@@ -169,6 +169,10 @@
 
 
 
+    <!-- PhotoView Screen Strings -->
+    <string name="photoview_post_image">Post image</string>
+
+
 
     <!-- Others -->
     <string name="image_transition" translatable="false">image_transition</string>

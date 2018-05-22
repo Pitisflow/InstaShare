@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.instashare">
-
+    package="com.app.instashare" >
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera2.full" />
-
-
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
 
 
         <activity
             android:name=".ui.base.activity.MainActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
-            android:theme="@style/AppThemeTranslucent">
+            android:theme="@style/AppThemeTranslucent"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
-
 
 
         <activity
             android:name=".ui.signin.activity.SignInActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,23 +43,29 @@
 
         <activity
             android:name=".ui.signup.activity.SignUpActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
         </activity>
 
-        <activity android:name=".ui.user.activity.UserProfileActivity"/>
+
+        <activity android:name=".ui.user.activity.UserProfileActivity" />
+
 
         <activity
             android:name=".ui.post.activity.AddPostActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
 
         <activity
             android:name=".ui.post.activity.PreviewPostActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
-            android:theme="@style/AppTheme.Detail"/>
+            android:theme="@style/AppTheme.Detail"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
 
+        <activity android:name=".ui.other.activity.WebViewActivity" />
         <activity
-            android:name=".ui.other.activity.WebViewActivity"/>
+            android:name=".ui.other.activity.PhotoViewActivity"
+            android:theme="@style/AppThemeTranslucent"/>
+
 
 
 
@@ -70,12 +73,11 @@
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.app.instashare.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>
