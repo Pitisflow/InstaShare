@@ -2,7 +2,10 @@ package com.app.instashare.ui.base.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -11,12 +14,16 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.base.fragment.MainFragment;
@@ -24,20 +31,33 @@ import com.app.instashare.ui.base.presenter.MainPresenter;
 import com.app.instashare.ui.base.view.MainView;
 import com.app.instashare.ui.notification.fragment.NotificationsFragment;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
+import com.app.instashare.utils.DistanceUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-public class MainActivity extends AppCompatActivity implements MainView, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity implements MainView,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
 
 
     private GoogleApiClient apiClient;
+    private Location myLocation;
     private MainPresenter presenter;
 
     private static final int PERMISSION_LOCATION_CODE = 1;
+    private static final int REQUEST_CHECK_SETTINGS_GPS = 2;
     private int isConnected = 0;
 
 
@@ -47,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
         setContentView(R.layout.activity_main);
 
         apiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, 0, this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -98,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
 
         if (getSupportActionBar() != null)
         {
-            getSupportActionBar().setTitle("InstaShare");
+            getSupportActionBar().setTitle(getString(R.string.app_name));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
         }
@@ -109,12 +130,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
     private void bindNavigationView()
     {
         navigationView = findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                return onItemSelected(item);
-            }
-        });
+        navigationView.setNavigationItemSelectedListener(this::onItemSelected);
     }
 
 
@@ -175,9 +191,22 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS_GPS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        getMyLocation();
+                        break;
 
-
-
+                    case Activity.RESULT_CANCELED:
+                        Toast.makeText(getApplicationContext(), getString(R.string.error_disabled_location), Toast.LENGTH_LONG).show();
+                        break;
+                }
+                break;
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -193,19 +222,13 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PERMISSION_LOCATION_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (requestCode == PERMISSION_LOCATION_CODE && grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(apiClient);
-
-            Fragment fragment = new MainFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+            if (isConnected == 0) getMyLocation();
             isConnected = 1;
-
-            presenter.setCurrentLocation(location);
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-                    , Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION_CODE);
+            Toast.makeText(getApplicationContext(), getString(R.string.error_refused_afinelocation), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -214,26 +237,20 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Location location;
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                location = LocationServices.FusedLocationApi.getLastLocation(apiClient);
-
-
-                Fragment fragment = new MainFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                if (isConnected == 0) getMyLocation();
                 isConnected = 1;
-
-                presenter.setCurrentLocation(location);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
                         , Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION_CODE);
             }
         }
     }
+
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -243,5 +260,62 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        myLocation = location;
+        if (myLocation != null) presenter.setCurrentLocation(location);
+    }
+
+
+
+    @SuppressLint("MissingPermission")
+    private void getMyLocation()
+    {
+        if(apiClient!=null && apiClient.isConnected()) {
+            myLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+            LocationRequest locationRequest = new LocationRequest();
+            locationRequest.setInterval(300000);
+            locationRequest.setFastestInterval(300000);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+            builder.setAlwaysShow(true);
+            LocationServices.FusedLocationApi
+                    .requestLocationUpdates(apiClient, locationRequest, this);
+            PendingResult<LocationSettingsResult> result =
+                    LocationServices.SettingsApi
+                            .checkLocationSettings(apiClient, builder.build());
+            result.setResultCallback(result1 -> {
+                final Status status = result1.getStatus();
+
+                switch (status.getStatusCode()) {
+
+                    case LocationSettingsStatusCodes.SUCCESS:
+
+                        Fragment fragment = new MainFragment();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+                        myLocation = LocationServices.FusedLocationApi
+                                .getLastLocation(apiClient);
+                        break;
+
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        try {
+                            status.startResolutionForResult(MainActivity.this,
+                                    REQUEST_CHECK_SETTINGS_GPS);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.d("Exception", e.getMessage());
+                        }
+                        break;
+
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        finish();
+                        break;
+                }
+            });
+        }
     }
 }

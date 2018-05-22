@@ -32,7 +32,11 @@ public class BasicUserViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(UserBasic user)
     {
-        Picasso.get().load(user.getMainImage()).into(userImage);
+        Picasso.get()
+                .load(user.getMainImage())
+                .resize(userImage.getLayoutParams().width, userImage.getLayoutParams().height)
+                .into(userImage);
+
         username.setText(user.getUsername());
         name.setText(user.getName());
     }
