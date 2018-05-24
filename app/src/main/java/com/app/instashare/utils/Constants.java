@@ -87,7 +87,6 @@ public class Constants {
     public static final String POST_ALIGNUP_K = "isAlignUp";
     public static final String POST_ANONYMOUS_K = "isAnonymous";
     public static final String POST_PUBLIC_K = "isForAll";
-    public static final String POST_LOCATION_K = "location";
     public static final String POST_TAGS_K = "tags";
     public static final String POST_LIKES_K = "numLikes";
     public static final String POST_COMMENTS_K = "numComments";
@@ -96,4 +95,5 @@ public class Constants {
 
     //General keys
     public static final String GENERAL_IMAGES = "images";
+    public static final String GENERAL_LOCATION_K = "location";
 }

@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.app.instashare.ui.user.model.UserBasic;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
 
@@ -25,8 +27,9 @@ public class Post implements Parcelable {
     private boolean isAlignUp;
     private boolean isAnonymous;                //Filter
     private boolean isForAll;
-    private HashMap<String, Double> location;     //Filter
+    private HashMap<String, Double> locationMap;
     private HashMap<String, Boolean> tags;      //Filter
+    private GeoPoint location;                  //Filter
 
 
     //Post extra information
@@ -106,12 +109,14 @@ public class Post implements Parcelable {
         isForAll = forAll;
     }
 
-    public HashMap<String, Double> getLocation() {
-        return location;
+    @Exclude
+    public HashMap<String, Double> getLocationMap() {
+        return locationMap;
     }
 
-    public void setLocation(HashMap<String, Double> location) {
-        this.location = location;
+    @Exclude
+    public void setLocationMap(HashMap<String, Double> locationMap) {
+        this.locationMap = locationMap;
     }
 
     public HashMap<String, Boolean> getTags() {
@@ -146,7 +151,13 @@ public class Post implements Parcelable {
         this.numShares = numShares;
     }
 
+    public GeoPoint getLocation() {
+        return location;
+    }
 
+    public void setLocation(GeoPoint location) {
+        this.location = location;
+    }
 
     @Override
     public int describeContents() {
@@ -163,7 +174,7 @@ public class Post implements Parcelable {
         dest.writeByte(this.isAlignUp ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isAnonymous ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isForAll ? (byte) 1 : (byte) 0);
-        dest.writeSerializable(this.location);
+        dest.writeSerializable(this.locationMap);
         dest.writeSerializable(this.tags);
         dest.writeValue(this.numLikes);
         dest.writeValue(this.numComments);
@@ -179,7 +190,7 @@ public class Post implements Parcelable {
         this.isAlignUp = in.readByte() != 0;
         this.isAnonymous = in.readByte() != 0;
         this.isForAll = in.readByte() != 0;
-        this.location = (HashMap<String, Double>) in.readSerializable();
+        this.locationMap = (HashMap<String, Double>) in.readSerializable();
         this.tags = (HashMap<String, Boolean>) in.readSerializable();
         this.numLikes = (Long) in.readValue(Long.class.getClassLoader());
         this.numComments = (Long) in.readValue(Long.class.getClassLoader());

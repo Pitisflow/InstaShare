@@ -150,4 +150,10 @@ public class PreviewPostPresenter {
         sequence = TextUtils.concat(sequence, "\n");
         return sequence;
     }
+
+
+    public void terminate()
+    {
+        view = null;
+    }
 }

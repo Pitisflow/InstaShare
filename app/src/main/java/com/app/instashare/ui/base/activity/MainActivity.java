@@ -3,7 +3,6 @@ package com.app.instashare.ui.base.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -14,9 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -31,11 +28,10 @@ import com.app.instashare.ui.base.presenter.MainPresenter;
 import com.app.instashare.ui.base.view.MainView;
 import com.app.instashare.ui.notification.fragment.NotificationsFragment;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
-import com.app.instashare.utils.DistanceUtils;
+import com.app.instashare.utils.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -46,7 +42,9 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 public class MainActivity extends AppCompatActivity implements MainView,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener,
+        LocationUtils.LocationStatus{
 
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -57,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements MainView,
     private MainPresenter presenter;
 
     private static final int PERMISSION_LOCATION_CODE = 1;
-    private static final int REQUEST_CHECK_SETTINGS_GPS = 2;
-    private int isConnected = 0;
+    private static final int REFRESH_LOCATION_INTERVAL = 3000;
+    private boolean fragmentTransactionDone = false;
 
 
     @Override
@@ -66,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        presenter = new MainPresenter(getApplicationContext(), this);
         apiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, 0, this)
                 .addConnectionCallbacks(this)
@@ -74,13 +73,11 @@ public class MainActivity extends AppCompatActivity implements MainView,
                 .build();
 
 
-        if (savedInstanceState != null && savedInstanceState.containsKey("isConnected")) {
-            isConnected = savedInstanceState.getInt("isConnected");
+        if (savedInstanceState != null && savedInstanceState.containsKey("fragmentTransactionDone")) {
+            fragmentTransactionDone = savedInstanceState.getBoolean("fragmentTransactionDone");
         }
-        if (isConnected == 0) apiClient.connect();
 
 
-        presenter = new MainPresenter(getApplicationContext(), this);
 
 
         bindToolbarView();
@@ -94,12 +91,16 @@ public class MainActivity extends AppCompatActivity implements MainView,
     @Override
     protected void onStart() {
         super.onStart();
+
+        apiClient.connect();
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
+
+        if (apiClient.isConnected()) apiClient.disconnect();
     }
 
 
@@ -194,10 +195,11 @@ public class MainActivity extends AppCompatActivity implements MainView,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS_GPS:
+            case LocationUtils.REQUEST_CHECK_SETTINGS_GPS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        getMyLocation();
+                        LocationUtils.getMyLocation(apiClient, REFRESH_LOCATION_INTERVAL,
+                                MainActivity.this, MainActivity.this, this);
                         break;
 
                     case Activity.RESULT_CANCELED:
@@ -212,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt("isConnected", isConnected);
+        outState.putBoolean("fragmentTransactionDone", fragmentTransactionDone);
     }
 
 
@@ -225,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements MainView,
         if (requestCode == PERMISSION_LOCATION_CODE && grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
-            if (isConnected == 0) getMyLocation();
-            isConnected = 1;
+            LocationUtils.getMyLocation(apiClient, REFRESH_LOCATION_INTERVAL,
+                    MainActivity.this, MainActivity.this, this);
         } else {
             Toast.makeText(getApplicationContext(), getString(R.string.error_refused_afinelocation), Toast.LENGTH_LONG).show();
         }
@@ -241,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements MainView,
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                if (isConnected == 0) getMyLocation();
-                isConnected = 1;
+                LocationUtils.getMyLocation(apiClient, REFRESH_LOCATION_INTERVAL,
+                        MainActivity.this, MainActivity.this, this);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
                         , Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION_CODE);
@@ -266,56 +268,23 @@ public class MainActivity extends AppCompatActivity implements MainView,
     @Override
     public void onLocationChanged(Location location) {
         myLocation = location;
+        System.out.println("EFEWFEW");
         if (myLocation != null) presenter.setCurrentLocation(location);
     }
 
 
 
-    @SuppressLint("MissingPermission")
-    private void getMyLocation()
-    {
-        if(apiClient!=null && apiClient.isConnected()) {
-            myLocation = LocationServices.FusedLocationApi.getLastLocation(apiClient);
-            LocationRequest locationRequest = new LocationRequest();
-            locationRequest.setInterval(300000);
-            locationRequest.setFastestInterval(300000);
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest);
-            builder.setAlwaysShow(true);
-            LocationServices.FusedLocationApi
-                    .requestLocationUpdates(apiClient, locationRequest, this);
-            PendingResult<LocationSettingsResult> result =
-                    LocationServices.SettingsApi
-                            .checkLocationSettings(apiClient, builder.build());
-            result.setResultCallback(result1 -> {
-                final Status status = result1.getStatus();
-
-                switch (status.getStatusCode()) {
-
-                    case LocationSettingsStatusCodes.SUCCESS:
-
-                        Fragment fragment = new MainFragment();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
-
-                        myLocation = LocationServices.FusedLocationApi
-                                .getLastLocation(apiClient);
-                        break;
-
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            status.startResolutionForResult(MainActivity.this,
-                                    REQUEST_CHECK_SETTINGS_GPS);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.d("Exception", e.getMessage());
-                        }
-                        break;
-
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        finish();
-                        break;
-                }
-            });
+    @Override
+    public void stateSucces() {
+        if (!fragmentTransactionDone) {
+            Fragment fragment = new MainFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+            fragmentTransactionDone = true;
         }
+    }
+
+    @Override
+    public void statusUnavailable() {
+        finish();
     }
 }

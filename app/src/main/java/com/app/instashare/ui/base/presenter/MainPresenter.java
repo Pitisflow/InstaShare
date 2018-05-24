@@ -31,4 +31,9 @@ public class MainPresenter {
     {
         UserInteractor.updateUserLocation(location);
     }
+
+    public void terminate()
+    {
+        this.view = null;
+    }
 }

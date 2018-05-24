@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
@@ -42,9 +43,12 @@ import com.app.instashare.ui.post.presenter.AddPostPresenter;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Constants;
+import com.app.instashare.utils.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -55,7 +59,11 @@ import java.util.HashMap;
  */
 
 public class AddPostActivity extends AppCompatActivity implements AddPostView,
-        NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener,
+        LocationUtils.LocationStatus{
 
     private EditText contentET;
     private TextView contentMaxLetters;
@@ -90,6 +98,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     private static final int REQUEST_WRITE_PERMISSIONS = 1;
     private static final int REQUEST_READ_PERMISSIONS = 2;
     private static final int REQUEST_LOCATION_PERMISSION = 3;
+    private static final int REFRESH_LOCATION_INTERVAL = 300000;
 
 
 
@@ -127,7 +136,12 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
         if (imagePathState != null) presenter.onContentImageChanged(imagePathState);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
 
+        if (apiClient.isConnected()) apiClient.disconnect();
+    }
 
     @Override
     protected void onDestroy() {
@@ -278,6 +292,16 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
                 imagePathState = data.getData().toString();
                 contentImage.setImageURI(data.getData());
                 contentImage.setBackgroundColor(getResources().getColor(R.color.black));
+            } else if (requestCode == LocationUtils.REQUEST_CHECK_SETTINGS_GPS)
+            {
+                LocationUtils.getMyLocation(apiClient, REFRESH_LOCATION_INTERVAL,
+                        AddPostActivity.this, AddPostActivity.this, this);
+            }
+        } else {
+            if (requestCode == LocationUtils.REQUEST_CHECK_SETTINGS_GPS)
+            {
+                enablePublishButton(false);
+                Toast.makeText(getApplicationContext(), getString(R.string.error_disabled_location), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -413,10 +437,11 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
         if (requestCode == REQUEST_LOCATION_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED)
         {
-            publishPost();
+            LocationUtils.getMyLocation(apiClient, REFRESH_LOCATION_INTERVAL,
+                    AddPostActivity.this, AddPostActivity.this, this);
         } else if (requestCode == REQUEST_LOCATION_PERMISSION){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-                    , Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            enablePublishButton(false);
+            Toast.makeText(getApplicationContext(), getString(R.string.error_refused_afinelocation), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -428,13 +453,21 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                publishPost();
+                LocationUtils.getMyLocation(apiClient, REFRESH_LOCATION_INTERVAL,
+                        AddPostActivity.this, AddPostActivity.this, this);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
                         , Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             }
         }
     }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        publishPost();
+    }
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -447,16 +480,24 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     }
 
 
+    @Override
+    public void stateSucces() {
+
+    }
+
+    @Override
+    public void statusUnavailable() {
+        enablePublishButton(false);
+    }
+
+
     @SuppressLint("MissingPermission")
     private void publishPost()
     {
-        HashMap<String, Double> locationMap = new HashMap<>();
         Location location = LocationServices.FusedLocationApi.getLastLocation(apiClient);
+        GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
 
-        locationMap.put(Constants.USER_LONGITUDE_K, location.getLongitude());
-        locationMap.put(Constants.USER_LATITUDE_K, location.getLatitude());
-
-        presenter.generatePost(locationMap, null);
+        presenter.generatePost(point, null);
     }
 
 

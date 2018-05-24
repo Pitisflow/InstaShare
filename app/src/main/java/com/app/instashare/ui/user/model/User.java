@@ -10,7 +10,7 @@ public class User {
 
     private UserBasic basicInfo;
     private Map<String, Object> information;
-
+    private Map<String, Object> location;
 
 
     public User() {}
@@ -32,5 +32,13 @@ public class User {
 
     public void setInformation(Map<String, Object> information) {
         this.information = information;
+    }
+
+    public Map<String, Object> getLocation() {
+        return location;
+    }
+
+    public void setLocation(Map<String, Object> location) {
+        this.location = location;
     }
 }

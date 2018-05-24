@@ -14,6 +14,7 @@ import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.AddPostView;
 import com.app.instashare.ui.user.model.User;
 import com.app.instashare.utils.Utils;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     private boolean isShareWithAll = true;
     private boolean isAnonymous = true;
     private ArrayList<String> tags;
-    private HashMap<String, Double> locationMap;
+    private GeoPoint location;
 
 
     private PostRVAdapter tagAdapter;
@@ -158,18 +159,18 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     }
 
 
-    public void generatePost(HashMap<String, Double> locationMap, OnRequestPost listener)
+    public void generatePost(GeoPoint location, OnRequestPost listener)
     {
         this.listener = listener;
-        this.locationMap = locationMap;
+        this.location = location;
         Post post = new Post();
 
         if (UserData.getUser() != null) {
             post.setUser(UserData.getUser().getBasicInfo());
-            post.setLocation(locationMap);
+            post.setLocation(location);
             setPostInfo(post);
 
-            if (locationMap != null) PostInteractor.publishPost(post);
+            if (location != null) PostInteractor.publishPost(post);
             else listener.getPost(post);
         } else {
             UserData.getInstance(this);
@@ -204,6 +205,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
     {
         UserData.removeListener(this);
         tagAdapter.removeTagListener();
+        view = null;
         listener = null;
     }
 
@@ -224,10 +226,10 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
         {
             Post post = new Post();
             post.setUser(user.getBasicInfo());
-            post.setLocation(locationMap);
+            post.setLocation(location);
             setPostInfo(post);
 
-            if (locationMap != null) PostInteractor.publishPost(post);
+            if (location != null) PostInteractor.publishPost(post);
             else listener.getPost(post);
         }
     }

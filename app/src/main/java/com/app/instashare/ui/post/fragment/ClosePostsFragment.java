@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.adapter.UsersRVAdapter;
+import com.app.instashare.interactor.PostInteractor;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.other.activity.WebViewActivity;
 import com.app.instashare.ui.post.activity.AddPostActivity;
@@ -24,6 +25,9 @@ import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
 import com.github.clans.fab.FloatingActionButton;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Pitisflow on 17/4/18.
@@ -87,6 +91,12 @@ public class ClosePostsFragment extends Fragment {
         adapter.addCard("Miau", Constants.CARD_POST_TAG);
 
 
+        Map<String, Object> map = new HashMap<>();
+
+        map.put(Constants.USER_LATITUDE_K, 40.968615);
+        map.put(Constants.USER_LONGITUDE_K, -5.6491575);
+
+        PostInteractor.getNearestPosts(1, map);
 
         bindFabButtons(view);
     }

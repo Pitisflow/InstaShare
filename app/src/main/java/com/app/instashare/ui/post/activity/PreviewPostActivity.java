@@ -106,6 +106,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     protected void onStop() {
         super.onStop();
 
+        presenter.terminate();
         presenter = null;
     }
 
