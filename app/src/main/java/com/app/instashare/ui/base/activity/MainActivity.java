@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
     private MainPresenter presenter;
 
     private static final int PERMISSION_LOCATION_CODE = 1;
-    private static final int REFRESH_LOCATION_INTERVAL = 3000;
+    private static final int REFRESH_LOCATION_INTERVAL = 300000;
     private boolean fragmentTransactionDone = false;
 
 

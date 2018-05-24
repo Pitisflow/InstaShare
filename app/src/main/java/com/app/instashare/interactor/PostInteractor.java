@@ -21,11 +21,14 @@ import java.util.Map;
 public class PostInteractor {
 
 
-    public static void publishPost(Post post)
+    public static void publishPost(Post post, OnUploadingPost uploadingPost)
     {
+        uploadingPost.preparingUpload();
+
         DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T).add(post)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        uploadingPost.uploadDone();
                         if (post.getMediaURL() != null) uploadPostImage(post, task.getResult().getId());
                     }
                 });
@@ -92,5 +95,14 @@ public class PostInteractor {
                 }
             }
         });
+    }
+
+
+
+    public interface OnUploadingPost
+    {
+        void preparingUpload();
+
+        void uploadDone();
     }
 }

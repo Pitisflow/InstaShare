@@ -263,19 +263,37 @@
 
 
 
-
-
-
-        <Button
-            android:id="@+id/publish"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/general_margin_big"
             android:layout_marginEnd="@dimen/general_margin_big"
             android:layout_marginStart="@dimen/general_margin_big"
-            android:enabled="false"
-            android:text="@string/add_post_publish"
-            style="@style/TaskButton"/>
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/publish"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/loading"
+                android:layout_alignWithParentIfMissing="true"
+                android:enabled="false"
+                android:text="@string/add_post_publish"
+                style="@style/TaskButton"/>
+
+
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"/>
+
+
+        </RelativeLayout>
+
 
         <Button
             android:id="@+id/preview"

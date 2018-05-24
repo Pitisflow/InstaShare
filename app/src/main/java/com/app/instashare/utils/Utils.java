@@ -43,7 +43,7 @@ public class Utils {
         progressDialog.setMessage(msg);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(true);
+        progressDialog.setCancelable(false);
 
         return progressDialog;
     }

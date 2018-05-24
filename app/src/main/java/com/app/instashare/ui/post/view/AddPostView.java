@@ -17,6 +17,8 @@ public interface AddPostView {
 
     void setMaxLettersText(String text);
 
+    void enableLoadingPost(boolean enable);
+
     void setAutoCompleteAdapter(ArrayAdapter<String> adapter);
 
     void setTagRecyclerAdapter(PostRVAdapter adapter);
@@ -24,6 +26,8 @@ public interface AddPostView {
     void addTagToAdapter(String tag);
 
     void deleteTagFromAdapter(String tag);
+
+    void finishActivity();
 
     View getContentImage();
 

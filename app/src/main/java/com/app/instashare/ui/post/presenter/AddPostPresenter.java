@@ -5,6 +5,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
@@ -19,6 +20,8 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import okhttp3.internal.Util;
 
 /**
  * Created by Pitisflow on 23/4/18.
@@ -170,7 +173,7 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
             post.setLocation(location);
             setPostInfo(post);
 
-            if (location != null) PostInteractor.publishPost(post);
+            if (location != null) publishPost(post);
             else listener.getPost(post);
         } else {
             UserData.getInstance(this);
@@ -229,9 +232,27 @@ public class AddPostPresenter implements PostRVAdapter.OnDeleteTagListener, User
             post.setLocation(location);
             setPostInfo(post);
 
-            if (location != null) PostInteractor.publishPost(post);
+            if (location != null) publishPost(post);
             else listener.getPost(post);
         }
+    }
+
+
+    private void publishPost(Post post)
+    {
+        PostInteractor.publishPost(post, new PostInteractor.OnUploadingPost() {
+            @Override
+            public void preparingUpload() {
+                view.enableLoadingPost(true);
+                Toast.makeText(context, context.getString(R.string.add_post_publishing), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void uploadDone() {
+                view.finishActivity();
+                Toast.makeText(context, context.getString(R.string.add_post_publishing_done), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

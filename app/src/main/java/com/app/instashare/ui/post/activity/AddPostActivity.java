@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -73,6 +74,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     private Switch publicationShareAs;
     private RecyclerView publicationTagsRecycler;
     private AutoCompleteTextView publicationTagsET;
+    private ProgressBar loading;
 
 
     private Button addTag;
@@ -210,6 +212,7 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     private void bindPublishView()
     {
         publishPost = findViewById(R.id.publish);
+        loading = findViewById(R.id.loading);
         publishPost.setOnClickListener(view -> apiClient.connect());
     }
 
@@ -512,6 +515,11 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
     }
 
     @Override
+    public void enableLoadingPost(boolean enable) {
+        if (enable) loading.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void setAutoCompleteAdapter(ArrayAdapter<String> adapter) {
         publicationTagsET.setAdapter(adapter);
     }
@@ -533,6 +541,11 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
         if (publicationTagsRecycler.getAdapter() != null && publicationTagsRecycler.getAdapter() instanceof PostRVAdapter) {
             ((PostRVAdapter) publicationTagsRecycler.getAdapter()).removeCard(tag);
         }
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     @Override

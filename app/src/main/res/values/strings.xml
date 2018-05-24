@@ -88,6 +88,9 @@
     <string name="add_post_share_as">Share as anonymous:</string>
     <string name="add_post_tags">Publication tags</string>
     <string name="add_post_write_tags">Write publication tags</string>
+    <string name="add_post_publishing">Publishing…</string>
+    <string name="add_post_publishing_done">Successful publication</string>
+
 
 
 
