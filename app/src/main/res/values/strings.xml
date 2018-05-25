@@ -67,6 +67,7 @@
 
     <!-- Post options Strings -->
     <string name="post_post">Post</string>
+    <string name="post_anonymous">Anonymous</string>
     <string name="post_options_comment">Comment</string>
     <string name="post_options_like">Like</string>
     <string name="post_options_share">Share</string>
@@ -90,6 +91,7 @@
     <string name="add_post_write_tags">Write publication tags</string>
     <string name="add_post_publishing">Publishing…</string>
     <string name="add_post_publishing_done">Successful publication</string>
+
 
 
 

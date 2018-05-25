@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements MainView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        presenter = new MainPresenter(getApplicationContext(), this);
         apiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, 0, this)
                 .addConnectionCallbacks(this)
@@ -92,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements MainView,
     protected void onStart() {
         super.onStart();
 
+        presenter = new MainPresenter(getApplicationContext(), this);
+        presenter.onInitialize();
         apiClient.connect();
     }
 
@@ -101,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements MainView,
         super.onStop();
 
         if (apiClient.isConnected()) apiClient.disconnect();
+        presenter.terminate();
+        presenter = null;
     }
 
 
@@ -235,8 +238,6 @@ public class MainActivity extends AppCompatActivity implements MainView,
     }
 
 
-
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -253,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements MainView,
     }
 
 
-
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -264,13 +264,12 @@ public class MainActivity extends AppCompatActivity implements MainView,
 
     }
 
-
     @Override
     public void onLocationChanged(Location location) {
         myLocation = location;
-        System.out.println("EFEWFEW");
         if (myLocation != null) presenter.setCurrentLocation(location);
     }
+
 
 
 

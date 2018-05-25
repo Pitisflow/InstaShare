@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.LinearLayout;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
@@ -22,6 +24,8 @@ import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.other.activity.WebViewActivity;
 import com.app.instashare.ui.post.activity.AddPostActivity;
 import com.app.instashare.ui.post.model.Post;
+import com.app.instashare.ui.post.presenter.ClosePostsPresenter;
+import com.app.instashare.ui.post.view.ClosePostsView;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
 import com.github.clans.fab.FloatingActionButton;
@@ -33,7 +37,18 @@ import java.util.Map;
  * Created by Pitisflow on 17/4/18.
  */
 
-public class ClosePostsFragment extends Fragment {
+public class ClosePostsFragment extends Fragment implements ClosePostsView {
+
+    private SwipeRefreshLayout refresher;
+    private RecyclerView recyclerView;
+    private PostRVAdapter adapter;
+    private LinearLayout loading;
+
+
+    private ClosePostsPresenter presenter;
+
+
+    private boolean loadedState = false;
 
 
     @Nullable
@@ -48,59 +63,28 @@ public class ClosePostsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        RecyclerView recyclerView = view.findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
-        PostRVAdapter adapter = new PostRVAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-        adapter.addCard("Miau", Constants.CARD_POST_TAG);
-
-
-        Map<String, Object> map = new HashMap<>();
-
-        map.put(Constants.USER_LATITUDE_K, 40.968615);
-        map.put(Constants.USER_LONGITUDE_K, -5.6491575);
-
-        PostInteractor.getNearestPosts(1, map);
+        presenter = new ClosePostsPresenter(getContext(), this);
 
         bindFabButtons(view);
+        bindRecyclerView(view);
+        bindLoadingView(view);
+
+        presenter.onInitialize();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        presenter.terminate();
+        presenter = null;
+    }
 
     private void bindFabButtons(View view)
     {
@@ -125,8 +109,51 @@ public class ClosePostsFragment extends Fragment {
     }
 
 
+    private void bindRecyclerView(View view)
+    {
+        refresher = view.findViewById(R.id.refresh);
+
+        adapter = new PostRVAdapter(getContext());
+        recyclerView = view.findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+
+        refresher.setOnRefreshListener(() -> {
+            System.out.println(refresher.isRefreshing());
+        });
+
+    }
+
+
+    private void bindLoadingView(View view)
+    {
+        loading = view.findViewById(R.id.loadingLayout);
+        loading.setVisibility(View.GONE);
+    }
+
+
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //inflater.inflate(R.menu.menu_sample, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public void enableLoadingView(boolean enable) {
+        if (enable) loading.setVisibility(View.VISIBLE);
+        else loading.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void refreshRecycler() {
+
+    }
+
+    @Override
+    public void addPost(Object post) {
+        adapter.addCard(post, Constants.CARD_POST);
     }
 }

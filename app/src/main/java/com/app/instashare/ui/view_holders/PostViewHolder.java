@@ -1,14 +1,17 @@
 package com.app.instashare.ui.view_holders;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.post.model.Post;
+import com.app.instashare.utils.DateUtils;
 import com.app.instashare.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -44,16 +47,39 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
 
 
-    public void bind(Post post)
+    public void bind(Post post, Context context)
     {
-        Picasso.get().load(post.getUser().getMainImage()).into(userImage);
-        username.setText(post.getUser().getMainImage());
-        date.setText("14:23");
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        contentImage.getLayoutParams().width = metrics.widthPixels > metrics.heightPixels ?
+                metrics.heightPixels : metrics.widthPixels;
 
+
+        userImage.setCircleBackgroundColor(context.getResources().getColor(R.color.black));
+        if (post.isAnonymous()) userImage.setImageResource(R.mipmap.ic_launcher);
+        else {
+            Picasso.get()
+                    .load(post.getUser().getMainImage())
+                    .resize(userImage.getLayoutParams().width, userImage.getLayoutParams().height)
+                    .into(userImage);
+        }
+
+
+        if (post.getMediaURL() != null) {
+            contentImage.setVisibility(View.VISIBLE);
+
+            Picasso.get()
+                    .load(post.getMediaURL())
+                    .resize(contentImage.getLayoutParams().width, 0)
+                    .into(contentImage);
+        } else contentImage.setVisibility(View.GONE);
+
+
+        if (post.isAnonymous()) username.setText(context.getString(R.string.post_anonymous));
+        else username.setText(post.getUser().getUsername());
+
+
+        date.setText(DateUtils.getPostDateFromTimestamp(post.getTimestamp(), context));
         contentText.setText(post.getContentText());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) Utils.justify(contentText);
-
-        Picasso.get().load(post.getMediaURL()).into(contentImage);
     }
 
 }

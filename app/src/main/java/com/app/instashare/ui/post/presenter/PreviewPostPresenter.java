@@ -105,7 +105,7 @@ public class PreviewPostPresenter {
 
     private void setCurrentUser(UserBasic user, boolean isAnonymous)
     {
-        if (isAnonymous) view.setUserName("Anonymous");
+        if (isAnonymous) view.setUserName(context.getString(R.string.post_anonymous));
         else {
             view.setUserName(user.getUsername());
             view.setUserImage(user.getMainImage());

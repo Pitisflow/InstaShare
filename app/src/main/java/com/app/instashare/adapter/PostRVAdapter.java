@@ -1,5 +1,6 @@
 package com.app.instashare.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,12 +21,19 @@ import java.util.ArrayList;
 
 public class PostRVAdapter extends BaseRVAdapter {
 
+    private Context context;
+
     private boolean isDeletableTag;
     private OnDeleteTagListener deleteTagListener;
 
 
     public PostRVAdapter() {
         super();
+    }
+
+    public PostRVAdapter(Context context) {
+        super();
+        this.context = context;
     }
 
 
@@ -66,7 +74,7 @@ public class PostRVAdapter extends BaseRVAdapter {
         switch (holder.getItemViewType())
         {
             case Constants.CARD_POST:
-                ((PostViewHolder) holder).bind((Post) getItemList().get(position));
+                ((PostViewHolder) holder).bind((Post) getItemList().get(position), context);
                 break;
 
             case Constants.CARD_POST_TAG:

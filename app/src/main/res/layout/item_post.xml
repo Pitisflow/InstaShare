@@ -53,6 +53,7 @@
             android:layout_below="@+id/date"
             android:layout_alignStart="@+id/userImage"
             android:layout_marginTop="@dimen/general_margin_medium"
+            android:layout_marginBottom="@dimen/general_margin_medium"
             android:layout_marginEnd="@dimen/general_margin_small"
             android:textColor="@color/black"
             tool:text="Cum hippotoxota accelerare, omnes nuclear vexatum iacerees promissio fortis, placidus consiliumes. Quadra peritus castor est. Accola, musa, et fiscina. Nunquam quaestio verpa. Est regius omnia, cesaris." />
@@ -64,8 +65,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/contentText"
-            android:layout_marginTop="@dimen/general_margin_small"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/general_margin_medium"
+            android:adjustViewBounds="true"
             tool:src="@mipmap/ic_launcher"/>
 
         <View

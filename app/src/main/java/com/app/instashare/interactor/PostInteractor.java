@@ -1,10 +1,16 @@
 package com.app.instashare.interactor;
 
+import android.content.Context;
+import android.location.Location;
+import android.support.annotation.NonNull;
+
 import com.app.instashare.singleton.DatabaseSingleton;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.utils.Constants;
+import com.app.instashare.utils.DateUtils;
 import com.app.instashare.utils.LocationUtils;
 import com.app.instashare.utils.Utils;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
@@ -52,49 +58,43 @@ public class PostInteractor {
     }
 
 
-    public static void getNearestPosts(int kilometers, Map<String, Object> location)
+    public static void getClosestPosts(int kilometers, Map<String, Object> location, OnDowloadingPosts listener)
     {
-        double userLatitude = (double) location.get(Constants.USER_LATITUDE_K);
-        double userLongitude = (double) location.get(Constants.USER_LONGITUDE_K);
-
-        double maxLatitude = LocationUtils.getMaxLatitudeCoordinate(kilometers);
-        double maxLongitude = LocationUtils.getMaxLongitudeCoordinate(kilometers);
-
-        double maxLatitudeOffset = userLatitude + maxLatitude;
-        double minLatitudeOffset = userLatitude - maxLatitude;
-        double maxLongitudeOffset = userLongitude + maxLongitude;
-        double minLongitudeOffset = userLongitude - maxLongitude;
-
-        String latitudeField = Constants.GENERAL_LOCATION_K + "." + Constants.USER_LATITUDE_K;
-        String longitudeField = Constants.GENERAL_LOCATION_K + "." + Constants.USER_LONGITUDE_K;
-
-
         CollectionReference reference = DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T);
 
+        GeoPoint maxPoint = LocationUtils.getMaxGeoPoint(kilometers, location);
+        GeoPoint minPoint = LocationUtils.getMinGeoPoint(kilometers, location);
 
-        Query query = reference.whereLessThanOrEqualTo(longitudeField, 80);
-//        query.whereLessThanOrEqualTo(latitudeField, 80);
-//        query.whereGreaterThanOrEqualTo(longitudeField, 70);
-//        query.whereGreaterThanOrEqualTo(latitudeField, 70);
+        Query query = reference
+                .whereLessThan(Constants.GENERAL_LOCATION_K, maxPoint)
+                .whereGreaterThan(Constants.GENERAL_LOCATION_K, minPoint);
 
 
-        GeoPoint point = new GeoPoint(40.9686266, -5.6491449);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("location", point);
 
-        reference.document("Ls5EmHX3VaOzQkUxrYpp").update(map);
-        reference.document("tX8Ngm1TvCCeDO4mobnX").update(map);
+//        Query query = reference.orderBy(Constants.POST_TIMESTAMP_K, Query.Direction.DESCENDING)
+//                .endAt(System.currentTimeMillis());
 
-        reference.get().addOnCompleteListener(task ->{
+        listener.downloading();
+
+        query.get().addOnCompleteListener(task ->{
             if (task.isSuccessful()) {
+                ArrayList<Post> posts = new ArrayList<>();
+
+                System.out.println(task.getResult().size());
+
                 for (DocumentSnapshot documentSnapshot : task.getResult()) {
                     Post post = documentSnapshot.toObject(Post.class);
 
-                    //System.out.println(post.getContentText());
+                    if (post != null) {
+                        post.setLocationMap(new HashMap<>(LocationUtils.getMapFromGeoPoint(post.getLocation())));
+                        posts.add(post);
+                    }
                 }
+
+                listener.downloadCompleted(posts);
             }
-        });
+        }).addOnFailureListener(e -> System.out.println(e.getMessage()));
     }
 
 
@@ -104,5 +104,13 @@ public class PostInteractor {
         void preparingUpload();
 
         void uploadDone();
+    }
+
+
+    public interface OnDowloadingPosts
+    {
+        void downloading();
+
+        void downloadCompleted(ArrayList<Post> posts);
     }
 }

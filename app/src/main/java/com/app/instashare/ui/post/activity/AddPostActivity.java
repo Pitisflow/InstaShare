@@ -50,7 +50,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.firestore.GeoPoint;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -288,12 +290,18 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
 
                 CameraUtils.moveImageToGallery(imagePathState, getApplicationContext());
                 CameraUtils.compressImage(imagePathState);
-                contentImage.setImageURI(Uri.parse(imagePathState));
+                Picasso.get()
+                        .load(CameraUtils.imageUriFromString(imagePathState))
+                        .resize(contentImage.getLayoutParams().width, contentImage.getLayoutParams().height)
+                        .into(contentImage);
                 contentImage.setBackgroundColor(getResources().getColor(R.color.black));
             } else if (requestCode == REQUEST_GALLERY_CODE)
             {
                 imagePathState = data.getData().toString();
-                contentImage.setImageURI(data.getData());
+                Picasso.get()
+                        .load(CameraUtils.imageUriFromString(imagePathState))
+                        .resize(contentImage.getLayoutParams().width, contentImage.getLayoutParams().height)
+                        .into(contentImage);
                 contentImage.setBackgroundColor(getResources().getColor(R.color.black));
             } else if (requestCode == LocationUtils.REQUEST_CHECK_SETTINGS_GPS)
             {
@@ -371,7 +379,10 @@ public class AddPostActivity extends AppCompatActivity implements AddPostView,
 
         if (imagePathState != null)
         {
-            contentImage.setImageURI(Uri.parse(imagePathState));
+            Picasso.get()
+                    .load(CameraUtils.imageUriFromString(imagePathState))
+                    .resize(contentImage.getLayoutParams().width, contentImage.getLayoutParams().height)
+                    .into(contentImage);
             contentImage.setBackgroundColor(getResources().getColor(R.color.black));
         }
     }

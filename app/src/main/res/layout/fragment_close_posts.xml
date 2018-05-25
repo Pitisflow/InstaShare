@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical|center_horizontal">
+
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:textSize="20sp"
+            android:text="Cargando publicaciones..."/>
+
+
+    </LinearLayout>
 
 
 
@@ -18,13 +51,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/general_margin_small"
+        app:layout_behavior="com.app.instashare.custom.FABBehavior"
         app:menu_colorNormal="@color/colorPrimary"
         app:menu_colorPressed="@color/colorPrimaryLight"
-        app:menu_showShadow="true"
-        app:menu_openDirection="up"
         app:menu_labels_position="left"
-        app:layout_behavior="com.app.instashare.custom.FABBehavior">
-
+        app:menu_openDirection="up"
+        app:menu_showShadow="true">
 
 
         <com.github.clans.fab.FloatingActionButton
@@ -34,8 +66,8 @@
             android:src="@drawable/ic_add_white_24dp"
             app:fab_colorNormal="@color/colorPrimary"
             app:fab_colorPressed="@color/colorPrimaryLight"
-            app:fab_size="mini"
-            app:fab_label="@string/fab_menu_add"/>
+            app:fab_label="@string/fab_menu_add"
+            app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/favorites"
@@ -44,8 +76,8 @@
             android:src="@drawable/ic_favorite_white_24"
             app:fab_colorNormal="@android:color/holo_red_dark"
             app:fab_colorPressed="@android:color/holo_red_light"
-            app:fab_size="mini"
-            app:fab_label="@string/fab_menu_favorites"/>
+            app:fab_label="@string/fab_menu_favorites"
+            app:fab_size="mini" />
 
 
         <com.github.clans.fab.FloatingActionButton
@@ -55,8 +87,8 @@
             android:src="@drawable/ic_save_alt_white_24"
             app:fab_colorNormal="@color/colorSecondary"
             app:fab_colorPressed="@color/colorSecondaryLight"
-            app:fab_size="mini"
-            app:fab_label="@string/fab_menu_saved"/>
+            app:fab_label="@string/fab_menu_saved"
+            app:fab_size="mini" />
 
 
     </com.github.clans.fab.FloatingActionMenu>

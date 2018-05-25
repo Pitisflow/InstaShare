@@ -128,6 +128,19 @@ public class CameraUtils {
 
 
 
+    public static Uri imageUriFromString(String url)
+    {
+        Uri uri;
+
+        if (!url.contains(":"))
+        {
+            File file = new File(url);
+            uri = Uri.parse(file.toURI().toString());
+        } else uri = Uri.parse(url);
+
+        return uri;
+    }
+
 
 
 

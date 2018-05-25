@@ -26,7 +26,9 @@ import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.instashare.R;
@@ -37,6 +39,7 @@ import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.PreviewPostPresenter;
 import com.app.instashare.ui.post.view.PreviewPostView;
 import com.app.instashare.ui.user.model.UserBasic;
+import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -217,12 +220,22 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
     @Override
     public void setContentImage(Uri uri) {
-        contentImage.setImageURI(uri);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels > metrics.heightPixels ?
+                metrics.heightPixels : metrics.widthPixels;
+
+        Picasso.get()
+                .load(uri)
+                .resize(width, 0)
+                .into(contentImage);
     }
 
     @Override
     public void setUserImage(String url) {
-        Picasso.get().load(url).into(userImage);
+        Picasso.get()
+                .load(CameraUtils.imageUriFromString(url))
+                .resize(userImage.getLayoutParams().width, userImage.getLayoutParams().height)
+                .into(userImage);
     }
 
     @Override

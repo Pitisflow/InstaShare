@@ -37,13 +37,43 @@ public class LocationUtils {
     public static final int REQUEST_CHECK_SETTINGS_GPS = 3000;
 
 
-    public static double getMaxLongitudeCoordinate(int kilometers)
+
+
+    public static GeoPoint getMaxGeoPoint(int kilometers, Map<String, Object> currentLocation)
+    {
+        double currentLongitude = (double) currentLocation.get(Constants.USER_LONGITUDE_K);
+        double currentLatitude = (double) currentLocation.get(Constants.USER_LATITUDE_K);
+
+        double maxLongitude = currentLongitude + getMaxLongitudeCoordinate(kilometers);
+        double maxLatitude = currentLatitude + getMaxLatitudeCoordinate(kilometers);
+
+        GeoPoint maxPoint = new GeoPoint(maxLatitude, maxLongitude);
+
+        return maxPoint;
+    }
+
+
+    public static GeoPoint getMinGeoPoint(int kilometers, Map<String, Object> currentLocation)
+    {
+        double currentLongitude = (double) currentLocation.get(Constants.USER_LONGITUDE_K);
+        double currentLatitude = (double) currentLocation.get(Constants.USER_LATITUDE_K);
+
+        double minLongitude = currentLongitude - getMaxLongitudeCoordinate(kilometers);
+        double minLatitude = currentLatitude - getMaxLatitudeCoordinate(kilometers);
+
+        GeoPoint minPoint = new GeoPoint(minLatitude, minLongitude);
+
+        return minPoint;
+    }
+
+
+    private static double getMaxLongitudeCoordinate(int kilometers)
     {
         return (kilometers * KILOMETER * OFFSET) / LONGITUDE_DISTANCE_IN_METERS;
     }
 
 
-    public static double getMaxLatitudeCoordinate(int kilometers)
+    private static double getMaxLatitudeCoordinate(int kilometers)
     {
         return (kilometers * KILOMETER * OFFSET) / LATITUDE_DISTANCE_IN_METERS;
     }
@@ -54,9 +84,9 @@ public class LocationUtils {
         return result.intValue();
     }
 
-    public static Map<String, Object> getMapFromGeoPoint(GeoPoint point)
+    public static Map<String, Double> getMapFromGeoPoint(GeoPoint point)
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Double> map = new HashMap<>();
         map.put(Constants.USER_LONGITUDE_K, point.getLongitude());
         map.put(Constants.USER_LATITUDE_K, point.getLatitude());
 
