@@ -30,10 +30,12 @@
 
 
         <ProgressBar
+            android:id="@+id/loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/textLoading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/general_margin_medium"
@@ -68,6 +70,20 @@
             app:fab_colorPressed="@color/colorPrimaryLight"
             app:fab_label="@string/fab_menu_add"
             app:fab_size="mini" />
+
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/allPosts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_public_white_24"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryLight"
+            app:fab_label="@string/fab_menu_public"
+            app:fab_size="mini" />
+
+
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/favorites"

@@ -10,33 +10,38 @@ import com.app.instashare.R;
 import com.app.instashare.interactor.PostInteractor;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.singleton.UserData;
+import com.app.instashare.ui.post.fragment.ClosePostsFragment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.ClosePostsView;
-import com.app.instashare.ui.user.model.User;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.LocationUtils;
-import com.google.android.gms.tasks.Task;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Pitisflow on 24/5/18.
  */
 
-public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInteractor.OnDowloadingPosts {
+public class ClosePostsPresenter implements UserData.OnUserDataFetched,
+        PostInteractor.OnDowloadingPosts, PostInteractor.OnDownloadingPostPerPost {
 
     private Context context;
     private ClosePostsView view;
 
 
     private ArrayList<Post> currentPosts;
+    private ArrayList<Post> publicPosts;
+    private ArrayList<Post> savedPosts;
+    private ArrayList<Post> favoritedPosts;
+    private ArrayList<Post> temp;
     private Map<String, Object> location;
     private boolean locationUpdated = false;
+    private AtomicInteger control = new AtomicInteger();
+    private int postShowing = ClosePostsFragment.SHOWING_PUBLIC;
 
 
     public ClosePostsPresenter(Context context, ClosePostsView view) {
@@ -45,7 +50,9 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
     }
 
 
-
+    //********************************************
+    //INITIALIZING PRESENTER AND TERMINATE
+    //********************************************
     public void onInitialize(ArrayList<Parcelable> posts)
     {
         currentPosts = new ArrayList<>();
@@ -73,6 +80,9 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
 
 
 
+    //********************************************
+    //ACTIONS FROM VIEW
+    //********************************************
     public void refreshRecycler()
     {
         if (location != null) {
@@ -148,6 +158,7 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
         }
     }
 
+
     public void onHidePressed(Post post)
     {
         view.removePost(post);
@@ -158,6 +169,47 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
     }
 
 
+    public void showPublicPosts()
+    {
+        postShowing = ClosePostsFragment.SHOWING_PUBLIC;
+
+        if (publicPosts != null && publicPosts.size() != 0){
+            view.enableLoadingView(false, false, null);
+            view.changePosts(new ArrayList<>(publicPosts));
+        }
+        else PostInteractor.getClosestPosts(getRadius(), location, false, this);
+    }
+
+
+    public void showFavoritedPosts()
+    {
+        postShowing = ClosePostsFragment.SHOWING_FAVORITES;
+
+        if (favoritedPosts != null && favoritedPosts.size() != 0) {
+            view.enableLoadingView(false, false, null);
+            view.changePosts(new ArrayList<>(favoritedPosts));
+        }
+        else PostInteractor.getPostsFromList(UserInteractor.getUserKey(), Constants.POSTS_FAVORITES_T, System.currentTimeMillis(), this);
+    }
+
+
+    public void showSavedPosts()
+    {
+        postShowing = ClosePostsFragment.SHOWING_SAVED;
+
+        if (savedPosts != null && savedPosts.size() != 0) {
+            view.enableLoadingView(false, false, null);
+            view.changePosts(new ArrayList<>(savedPosts));
+        }
+        else PostInteractor.getPostsFromList(UserInteractor.getUserKey(), Constants.POSTS_SAVED_T, System.currentTimeMillis(), this);
+    }
+
+
+
+
+    //********************************************
+    //OTHERS
+    //********************************************
     private int getRadius()
     {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -168,7 +220,9 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
 
 
 
+    //********************************************
     //IMPLEMENT USERDATA INTERFACE
+    //********************************************
     @Override
     public void updateUserInfo() {
         if (UserData.getUser() != null && UserData.getUser().getLocation() != null)
@@ -184,17 +238,22 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
 
 
 
-    //IMPLEMENT POSTINTERACTOR INTERFACE
+    //********************************************
+    //IMPLEMENTS POSTINTERACTOR INTERFACES
+    //********************************************
     @Override
     public void downloading(boolean isRefreshing) {
-        if (!isRefreshing) view.enableLoadingView(true);
+        if (!isRefreshing) view.enableLoadingView(true, true, context.getString(R.string.post_loading));
     }
 
 
     @Override
     public void downloadCompleted(ArrayList<Post> posts, boolean isRefreshing) {
-        if (!isRefreshing) {
-            view.enableLoadingView(false);
+        if (view != null && posts.size() == 0)
+        {
+            view.enableLoadingView(true, false, context.getString(R.string.post_error_no_close_posts));
+        } else if (!isRefreshing && view != null) {
+            view.enableLoadingView(false, false, null);
             currentPosts = posts;
 
             Collections.sort(currentPosts, (post, t1) -> t1.getTimestamp().compareTo(post.getTimestamp()));
@@ -203,7 +262,8 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
                     view.addPost(post);
                 }
             }
-        } else {
+            publicPosts = new ArrayList<>(currentPosts);
+        } else if (view != null){
             view.stopRefreshing();
 
             ArrayList<Post> newPosts = new ArrayList<>(posts);
@@ -227,6 +287,47 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched, PostInte
                     }
                 }
             }
+            publicPosts = new ArrayList<>(currentPosts);
+        }
+    }
+
+    @Override
+    public void downloading() {
+        view.changePosts(new ArrayList<>());
+        view.enableLoadingView(true, true, context.getString(R.string.post_loading));
+    }
+
+    @Override
+    public void downloadNumber(int number) {
+        control.getAndSet(number);
+        temp = new ArrayList<>();
+
+        if (number == 0){
+            if (postShowing == ClosePostsFragment.SHOWING_FAVORITES) {
+                view.enableLoadingView(true, false, context.getString(R.string.post_error_no_favs));
+            }
+            if (postShowing == ClosePostsFragment.SHOWING_SAVED) {
+                view.enableLoadingView(true, false, context.getString(R.string.post_error_no_saved));
+            }
+        }
+    }
+
+    @Override
+    public void downloadCompleted(Post post) {
+        control.getAndSet(control.decrementAndGet());
+        if (control.intValue() == 0)
+        {
+            temp.add(post);
+            Collections.sort(temp, (p, t1) -> t1.getTimestamp().compareTo(p.getTimestamp()));
+
+            if (postShowing == ClosePostsFragment.SHOWING_FAVORITES) favoritedPosts = new ArrayList<>(temp);
+            if (postShowing == ClosePostsFragment.SHOWING_SAVED) savedPosts = new ArrayList<>(temp);
+            currentPosts = new ArrayList<>(temp);
+
+            view.changePosts(new ArrayList<>(currentPosts));
+            view.enableLoadingView(false, false, null);
+        } else {
+            temp.add(post);
         }
     }
 }

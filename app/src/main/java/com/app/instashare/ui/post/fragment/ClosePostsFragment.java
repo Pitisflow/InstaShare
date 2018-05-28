@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.instashare.R;
@@ -52,6 +54,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     private RecyclerView recyclerView;
     private PostRVAdapter adapter;
     private LinearLayout loading;
+    private ProgressBar loadingBar;
+    private TextView loadingText;
 
 
     private ClosePostsPresenter presenter;
@@ -60,6 +64,14 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     private Post postOptionsPressed = null;
     private Parcelable recyclerState = null;
     private ArrayList<Parcelable> recyclerItemsState = null;
+    private int postsShowingState = SHOWING_PUBLIC;
+
+
+
+    public static final int SHOWING_PUBLIC = 0;
+    public static final int SHOWING_FAVORITES = 1;
+    public static final int SHOWING_SAVED = 2;
+
 
 
     @Nullable
@@ -74,11 +86,11 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         if (savedInstanceState != null )
         {
             recyclerItemsState = savedInstanceState.getParcelableArrayList("recyclerItems");
             recyclerState = savedInstanceState.getParcelable("recycler");
+            postsShowingState = savedInstanceState.getInt("showingState");
         }
 
 
@@ -135,6 +147,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
             outState.putParcelableArrayList("recyclerItems", posts);
             outState.putParcelable("recycler", recyclerView.getLayoutManager().onSaveInstanceState());
         }
+
+        outState.putInt("showingState", postsShowingState);
     }
 
     private void bindFabButtons(View view)
@@ -142,6 +156,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         FloatingActionButton fabAdd = view.findViewById(R.id.add);
         FloatingActionButton fabFavorites = view.findViewById(R.id.favorites);
         FloatingActionButton fabSaved = view.findViewById(R.id.saved);
+        FloatingActionButton fabPublic = view.findViewById(R.id.allPosts);
 
         fabAdd.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), AddPostActivity.class);
@@ -149,13 +164,24 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         });
 
         fabFavorites.setOnClickListener(v -> {
-            Intent intent = WebViewActivity.newInstance(getContext(), "https://stackoverflow.com/questions/7746409/android-webview-launches-browser-when-calling-loadurl");
-            startActivity(intent);
+            if (postsShowingState != SHOWING_FAVORITES) presenter.showFavoritedPosts();
+
+            postsShowingState = SHOWING_FAVORITES;
+            refresher.setEnabled(false);
         });
 
         fabSaved.setOnClickListener(v -> {
-            Intent intent = PhotoViewActivity.newInstance(getContext(), "https://i.ytimg.com/vi/6VLxwPs-bpw/maxresdefault.jpg", null, false);
-            startActivity(intent);
+            if (postsShowingState != SHOWING_SAVED) presenter.showSavedPosts();
+
+            postsShowingState = SHOWING_SAVED;
+            refresher.setEnabled(false);
+        });
+
+        fabPublic.setOnClickListener(v -> {
+            if (postsShowingState != SHOWING_PUBLIC) presenter.showPublicPosts();
+
+            postsShowingState = SHOWING_PUBLIC;
+            refresher.setEnabled(true);
         });
     }
 
@@ -177,12 +203,16 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     private void bindLoadingView(View view)
     {
         loading = view.findViewById(R.id.loadingLayout);
+        loadingBar = view.findViewById(R.id.loading);
+        loadingText = view.findViewById(R.id.textLoading);
         loading.setVisibility(View.GONE);
     }
 
 
 
-
+    //********************************************
+    //ON MENU OPTIONS SELECT
+    //********************************************
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_home_options, menu);
@@ -247,11 +277,18 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
 
 
 
-    //IMPLEMENTS VIEW INTERFACE
+    //********************************************
+    //IMPLEMENTING VIEW INTERFACE
+    //********************************************
     @Override
-    public void enableLoadingView(boolean enable) {
-        if (enable) loading.setVisibility(View.VISIBLE);
-        else loading.setVisibility(View.GONE);
+    public void enableLoadingView(boolean enable, boolean loading, String message) {
+        if (enable) this.loading.setVisibility(View.VISIBLE);
+        else this.loading.setVisibility(View.GONE);
+
+        if (loading) loadingBar.setVisibility(View.VISIBLE);
+        else loadingBar.setVisibility(View.GONE);
+
+        loadingText.setText(message);
     }
 
     @Override
@@ -276,13 +313,21 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     }
 
     @Override
+    public void changePosts(ArrayList<Object> posts) {
+        adapter.removeAllCards();
+        adapter.addCards(posts, Constants.CARD_POST);
+    }
+
+    @Override
     public void stopRefreshing() {
         refresher.setRefreshing(false);
     }
 
 
 
-    // IMPLEMENTS POST ADAPTER INTERFACE
+    //********************************************
+    //IMPLEMENTING POST ADAPTER INTERFACE
+    //********************************************
     @Override
     public void onLikeClicked(Post post, boolean liked) {
         presenter.onLikePressed(post, liked);

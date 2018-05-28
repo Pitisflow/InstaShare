@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,7 +39,12 @@ public class PostInteractor {
 
 
     public static final String POST_TYPE_SHARED = "shared";
+    private static final int LIMIT_POSTS = 5;
 
+
+    //********************************************
+    //UPLOAD POST
+    //********************************************
 
 
     public static void publishPost(Post post, OnUploadingPost uploadingPost)
@@ -70,6 +76,13 @@ public class PostInteractor {
 
         ImagesInteractor.addImage(post.getMediaURL(), storageRoute, databaseRoutes, postKey);
     }
+
+
+
+
+    //********************************************
+    //DOWNLOAD DATA AND LISTENERS
+    //********************************************
 
 
     public static void getClosestPosts(int kilometers, Map<String, Object> location,
@@ -113,24 +126,58 @@ public class PostInteractor {
     }
 
 
-
-
-
-    public static void addPostToList(Post post, String userKey, String tree)
+    public static void getPostsFromList(String userKey, String tree, long endAt, OnDownloadingPostPerPost listener)
     {
-        Map<String, Object> postRed = new HashMap<>();
-        postRed.put(Constants.POST_TIMESTAMP_K, post.getTimestamp());
-        postRed.put(Constants.POST_KEY_K, post.getPostKey());
+        String path = Utils.createChild(tree, userKey);
 
-        DatabaseSingleton.getDbInstance().child(tree)
-                .child(userKey).child(post.getPostKey()).setValue(postRed);
+        listener.downloading();
+        DatabaseSingleton.getDbInstance().child(path).orderByChild(Constants.POST_TIMESTAMP_K)
+            .endAt(endAt).limitToLast(LIMIT_POSTS)
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists())
+                    {
+                        listener.downloadNumber((int) dataSnapshot.getChildrenCount());
+                        for (DataSnapshot data : dataSnapshot.getChildren())
+                        {
+                            GenericTypeIndicator<HashMap<String, Object>> t = new GenericTypeIndicator<HashMap<String, Object>>(){};
+                            HashMap<String, Object> map = data.getValue(t);
+
+                            if (map != null && map.containsKey(Constants.POST_KEY_K) && map.get(Constants.POST_KEY_K) instanceof String)
+                            {
+                                downloadPostFromList((String) map.get(Constants.POST_KEY_K), listener);
+                            }
+                        }
+                    } else listener.downloadNumber(0);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
     }
 
 
-    public static void removePostFromList(Post post, String userKey, String tree)
+    private static void downloadPostFromList(String postKey, OnDownloadingPostPerPost listener)
     {
-        DatabaseSingleton.getDbInstance().child(tree).child(userKey).child(post.getPostKey()).removeValue();
+        CollectionReference reference = DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T);
+
+        reference.document(postKey).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+            {
+                Post post = task.getResult().toObject(Post.class);
+
+                if (post != null) {
+                    post.setPostKey(postKey);
+                    post.setLocationMap(new HashMap<>(LocationUtils.getMapFromGeoPoint(post.getLocation())));
+                    listener.downloadCompleted(post);
+                }
+            }
+        });
     }
+
 
 
     public static void checkPostOnList(Post post, String userKey, String tree, OnCheckedList listener)
@@ -149,6 +196,12 @@ public class PostInteractor {
                 });
     }
 
+
+
+
+    //********************************************
+    //TRANSACTIONS
+    //********************************************
 
 
     public static void modifyLikes(String postKey, boolean plus)
@@ -190,25 +243,10 @@ public class PostInteractor {
 
 
 
-    public static Post createSharedPost(Post postToShare, UserBasic user, GeoPoint point)
-    {
-        Post post = new Post();
 
-        post.setType(POST_TYPE_SHARED);
-        post.setLocation(point);
-        post.setContentText(postToShare.getPostKey());
-        post.setTimestamp(System.currentTimeMillis());
-        post.setUser(user);
-        post.setAlignUp(true);
-        post.setAnonymous(false);
-        post.setForAll(false);
-        post.setNumLikes(0L);
-        post.setNumShares(0L);
-        post.setNumComments(0L);
-
-        return post;
-    }
-
+    //********************************************
+    //SIMPLE OPERATIONS
+    //********************************************
 
     public static void removePost(Post post, OnDeletePost listener)
     {
@@ -243,8 +281,56 @@ public class PostInteractor {
     }
 
 
+    public static void addPostToList(Post post, String userKey, String tree)
+    {
+        Map<String, Object> postRed = new HashMap<>();
+        postRed.put(Constants.POST_TIMESTAMP_K, post.getTimestamp());
+        postRed.put(Constants.POST_KEY_K, post.getPostKey());
+
+        DatabaseSingleton.getDbInstance().child(tree)
+                .child(userKey).child(post.getPostKey()).setValue(postRed);
+    }
 
 
+    public static void removePostFromList(Post post, String userKey, String tree)
+    {
+        DatabaseSingleton.getDbInstance().child(tree).child(userKey).child(post.getPostKey()).removeValue();
+    }
+
+
+
+
+    //********************************************
+    //OTHERS
+    //********************************************
+
+
+    public static Post createSharedPost(Post postToShare, UserBasic user, GeoPoint point)
+    {
+        Post post = new Post();
+
+        post.setType(POST_TYPE_SHARED);
+        post.setLocation(point);
+        post.setContentText(postToShare.getPostKey());
+        post.setTimestamp(System.currentTimeMillis());
+        post.setUser(user);
+        post.setAlignUp(true);
+        post.setAnonymous(false);
+        post.setForAll(false);
+        post.setNumLikes(0L);
+        post.setNumShares(0L);
+        post.setNumComments(0L);
+
+        return post;
+    }
+
+
+
+
+
+    //********************************************
+    //INTERFACES
+    //********************************************
 
 
     public interface OnUploadingPost
@@ -266,6 +352,15 @@ public class PostInteractor {
         void downloading(boolean isRefreshing);
 
         void downloadCompleted(ArrayList<Post> posts, boolean isRefreshing);
+    }
+
+    public interface OnDownloadingPostPerPost
+    {
+        void downloading();
+
+        void downloadNumber(int number);
+
+        void downloadCompleted(Post post);
     }
 
     public interface OnCheckedList

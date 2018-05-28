@@ -97,6 +97,9 @@
     <string name="post_menu_favorite_remove">Remove from favorites posts</string>
     <string name="post_menu_save_remove">Remove from saved posts</string>
     <string name="post_menu_show">Show this post</string>
+    <string name="post_error_no_saved">You have not saved any post</string>
+    <string name="post_error_no_favs">You have not added any favorites</string>
+    <string name="post_error_no_close_posts">No posts found near you</string>
 
 
 
@@ -191,6 +194,7 @@
     <string name="fab_menu_favorites">Favorites</string>
     <string name="fab_menu_add">Add post</string>
     <string name="fab_menu_saved">Saved</string>
+    <string name="fab_menu_public">Public posts</string>
 
 
 
