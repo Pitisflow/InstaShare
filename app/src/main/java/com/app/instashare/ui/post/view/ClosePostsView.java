@@ -12,4 +12,10 @@ public interface ClosePostsView {
     void refreshRecycler();
 
     void addPost(Object post);
+
+    void removePost(Object post);
+
+    void addPostAtStart(Object post);
+
+    void stopRefreshing();
 }

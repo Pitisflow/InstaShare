@@ -46,6 +46,17 @@
             tool:text="14:23"/>
 
 
+        <ImageButton
+            android:id="@+id/options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/userImage"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_more_vert_black_24"/>
+
+
         <TextView
             android:id="@+id/contentText"
             android:layout_width="wrap_content"
@@ -53,7 +64,6 @@
             android:layout_below="@+id/date"
             android:layout_alignStart="@+id/userImage"
             android:layout_marginTop="@dimen/general_margin_medium"
-            android:layout_marginBottom="@dimen/general_margin_medium"
             android:layout_marginEnd="@dimen/general_margin_small"
             android:textColor="@color/black"
             tool:text="Cum hippotoxota accelerare, omnes nuclear vexatum iacerees promissio fortis, placidus consiliumes. Quadra peritus castor est. Accola, musa, et fiscina. Nunquam quaestio verpa. Est regius omnia, cesaris." />
@@ -66,15 +76,37 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/contentText"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/general_margin_medium"
+            android:layout_marginTop="@dimen/general_margin_medium"
             android:adjustViewBounds="true"
+            android:transitionName="@string/image_transition"
             tool:src="@mipmap/ic_launcher"/>
+
+
+        <TextView
+            android:id="@+id/likesNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contentImage"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:layout_marginStart="@dimen/general_margin_small"
+            android:layout_alignParentStart="true" />
+
+
+        <TextView
+            android:id="@+id/commentsNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contentImage"
+            android:layout_marginTop="@dimen/general_margin_medium"
+            android:layout_marginEnd="@dimen/general_margin_small"
+            android:layout_alignParentEnd="true" />
+
 
         <View
             android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/contentImage"
+            android:layout_below="@+id/likesNumber"
             android:layout_marginBottom="@dimen/general_margin_small"
             android:layout_marginEnd="@dimen/general_margin_small"
             android:layout_marginStart="@dimen/general_margin_small"
@@ -89,35 +121,64 @@
             android:layout_marginBottom="@dimen/general_margin_small"
             android:weightSum="3">
 
-
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:background="@android:color/transparent"
-                android:text="@string/post_options_like"
-                tool:text="Like"/>
+                android:gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/likeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/post_options_like"
+                    android:textColor="@color/grayDark"
+                    android:drawablePadding="5dp"
+                    tool:text="Like"/>
+
+            </LinearLayout>
 
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:background="@android:color/transparent"
-                android:text="@string/post_options_comment"
-                tool:text="Comment"/>
+                android:gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/commentButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/post_options_comment"
+                    android:textColor="@color/grayDark"
+                    android:drawablePadding="5dp"
+                    tool:text="Comment"/>
+
+            </LinearLayout>
 
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="0dp"
-                android:background="@android:color/transparent"
-                android:text="@string/post_options_share"
-                tool:text="Share"/>
+                android:gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/shareButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/post_options_share"
+                    android:textColor="@color/grayDark"
+                    android:drawablePadding="5dp"
+                    tool:text="Share"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

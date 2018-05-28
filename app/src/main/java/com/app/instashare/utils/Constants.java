@@ -23,6 +23,13 @@ public class Constants {
 
 
 
+    //********************************************
+    //Shared Preferences
+    //********************************************
+    public static final String PREFERENCES_RADIUS = "radius";
+
+
+
 
     //********************************************
     //Firebase Trees (T) and Keys (K).
@@ -79,18 +86,34 @@ public class Constants {
 
     //Post keys tree keys
     public static final String POSTS_T = "posts";
+    public static final String POST_KEY_K = "postKey";
     public static final String POST_CONTENT_TEXT_K = "contentText";
     public static final String POST_CONTENT_IMAGE_K = "mediaURL";
     public static final String POST_USER_K = "user";
     public static final String POST_TIMESTAMP_K = "timestamp";
     public static final String POST_TYPE_K = "type";
     public static final String POST_ALIGNUP_K = "isAlignUp";
-    public static final String POST_ANONYMOUS_K = "isAnonymous";
-    public static final String POST_PUBLIC_K = "isForAll";
+    public static final String POST_ANONYMOUS_K = "anonymous";
+    public static final String POST_PUBLIC_K = "forAll";
     public static final String POST_TAGS_K = "tags";
     public static final String POST_LIKES_K = "numLikes";
     public static final String POST_COMMENTS_K = "numComments";
     public static final String POST_SHARES_K = "numShares";
+
+
+    public static final String POSTS_LIKED_T = "posts-liked";
+    public static final String POSTS_SHARED_T = "posts-shared";
+    public static final String POSTS_FAVORITES_T = "posts-favs";
+    public static final String POSTS_SAVED_T = "posts-saved";
+    public static final String POSTS_REPORTED_T = "posts-reported";
+    public static final String POSTS_HIDED_T = "posts-hided";
+
+
+    //Report tree keys
+    public static final String POST_REPORT_K = "report";
+
+
+
 
 
     //General keys

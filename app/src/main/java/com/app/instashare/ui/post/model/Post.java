@@ -2,18 +2,22 @@ package com.app.instashare.ui.post.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.app.instashare.ui.user.model.UserBasic;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Created by Pitisflow on 20/4/18.
  */
 
-public class Post implements Parcelable {
+public class Post implements Parcelable, Comparable{
+
+    private String postKey;
 
     //Post user information
     private UserBasic user;
@@ -36,6 +40,11 @@ public class Post implements Parcelable {
     private Long numLikes;      //Order By
     private Long numComments;   //Order By
     private Long numShares;     //Order By
+
+
+    //Post local values
+    private boolean isLiked;
+    private boolean isShared;
 
 
 
@@ -159,6 +168,47 @@ public class Post implements Parcelable {
         this.location = location;
     }
 
+    @Exclude
+    public String getPostKey() {
+        return postKey;
+    }
+
+    @Exclude
+    public void setPostKey(String postKey) {
+        this.postKey = postKey;
+    }
+
+    @Exclude
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    @Exclude
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
+    @Exclude
+    public boolean isShared() {
+        return isShared;
+    }
+
+    @Exclude
+    public void setShared(boolean shared) {
+        isShared = shared;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        if (o instanceof Post)
+        {
+            if (this.location.equals(((Post) o).getLocation())
+                    && this.user.getUserKey().equals(((Post) o).user.getUserKey())
+                    && Objects.equals(this.timestamp, ((Post) o).getTimestamp())) return 0;
+            else return 1;
+        } else return -1;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -166,6 +216,7 @@ public class Post implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.postKey);
         dest.writeParcelable(this.user, flags);
         dest.writeValue(this.timestamp);
         dest.writeString(this.contentText);
@@ -179,9 +230,12 @@ public class Post implements Parcelable {
         dest.writeValue(this.numLikes);
         dest.writeValue(this.numComments);
         dest.writeValue(this.numShares);
+        dest.writeByte(this.isLiked ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isShared ? (byte) 1 : (byte) 0);
     }
 
     protected Post(Parcel in) {
+        this.postKey = in.readString();
         this.user = in.readParcelable(UserBasic.class.getClassLoader());
         this.timestamp = (Long) in.readValue(Long.class.getClassLoader());
         this.contentText = in.readString();
@@ -195,6 +249,8 @@ public class Post implements Parcelable {
         this.numLikes = (Long) in.readValue(Long.class.getClassLoader());
         this.numComments = (Long) in.readValue(Long.class.getClassLoader());
         this.numShares = (Long) in.readValue(Long.class.getClassLoader());
+        this.isLiked = in.readByte() != 0;
+        this.isShared = in.readByte() != 0;
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {

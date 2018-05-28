@@ -3,6 +3,7 @@ package com.app.instashare.utils;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,12 +18,15 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
 
 import com.app.instashare.R;
+import com.app.instashare.ui.other.activity.WebViewActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,6 +136,31 @@ public class Utils {
     }
 
 
+
+    public static CharSequence urlChecker(String contentText, Context context)
+    {
+        String[] words = contentText.split(" ");
+        CharSequence sequence = "";
+
+        for (String word : words)
+        {
+            if (Patterns.WEB_URL.matcher(word).matches()) {
+                SpannableString spannableString =  Utils.getSpannableFromString(word,
+                        context.getResources().getColor(R.color.colorPrimary), true, false, () -> {
+                            Intent intent = WebViewActivity.newInstance(context, word);
+                            context.startActivity(intent);
+                        });
+
+                sequence = TextUtils.concat(sequence, " ", spannableString);
+                continue;
+            }
+
+            sequence = TextUtils.concat(sequence, " ", word);
+        }
+        return sequence;
+    }
+
+
     public static String createChild(String... tree)
     {
         StringBuilder sb = new StringBuilder();
@@ -156,7 +185,7 @@ public class Utils {
 
 
     public static SpannableString getSpannableFromString(String string, int color,
-                                                         boolean isLink, SpannableAction action)
+                                                         boolean isLink, boolean shouldBeBold, SpannableAction action)
     {
         SpannableString ss = new SpannableString(string);
 
@@ -173,7 +202,7 @@ public class Utils {
                     ds.setUnderlineText(true);
                 } else {
                     ds.setUnderlineText(false);
-                    ds.setFakeBoldText(true);
+                    if (shouldBeBold) ds.setFakeBoldText(true);
                 }
 
                 ds.setColor(color);

@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.post.model.Post;
@@ -25,6 +26,7 @@ public class PostRVAdapter extends BaseRVAdapter {
 
     private boolean isDeletableTag;
     private OnDeleteTagListener deleteTagListener;
+    private OnPostInteraction postListener;
 
 
     public PostRVAdapter() {
@@ -74,7 +76,7 @@ public class PostRVAdapter extends BaseRVAdapter {
         switch (holder.getItemViewType())
         {
             case Constants.CARD_POST:
-                ((PostViewHolder) holder).bind((Post) getItemList().get(position), context);
+                ((PostViewHolder) holder).bind((Post) getItemList().get(position), context, postListener);
                 break;
 
             case Constants.CARD_POST_TAG:
@@ -98,8 +100,39 @@ public class PostRVAdapter extends BaseRVAdapter {
         deleteTagListener = null;
     }
 
+    public void setPostListener(OnPostInteraction postListener) {
+        this.postListener = postListener;
+    }
+
+    public void removePostListener(){
+        postListener = null;
+    }
+
+
+
+
 
     public interface OnDeleteTagListener {
         void deleteTag(String tagName);
+    }
+
+
+    public interface OnPostInteraction
+    {
+        void onLikeClicked(Post post, boolean liked);
+
+        void onCommentClicked(Post post);
+
+        void onShareClicked(Post post, boolean shared);
+
+        void onSharedPostClicked(Post post);
+
+        void onImageClicked(String imageUrl, ImageView imageView);
+
+        void onUserClicked(String userKey);
+
+        void onOptionsClicked(Post post, View view);
+
+        void onPostLongClicked(Post post);
     }
 }

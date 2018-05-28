@@ -107,6 +107,13 @@ public class MainActivity extends AppCompatActivity implements MainView,
     }
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean("fragmentTransactionDone", fragmentTransactionDone);
+    }
+
 
 
     private void bindDrawerView()
@@ -213,12 +220,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
-        outState.putBoolean("fragmentTransactionDone", fragmentTransactionDone);
-    }
 
 
 

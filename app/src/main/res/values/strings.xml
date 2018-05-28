@@ -68,9 +68,35 @@
     <!-- Post options Strings -->
     <string name="post_post">Post</string>
     <string name="post_anonymous">Anonymous</string>
+    <string name="post_loading">Loading posts…</string>
+    <string name="post_refreshing_failed">It is not possible to refresh the posts.</string>
+    <string name="post_likes_single">1 like</string>
+    <string name="post_likes_plural">%1$d likes</string>
+    <string name="post_comments_single">1 comment</string>
+    <string name="post_comments_plural">%1$d comments</string>
+    <string name="post_share_message">Do you really want to share this post?</string>
+    <string name="post_share_option_ok">Yes</string>
+    <string name="post_share_option_cancel">Cancel</string>
+    <string name="post_shared_already">You already shared this post.</string>
+    <string name="post_shared_text">Have shared a post</string>
+    <string name="post_shared_successful">You have shared a post.</string>
+    <string name="post_report">Report</string>
+    <string name="post_report_text">Write your report here:</string>
+    <string name="post_report_send">Send</string>
+    <string name="post_report_cancel">Cancel</string>
+    <string name="post_report_sent">The report has been sent successfully.</string>
     <string name="post_options_comment">Comment</string>
     <string name="post_options_like">Like</string>
     <string name="post_options_share">Share</string>
+    <string name="post_options_see_more">&#160;See more.</string>
+    <string name="post_options_see_less">&#160;See less.</string>
+    <string name="post_menu_report">Report</string>
+    <string name="post_menu_hide">Hide</string>
+    <string name="post_menu_favorite">Favorite</string>
+    <string name="post_menu_save">Save</string>
+    <string name="post_menu_favorite_remove">Remove from favorites posts</string>
+    <string name="post_menu_save_remove">Remove from saved posts</string>
+    <string name="post_menu_show">Show this post</string>
 
 
 
@@ -188,6 +214,7 @@
     <!-- Others -->
     <string name="image_transition" translatable="false">image_transition</string>
     <string name="text_transition" translatable="false">text_transition</string>
+    <string name="menu_post" translatable="false">posts_options_remove</string>
 
 
     <!-- File strings -->

@@ -88,11 +88,11 @@ public class PreviewPostPresenter {
         if (isUp) {
             view.enableTextUp(true);
             view.enableTextDown(false);
-            view.setTextUp(urlChecker(text));
+            view.setTextUp(Utils.urlChecker(text, context));
         } else {
             view.enableTextUp(false);
             view.enableTextDown(true);
-            view.setTextDown(urlChecker(text));
+            view.setTextDown(Utils.urlChecker(text, context));
         }
     }
 
@@ -126,30 +126,6 @@ public class PreviewPostPresenter {
     }
 
 
-    private CharSequence urlChecker(String contentText)
-    {
-        String[] words = contentText.split(" ");
-        CharSequence sequence = "";
-
-        for (String word : words)
-        {
-            if (Patterns.WEB_URL.matcher(word).matches()) {
-                SpannableString spannableString =  Utils.getSpannableFromString(word,
-                    context.getResources().getColor(R.color.colorPrimary), true, () -> {
-                        Intent intent = WebViewActivity.newInstance(context, word);
-                        context.startActivity(intent);
-                    });
-
-                sequence = TextUtils.concat(sequence, " ", spannableString);
-                continue;
-            }
-
-            sequence = TextUtils.concat(sequence, " ", word);
-        }
-
-        sequence = TextUtils.concat(sequence, "\n");
-        return sequence;
-    }
 
 
     public void terminate()

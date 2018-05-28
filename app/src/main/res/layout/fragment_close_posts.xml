@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/general_margin_medium"
             android:textSize="20sp"
-            android:text="Cargando publicaciones..."/>
+            android:text="@string/post_loading"/>
 
 
     </LinearLayout>
