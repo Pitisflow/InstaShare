@@ -64,7 +64,9 @@
             android:name=".ui.other.activity.PhotoViewActivity"
             android:theme="@style/AppThemeTranslucent"/>
 
-
+        <activity
+            android:name=".ui.post.activity.PublicPostsSettings"
+            android:theme="@style/AppTheme.Dialog"/>
 
 
         <provider

@@ -1,22 +1,20 @@
 package com.app.instashare.ui.post.fragment;
 
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,10 +31,10 @@ import android.widget.Toast;
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.custom.MyScrollListener;
+import com.app.instashare.ui.base.activity.MainActivity;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
-import com.app.instashare.ui.other.activity.WebViewActivity;
-import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.post.activity.AddPostActivity;
+import com.app.instashare.ui.post.activity.PublicPostsSettings;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.ClosePostsPresenter;
 import com.app.instashare.ui.post.view.ClosePostsView;
@@ -93,7 +91,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (savedInstanceState != null )
+        if (savedInstanceState != null)
         {
             recyclerItemsState = savedInstanceState.getParcelableArrayList("recyclerItems");
             recyclerState = savedInstanceState.getParcelable("recycler");
@@ -101,8 +99,6 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
             isLoading = savedInstanceState.getBoolean("isLoading", false);
             downloadCompleted = savedInstanceState.getBoolean("downloadCompleted", false);
         }
-
-
 
         presenter = new ClosePostsPresenter(getContext(), this);
 
@@ -134,14 +130,23 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
                     presenter.setPostShowing(postsShowingState);
                     presenter.setLoadingMore(isLoading);
 
-                    if (postsShowingState == SHOWING_FAVORITES) presenter.setFavoritedPosts(new ArrayList<>(tmp));
-                    else if (postsShowingState == SHOWING_SAVED) presenter.setSavedPosts(new ArrayList<>(tmp));
+                    if (postsShowingState == SHOWING_FAVORITES) {
+                        presenter.setFavoritedPosts(new ArrayList<>(tmp));
+                        setToolbarTitle(getString(R.string.post_title_favorites));
+                    }
+                    else if (postsShowingState == SHOWING_SAVED) {
+                        presenter.setSavedPosts(new ArrayList<>(tmp));
+                        setToolbarTitle(getString(R.string.post_title_saved));
+                    }
 
                 }
-                else postsShowingState = SHOWING_PUBLIC;
+                else {
+                    postsShowingState = SHOWING_PUBLIC;
+                    setToolbarTitle(getString(R.string.post_title_public));
+                }
 
                 if (isLoading && !downloadCompleted) adapter.addCard(null, Constants.CARD_LOADING);
-            }
+            } else setToolbarTitle(getString(R.string.post_title_public));
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
             recyclerState = null;
             recyclerItemsState = null;
@@ -180,6 +185,15 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         outState.putBoolean("downloadCompleted", downloadCompleted);
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data.getExtras() != null)
+        {
+            System.out.println(data.getExtras().getBoolean(PublicPostsSettings.NEED_RELOAD));
+        }
+    }
+
     private void bindFabButtons(View view)
     {
         FloatingActionButton fabAdd = view.findViewById(R.id.add);
@@ -191,10 +205,10 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
             Intent intent = new Intent(getContext(), AddPostActivity.class);
             startActivity(intent);
         });
-
         fabFavorites.setOnClickListener(v -> {
             if (postsShowingState != SHOWING_FAVORITES) presenter.showFavoritedPosts();
 
+            setToolbarTitle(getString(R.string.post_title_favorites));
             postsShowingState = SHOWING_FAVORITES;
             refresher.setEnabled(false);
             recyclerView.addOnScrollListener(scrollListener);
@@ -203,6 +217,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         fabSaved.setOnClickListener(v -> {
             if (postsShowingState != SHOWING_SAVED) presenter.showSavedPosts();
 
+            setToolbarTitle(getString(R.string.post_title_saved));
             postsShowingState = SHOWING_SAVED;
             refresher.setEnabled(false);
             recyclerView.addOnScrollListener(scrollListener);
@@ -211,6 +226,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         fabPublic.setOnClickListener(v -> {
             if (postsShowingState != SHOWING_PUBLIC) presenter.showPublicPosts();
 
+            setToolbarTitle(getString(R.string.post_title_public));
             postsShowingState = SHOWING_PUBLIC;
             refresher.setEnabled(true);
             recyclerView.removeOnScrollListener(scrollListener);
@@ -243,6 +259,17 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     }
 
 
+    private void setToolbarTitle(String title)
+    {
+        ActionBar actionBar;
+        if (getActivity() != null && ((MainActivity) getActivity()).getSupportActionBar() != null)
+        {
+            actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) actionBar.setTitle(getString(R.string.app_name) + " " + title);
+        }
+    }
+
+
 
     //********************************************
     //ON MENU OPTIONS SELECT
@@ -259,7 +286,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         switch (item.getItemId())
         {
             case R.id.location:
-                System.out.println("Location");
+                Intent intent = new Intent(getContext(), PublicPostsSettings.class);
+                startActivityForResult(intent, 1);
                 break;
 
             case R.id.filter:
@@ -326,11 +354,6 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     }
 
     @Override
-    public void refreshRecycler() {
-
-    }
-
-    @Override
     public void addPost(Object post) {
         adapter.addCard(post, Constants.CARD_POST);
     }
@@ -338,7 +361,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     @Override
     public void enableLoading(boolean enable) {
         if (enable) adapter.addCard(null, Constants.CARD_LOADING);
-        else adapter.removeLastCard();
+        else if (adapter.getItemList() != null && adapter.getItemList().size() != 0) adapter.removeLastCard();
     }
 
     @Override
@@ -443,8 +466,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(true);
         builder.setNegativeButton(getString(R.string.post_menu_favorite_remove), (dialogInterface, i) -> presenter.onRemoveFromFavorites(post));
-        builder.setNeutralButton(getString(R.string.post_menu_favorite_remove), (dialogInterface, i) -> presenter.onRemoveFromSaved(post));
-        builder.setPositiveButton(getString(R.string.post_menu_save_remove), (dialogInterface, i) -> presenter.onRemoveFromHided(post));
+        builder.setNeutralButton(getString(R.string.post_menu_save_remove), (dialogInterface, i) -> presenter.onRemoveFromSaved(post));
+        builder.setPositiveButton(getString(R.string.post_menu_show), (dialogInterface, i) -> presenter.onRemoveFromHidden(post));
         builder.show();
     }
 

@@ -9,9 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by Pitisflow on 24/4/18.
@@ -23,7 +21,7 @@ public class UserData {
     private static User user;
     private static UserData instance;
 
-    private static ArrayList<String> hidedPosts = new ArrayList<>();
+    private static ArrayList<String> hiddenPosts = new ArrayList<>();
     private static ArrayList<OnUserDataFetched> listeners = new ArrayList<>();
 
 
@@ -103,13 +101,13 @@ public class UserData {
 
     private void fetchHidePosts()
     {
-        String path = Utils.createChild(Constants.POSTS_HIDED_T, UserInteractor.getUserKey());
+        String path = Utils.createChild(Constants.POSTS_HIDDEN_T, UserInteractor.getUserKey());
 
         DatabaseSingleton.getDbInstance().child(path).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    hidedPosts.add(dataSnapshot.getKey());
+                    hiddenPosts.add(dataSnapshot.getKey());
                 }
             }
 
@@ -121,7 +119,7 @@ public class UserData {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    hidedPosts.remove(dataSnapshot.getKey());
+                    hiddenPosts.remove(dataSnapshot.getKey());
                 }
             }
 
@@ -142,8 +140,8 @@ public class UserData {
         return user;
     }
 
-    public static ArrayList<String> getHidedPosts() {
-        return hidedPosts;
+    public static ArrayList<String> getHiddenPosts() {
+        return hiddenPosts;
     }
 
     public interface OnUserDataFetched {

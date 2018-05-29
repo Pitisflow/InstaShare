@@ -62,6 +62,7 @@ dependencies {
     implementation 'me.biubiubiu.justifytext:library:1.1'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.jsibbold:zoomage:1.1.0'
+    implementation 'com.xw.repo:bubbleseekbar:3.16-lite'
 
 
 

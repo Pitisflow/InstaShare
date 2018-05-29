@@ -28,6 +28,7 @@ public class Constants {
     //Shared Preferences
     //********************************************
     public static final String PREFERENCES_RADIUS = "radius";
+    public static final String PREFERENCES_SHOW_HIDDEN = "showHidden";
 
 
 
@@ -107,7 +108,7 @@ public class Constants {
     public static final String POSTS_FAVORITES_T = "posts-favs";
     public static final String POSTS_SAVED_T = "posts-saved";
     public static final String POSTS_REPORTED_T = "posts-reported";
-    public static final String POSTS_HIDED_T = "posts-hided";
+    public static final String POSTS_HIDDEN_T = "posts-hidden";
 
 
     //Report tree keys

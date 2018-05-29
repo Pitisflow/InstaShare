@@ -223,22 +223,22 @@ public class Utils {
         HashMap<String, Boolean> tagsMap = new HashMap<>();
         Resources res = context.getResources();
 
-        if (tags.contains(res.getString(R.string.tag_travel))) tagsMap.put(Constants.TAG_TRAVEL_K, true);
-        if (tags.contains(res.getString(R.string.tag_sport))) tagsMap.put(Constants.TAG_SPORT_K, true);
-        if (tags.contains(res.getString(R.string.tag_entertaiment))) tagsMap.put(Constants.TAG_ENTERTAIMENT_K, true);
-        if (tags.contains(res.getString(R.string.tag_groups))) tagsMap.put(Constants.TAG_GROUPS_K, true);
-        if (tags.contains(res.getString(R.string.tag_photo))) tagsMap.put(Constants.TAG_PHOTO_K, true);
-        if (tags.contains(res.getString(R.string.tag_video))) tagsMap.put(Constants.TAG_VIDEO_K, true);
-        if (tags.contains(res.getString(R.string.tag_places))) tagsMap.put(Constants.TAG_PLACES_K, true);
-        if (tags.contains(res.getString(R.string.tag_lifestyle))) tagsMap.put(Constants.TAG_LIFESTYLE_K, true);
-        if (tags.contains(res.getString(R.string.tag_party))) tagsMap.put(Constants.TAG_PARTY_K, true);
-        if (tags.contains(res.getString(R.string.tag_meetings))) tagsMap.put(Constants.TAG_MEETINGS_K, true);
-        if (tags.contains(res.getString(R.string.tag_work))) tagsMap.put(Constants.TAG_WORK_K, true);
-        if (tags.contains(res.getString(R.string.tag_food))) tagsMap.put(Constants.TAG_FOOD_K, true);
-        if (tags.contains(res.getString(R.string.tag_politic))) tagsMap.put(Constants.TAG_POLITIC_K, true);
-        if (tags.contains(res.getString(R.string.tag_social))) tagsMap.put(Constants.TAG_SOCIAL_K, true);
-        if (tags.contains(res.getString(R.string.tag_curiosities))) tagsMap.put(Constants.TAG_CURIOSITIES_K, true);
-        if (tags.contains(res.getString(R.string.tag_animals))) tagsMap.put(Constants.TAG_ANIMALS_K, true);
+        tagsMap.put(Constants.TAG_TRAVEL_K, tags.contains(res.getString(R.string.tag_travel)));
+        tagsMap.put(Constants.TAG_SPORT_K, tags.contains(res.getString(R.string.tag_sport)));
+        tagsMap.put(Constants.TAG_ENTERTAIMENT_K, tags.contains(res.getString(R.string.tag_entertaiment)));
+        tagsMap.put(Constants.TAG_GROUPS_K, tags.contains(res.getString(R.string.tag_groups)));
+        tagsMap.put(Constants.TAG_PHOTO_K, tags.contains(res.getString(R.string.tag_photo)));
+        tagsMap.put(Constants.TAG_VIDEO_K, tags.contains(res.getString(R.string.tag_video)));
+        tagsMap.put(Constants.TAG_PLACES_K, tags.contains(res.getString(R.string.tag_places)));
+        tagsMap.put(Constants.TAG_LIFESTYLE_K, tags.contains(res.getString(R.string.tag_lifestyle)));
+        tagsMap.put(Constants.TAG_PARTY_K, tags.contains(res.getString(R.string.tag_party)));
+        tagsMap.put(Constants.TAG_MEETINGS_K, tags.contains(res.getString(R.string.tag_meetings)));
+        tagsMap.put(Constants.TAG_WORK_K, tags.contains(res.getString(R.string.tag_work)));
+        tagsMap.put(Constants.TAG_FOOD_K, tags.contains(res.getString(R.string.tag_food)));
+        tagsMap.put(Constants.TAG_POLITIC_K, tags.contains(res.getString(R.string.tag_politic)));
+        tagsMap.put(Constants.TAG_SOCIAL_K, tags.contains(res.getString(R.string.tag_social)));
+        tagsMap.put(Constants.TAG_CURIOSITIES_K, tags.contains(res.getString(R.string.tag_curiosities)));
+        tagsMap.put(Constants.TAG_ANIMALS_K, tags.contains(res.getString(R.string.tag_animals)));
 
         return tagsMap;
     }
@@ -249,22 +249,22 @@ public class Utils {
         ArrayList<String> tagsArray = new ArrayList<>();
         Resources res = context.getResources();
 
-        if (tags.containsKey(Constants.TAG_TRAVEL_K)) tagsArray.add(res.getString(R.string.tag_travel));
-        if (tags.containsKey(Constants.TAG_SPORT_K)) tagsArray.add(res.getString(R.string.tag_sport));
-        if (tags.containsKey(Constants.TAG_ENTERTAIMENT_K)) tagsArray.add(res.getString(R.string.tag_entertaiment));
-        if (tags.containsKey(Constants.TAG_GROUPS_K)) tagsArray.add(res.getString(R.string.tag_groups));
-        if (tags.containsKey(Constants.TAG_PHOTO_K)) tagsArray.add(res.getString(R.string.tag_photo));
-        if (tags.containsKey(Constants.TAG_VIDEO_K)) tagsArray.add(res.getString(R.string.tag_video));
-        if (tags.containsKey(Constants.TAG_PLACES_K)) tagsArray.add(res.getString(R.string.tag_places));
-        if (tags.containsKey(Constants.TAG_LIFESTYLE_K)) tagsArray.add(res.getString(R.string.tag_lifestyle));
-        if (tags.containsKey(Constants.TAG_PARTY_K)) tagsArray.add(res.getString(R.string.tag_party));
-        if (tags.containsKey(Constants.TAG_MEETINGS_K)) tagsArray.add(res.getString(R.string.tag_meetings));
-        if (tags.containsKey(Constants.TAG_WORK_K)) tagsArray.add(res.getString(R.string.tag_work));
-        if (tags.containsKey(Constants.TAG_FOOD_K)) tagsArray.add(res.getString(R.string.tag_food));
-        if (tags.containsKey(Constants.TAG_POLITIC_K)) tagsArray.add(res.getString(R.string.tag_politic));
-        if (tags.containsKey(Constants.TAG_SOCIAL_K)) tagsArray.add(res.getString(R.string.tag_social));
-        if (tags.containsKey(Constants.TAG_CURIOSITIES_K)) tagsArray.add(res.getString(R.string.tag_curiosities));
-        if (tags.containsKey(Constants.TAG_ANIMALS_K)) tagsArray.add(res.getString(R.string.tag_animals));
+        if (tags.containsKey(Constants.TAG_TRAVEL_K) && tags.get(Constants.TAG_TRAVEL_K)) tagsArray.add(res.getString(R.string.tag_travel));
+        if (tags.containsKey(Constants.TAG_SPORT_K) && tags.get(Constants.TAG_SPORT_K)) tagsArray.add(res.getString(R.string.tag_sport));
+        if (tags.containsKey(Constants.TAG_ENTERTAIMENT_K) && tags.get(Constants.TAG_ENTERTAIMENT_K)) tagsArray.add(res.getString(R.string.tag_entertaiment));
+        if (tags.containsKey(Constants.TAG_GROUPS_K) && tags.get(Constants.TAG_GROUPS_K)) tagsArray.add(res.getString(R.string.tag_groups));
+        if (tags.containsKey(Constants.TAG_PHOTO_K) && tags.get(Constants.TAG_PHOTO_K)) tagsArray.add(res.getString(R.string.tag_photo));
+        if (tags.containsKey(Constants.TAG_VIDEO_K) && tags.get(Constants.TAG_VIDEO_K)) tagsArray.add(res.getString(R.string.tag_video));
+        if (tags.containsKey(Constants.TAG_PLACES_K) && tags.get(Constants.TAG_PLACES_K)) tagsArray.add(res.getString(R.string.tag_places));
+        if (tags.containsKey(Constants.TAG_LIFESTYLE_K) && tags.get(Constants.TAG_LIFESTYLE_K)) tagsArray.add(res.getString(R.string.tag_lifestyle));
+        if (tags.containsKey(Constants.TAG_PARTY_K) && tags.get(Constants.TAG_PARTY_K)) tagsArray.add(res.getString(R.string.tag_party));
+        if (tags.containsKey(Constants.TAG_MEETINGS_K) && tags.get(Constants.TAG_MEETINGS_K)) tagsArray.add(res.getString(R.string.tag_meetings));
+        if (tags.containsKey(Constants.TAG_WORK_K) && tags.get(Constants.TAG_WORK_K)) tagsArray.add(res.getString(R.string.tag_work));
+        if (tags.containsKey(Constants.TAG_FOOD_K) && tags.get(Constants.TAG_FOOD_K)) tagsArray.add(res.getString(R.string.tag_food));
+        if (tags.containsKey(Constants.TAG_POLITIC_K) && tags.get(Constants.TAG_POLITIC_K)) tagsArray.add(res.getString(R.string.tag_politic));
+        if (tags.containsKey(Constants.TAG_SOCIAL_K) && tags.get(Constants.TAG_SOCIAL_K)) tagsArray.add(res.getString(R.string.tag_social));
+        if (tags.containsKey(Constants.TAG_CURIOSITIES_K) && tags.get(Constants.TAG_CURIOSITIES_K)) tagsArray.add(res.getString(R.string.tag_curiosities));
+        if (tags.containsKey(Constants.TAG_ANIMALS_K) && tags.get(Constants.TAG_ANIMALS_K)) tagsArray.add(res.getString(R.string.tag_animals));
 
         return tagsArray;
     }

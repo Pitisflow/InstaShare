@@ -14,32 +14,22 @@ import com.app.instashare.ui.post.fragment.ClosePostsFragment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.ClosePostsView;
 import com.app.instashare.utils.Constants;
-import com.app.instashare.utils.LocationUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Pitisflow on 24/5/18.
  */
 
-public class ClosePostsPresenter implements UserData.OnUserDataFetched,
+public class ClosePostsPresenter extends BaseListedPostPresenter implements UserData.OnUserDataFetched,
         PostInteractor.OnDowloadingPosts, PostInteractor.OnDownloadingPostPerPost {
 
-    private Context context;
-    private ClosePostsView view;
-
-
-    private ArrayList<Post> currentPosts;
     private ArrayList<Post> publicPosts;
     private ArrayList<Post> savedPosts;
     private ArrayList<Post> favoritedPosts;
     private ArrayList<Post> temp;
-    private Map<String, Object> location;
-    private boolean locationUpdated = false;
     private boolean loadingMore = false;
     private AtomicInteger control = new AtomicInteger();
     private int postShowing = ClosePostsFragment.SHOWING_PUBLIC;
@@ -47,40 +37,30 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched,
 
 
     public ClosePostsPresenter(Context context, ClosePostsView view) {
-        this.context = context;
-        this.view = view;
+        super(context, view);
     }
 
 
     //********************************************
     //INITIALIZING PRESENTER AND TERMINATE
     //********************************************
-    public void onInitialize(ArrayList<Parcelable> posts)
-    {
-        currentPosts = new ArrayList<>();
-        if (posts != null)
-        {
-            for (Parcelable post : posts)
-            {
-                if (post instanceof Post) currentPosts.add((Post) post);
-            }
-        }
+
+    @Override
+    public void onInitialize(ArrayList<Parcelable> posts) {
+        super.onInitialize(posts);
         UserData.addListener(this);
-        if (UserData.getUser() != null && UserData.getUser().getLocation() != null)
-        {
-            location = UserData.getUser().getLocation();
-            locationUpdated = true;
-            if (currentPosts.size() == 0) PostInteractor.getClosestPosts(getRadius(), location, true, this);
+
+        if (location != null && currentPosts.size() == 0){
+            PostInteractor.getClosestPosts(getRadius(), UserData.getUser().getLocation(),
+                    false, this);
         }
     }
 
-    public void terminate()
-    {
-        view = null;
+    @Override
+    public void terminate() {
+        super.terminate();
         UserData.removeListener(this);
     }
-
-
 
     //********************************************
     //ACTIONS FROM VIEW
@@ -106,101 +86,25 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched,
         else if (postShowing == ClosePostsFragment.SHOWING_SAVED) PostInteractor.getPostsFromList(UserInteractor.getUserKey(), Constants.POSTS_SAVED_T, endAt, this);
     }
 
-
-    public void onLikePressed(Post post, boolean liked)
-    {
-        if (UserInteractor.getUserKey() != null) {
-            if (liked) {
-                PostInteractor.addPostToList(post, UserInteractor.getUserKey(), Constants.POSTS_LIKED_T);
-                PostInteractor.modifyLikes(post.getPostKey(), true);
-            }
-            else {
-                PostInteractor.removePostFromList(post, UserInteractor.getUserKey(), Constants.POSTS_LIKED_T);
-                PostInteractor.modifyLikes(post.getPostKey(), false);
-            }
-        }
-    }
-
-
-    public void onSharePressed(Post post)
-    {
-        post.setShared(true);
-        if (UserInteractor.getUserKey() != null) {
-            PostInteractor.addPostToList(post, UserInteractor.getUserKey(), Constants.POSTS_SHARED_T);
-            PostInteractor.modifyShares(post.getPostKey(), true);
-
-            PostInteractor.publishPost(PostInteractor.createSharedPost(post, UserData.getUser().getBasicInfo(),
-                    LocationUtils.getGeoPointFromMap(location)), new PostInteractor.OnUploadingPost() {
-                @Override
-                public void preparingUpload() {
-
-                }
-
-                @Override
-                public void uploadDone() {
-                    Toast.makeText(context, context.getString(R.string.post_shared_successful), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-
-    public void onReportPressed(Post post, String report)
-    {
-        if (UserData.getUser() != null)
-        {
-            PostInteractor.reportPost(post, report, UserData.getUser().getBasicInfo());
-            Toast.makeText(context, context.getString(R.string.post_report_sent), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    public void onSavePressed(Post post)
-    {
-        if (UserInteractor.getUserKey() != null) {
-            PostInteractor.addPostToList(post, UserInteractor.getUserKey(), Constants.POSTS_SAVED_T);
-        }
-    }
-
-
-    public void onFavoritePressed(Post post)
-    {
-        if (UserInteractor.getUserKey() != null) {
-            PostInteractor.addPostToList(post, UserInteractor.getUserKey(), Constants.POSTS_FAVORITES_T);
-        }
-    }
-
-
-    public void onHidePressed(Post post)
-    {
-        view.removePost(post);
-
-        if (UserInteractor.getUserKey() != null) {
-            PostInteractor.setPostAsHided(post, UserInteractor.getUserKey());
-        }
-    }
-
-
-    public void onRemoveFromFavorites(Post post)
-    {
-        PostInteractor.removePostFromList(post, UserInteractor.getUserKey(), Constants.POSTS_FAVORITES_T);
+    @Override
+    public void onRemoveFromFavorites(Post post) {
+        super.onRemoveFromFavorites(post);
         if (postShowing == ClosePostsFragment.SHOWING_FAVORITES) view.removePost(post);
         if (favoritedPosts != null && favoritedPosts.size() != 0) favoritedPosts.remove(post);
     }
 
-    public void onRemoveFromSaved(Post post)
-    {
-        PostInteractor.removePostFromList(post, UserInteractor.getUserKey(), Constants.POSTS_SAVED_T);
+    @Override
+    public void onRemoveFromSaved(Post post) {
+        super.onRemoveFromSaved(post);
         if (postShowing == ClosePostsFragment.SHOWING_SAVED) view.removePost(post);
         if (savedPosts != null && savedPosts.size() != 0) savedPosts.remove(post);
     }
 
-
-    public void onRemoveFromHided(Post post)
-    {
-        PostInteractor.removePostAsHided(post, UserInteractor.getUserKey());
+    @Override
+    public void onHidePressed(Post post) {
+        super.onHidePressed(post);
+        if (publicPosts != null) publicPosts.remove(post);
     }
-
 
     public void showPublicPosts()
     {
@@ -262,6 +166,12 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched,
     {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt(Constants.PREFERENCES_RADIUS, 1);
+    }
+
+    private boolean getShowHiddenPosts()
+    {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(Constants.PREFERENCES_SHOW_HIDDEN, false);
     }
 
     private long setEndAt(ArrayList<Post> posts)
@@ -328,7 +238,7 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched,
 
             Collections.sort(currentPosts, (post, t1) -> t1.getTimestamp().compareTo(post.getTimestamp()));
             for (Post post : currentPosts) {
-                if (!UserData.getHidedPosts().contains(post.getPostKey())){
+                if (!UserData.getHiddenPosts().contains(post.getPostKey()) && !getShowHiddenPosts()){
                     view.addPost(post);
                 }
             }
@@ -352,7 +262,7 @@ public class ClosePostsPresenter implements UserData.OnUserDataFetched,
 
                 for (int i = newPosts.size() - 1; i >= 0; i--)
                 {
-                    if (!UserData.getHidedPosts().contains(newPosts.get(i).getPostKey())) {
+                    if (!UserData.getHiddenPosts().contains(newPosts.get(i).getPostKey())) {
                         view.addPostAtStart(newPosts.get(i));
                     }
                 }

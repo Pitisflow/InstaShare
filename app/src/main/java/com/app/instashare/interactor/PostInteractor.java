@@ -1,21 +1,12 @@
 package com.app.instashare.interactor;
 
-import android.content.Context;
-import android.location.Location;
-import android.support.annotation.NonNull;
-
 import com.app.instashare.singleton.DatabaseSingleton;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.model.Report;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
-import com.app.instashare.utils.DateUtils;
 import com.app.instashare.utils.LocationUtils;
 import com.app.instashare.utils.Utils;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -268,15 +259,15 @@ public class PostInteractor {
     }
 
 
-    public static void setPostAsHided(Post post, String userKey)
+    public static void setPostAsHidden(Post post, String userKey)
     {
-        String path = Utils.createChild(Constants.POSTS_HIDED_T, userKey, post.getPostKey());
+        String path = Utils.createChild(Constants.POSTS_HIDDEN_T, userKey, post.getPostKey());
         DatabaseSingleton.getDbInstance().child(path).setValue(true);
     }
 
-    public static void removePostAsHided(Post post, String userKey)
+    public static void removePostAsHidden(Post post, String userKey)
     {
-        String path = Utils.createChild(Constants.POSTS_HIDED_T, userKey, post.getPostKey());
+        String path = Utils.createChild(Constants.POSTS_HIDDEN_T, userKey, post.getPostKey());
         DatabaseSingleton.getDbInstance().child(path).removeValue();
     }
 

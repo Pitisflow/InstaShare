@@ -12,8 +12,6 @@ public interface ClosePostsView {
 
     void enableLoadingView(boolean enable, boolean loading, String message);
 
-    void refreshRecycler();
-
     void addPost(Object post);
 
     void enableLoading(boolean enable);
