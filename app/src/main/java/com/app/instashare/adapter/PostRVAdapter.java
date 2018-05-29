@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.app.instashare.R;
 import com.app.instashare.ui.post.model.Post;
+import com.app.instashare.ui.view_holders.LoadingViewHolder;
 import com.app.instashare.ui.view_holders.PostViewHolder;
 import com.app.instashare.ui.view_holders.TagViewHolder;
 import com.app.instashare.utils.Constants;
@@ -62,6 +63,13 @@ public class PostRVAdapter extends BaseRVAdapter {
 
                 return new TagViewHolder(itemView);
 
+            case Constants.CARD_LOADING:
+                itemView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.item_loading_more, parent, false);
+
+                return new LoadingViewHolder(itemView);
+
 
             default:
                 return null;
@@ -81,6 +89,11 @@ public class PostRVAdapter extends BaseRVAdapter {
 
             case Constants.CARD_POST_TAG:
                 ((TagViewHolder) holder).bind((String) getItemList().get(position), deleteTagListener, isDeletableTag);
+                break;
+
+            case Constants.CARD_LOADING:
+                LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+                loadingViewHolder.getProgressBar().setIndeterminate(true);
                 break;
         }
     }

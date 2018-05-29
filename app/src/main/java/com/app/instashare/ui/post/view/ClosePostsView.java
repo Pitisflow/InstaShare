@@ -16,11 +16,17 @@ public interface ClosePostsView {
 
     void addPost(Object post);
 
+    void enableLoading(boolean enable);
+
     void removePost(Object post);
 
     void addPostAtStart(Object post);
 
     void changePosts(ArrayList<Object> posts);
+
+    void setIsLoading(boolean loading);
+
+    void setDownloadCompleted(boolean completed);
 
     void stopRefreshing();
 }

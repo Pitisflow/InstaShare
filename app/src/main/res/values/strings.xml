@@ -96,7 +96,7 @@
     <string name="post_menu_save">Save</string>
     <string name="post_menu_favorite_remove">Remove from favorites posts</string>
     <string name="post_menu_save_remove">Remove from saved posts</string>
-    <string name="post_menu_show">Show this post</string>
+    <string name="post_menu_show">Unhide this post</string>
     <string name="post_error_no_saved">You have not saved any post</string>
     <string name="post_error_no_favs">You have not added any favorites</string>
     <string name="post_error_no_close_posts">No posts found near you</string>

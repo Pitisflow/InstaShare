@@ -39,7 +39,7 @@ public class PostInteractor {
 
 
     public static final String POST_TYPE_SHARED = "shared";
-    private static final int LIMIT_POSTS = 5;
+    public static final int LIMIT_POSTS = 5;
 
 
     //********************************************
