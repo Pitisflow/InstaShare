@@ -46,8 +46,11 @@ public class PublicPostsSettings extends AppCompatActivity {
 
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        seekBar.setProgress(preferences.getInt(Constants.PREFERENCES_RADIUS, 1));
-        showHidden.setChecked(preferences.getBoolean(Constants.PREFERENCES_SHOW_HIDDEN, false));
+        currentShowHidden = preferences.getBoolean(Constants.PREFERENCES_SHOW_HIDDEN, false);
+        currentRadius = preferences.getInt(Constants.PREFERENCES_RADIUS, 1);
+
+        seekBar.setProgress(currentRadius);
+        showHidden.setChecked(currentShowHidden);
     }
 
     private void bindShowHiddenView()

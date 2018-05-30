@@ -1,7 +1,9 @@
 package com.app.instashare.utils;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.IntentSender;
+import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -82,6 +84,15 @@ public class LocationUtils {
     {
         Double result = Math.sqrt(Math.pow(kilometers, 2) + Math.pow(kilometers, 2));
         return result.intValue();
+    }
+
+    public static String getDistanceBetween(Location location, Location location1, Context context)
+    {
+        int distance = Math.round(location.distanceTo(location1));
+
+        if (distance < 1000) return context.getString(R.string.distance_less_a_km);
+        else if (distance >= 1000 && distance < 2000) return context.getString(R.string.distance_a_km);
+        else return context.getString(R.string.distance_more_a_km, distance / 1000);
     }
 
     public static Map<String, Double> getMapFromGeoPoint(GeoPoint point)

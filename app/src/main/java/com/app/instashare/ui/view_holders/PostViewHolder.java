@@ -168,15 +168,33 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
         if (UserInteractor.getUserKey() != null) {
             PostInteractor.checkPostOnList(post, UserInteractor.getUserKey(), Constants.POSTS_LIKED_T,
-                    () -> {
-                        setButton(likeButton, context, true, BUTTON_LIKE);
-                        post.setLiked(true);
+                    new PostInteractor.OnCheckedList() {
+                        @Override
+                        public void isOnList() {
+                            setButton(likeButton, context, true, BUTTON_LIKE);
+                            post.setLiked(true);
+                        }
+
+                        @Override
+                        public void isNotOnlist() {
+                            setButton(likeButton, context, false, BUTTON_LIKE);
+                            post.setLiked(false);
+                        }
                     });
 
             PostInteractor.checkPostOnList(post, UserInteractor.getUserKey(), Constants.POSTS_SHARED_T,
-                    () -> {
-                        setButton(shareButton, context, true, BUTTON_SHARE);
-                        post.setShared(true);
+                    new PostInteractor.OnCheckedList() {
+                        @Override
+                        public void isOnList() {
+                            setButton(shareButton, context, true, BUTTON_SHARE);
+                            post.setShared(true);
+                        }
+
+                        @Override
+                        public void isNotOnlist() {
+                            setButton(shareButton, context, false, BUTTON_SHARE);
+                            post.setShared(false);
+                        }
                     });
         }
 

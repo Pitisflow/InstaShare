@@ -4,6 +4,7 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -67,6 +68,10 @@
         <activity
             android:name=".ui.post.activity.PublicPostsSettings"
             android:theme="@style/AppTheme.Dialog"/>
+
+        <activity
+            android:name=".ui.post.activity.DetailPostActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
 
         <provider

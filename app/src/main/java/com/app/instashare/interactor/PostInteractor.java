@@ -170,6 +170,25 @@ public class PostInteractor {
     }
 
 
+    public static void downloadSinglePost(String postKey, OnDownloadSinglePost listener)
+    {
+        CollectionReference reference = DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T);
+
+        reference.document(postKey).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+            {
+                Post post = task.getResult().toObject(Post.class);
+
+                if (post != null)
+                {
+                    post.setPostKey(postKey);
+                    post.setLocationMap(new HashMap<>(LocationUtils.getMapFromGeoPoint(post.getLocation())));
+                    listener.downloadCompleted(post);
+                }
+            }
+        });
+    }
+
 
     public static void checkPostOnList(Post post, String userKey, String tree, OnCheckedList listener)
     {
@@ -178,6 +197,7 @@ public class PostInteractor {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) listener.isOnList();
+                        else listener.isNotOnlist();
                     }
 
                     @Override
@@ -323,7 +343,6 @@ public class PostInteractor {
     //INTERFACES
     //********************************************
 
-
     public interface OnUploadingPost
     {
         void preparingUpload();
@@ -357,5 +376,12 @@ public class PostInteractor {
     public interface OnCheckedList
     {
         void isOnList();
+
+        void isNotOnlist();
+    }
+
+    public interface OnDownloadSinglePost
+    {
+        void downloadCompleted(Post post);
     }
 }

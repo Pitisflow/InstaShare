@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.app.instashare.R;
+import com.app.instashare.utils.CameraUtils;
 import com.jsibbold.zoomage.ZoomageView;
 import com.squareup.picasso.Picasso;
 
@@ -82,7 +83,7 @@ public class PhotoViewActivity extends AppCompatActivity{
     {
         ZoomageView zoomageView = findViewById(R.id.myZoomageView);
         if (!isLocal) Picasso.get().load(imageURL).into(zoomageView);
-        else zoomageView.setImageURI(Uri.parse(imageURL));
+        else zoomageView.setImageURI(CameraUtils.imageUriFromString(imageURL));
     }
 
 

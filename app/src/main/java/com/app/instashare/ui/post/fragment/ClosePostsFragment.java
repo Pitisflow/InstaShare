@@ -34,6 +34,7 @@ import com.app.instashare.custom.MyScrollListener;
 import com.app.instashare.ui.base.activity.MainActivity;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.post.activity.AddPostActivity;
+import com.app.instashare.ui.post.activity.DetailPostActivity;
 import com.app.instashare.ui.post.activity.PublicPostsSettings;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.ClosePostsPresenter;
@@ -188,9 +189,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data.getExtras() != null)
-        {
-            System.out.println(data.getExtras().getBoolean(PublicPostsSettings.NEED_RELOAD));
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data.getExtras() != null) {
+            if (data.getExtras().getBoolean(PublicPostsSettings.NEED_RELOAD)) presenter.needReloadData();
         }
     }
 
@@ -409,7 +409,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
 
     @Override
     public void onCommentClicked(Post post) {
-        System.out.println("COMMENT: " + post.getPostKey());
+        Intent intent = DetailPostActivity.newInstance(getContext(), post);
+        startActivity(intent);
     }
 
     @Override
@@ -428,7 +429,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
 
     @Override
     public void onSharedPostClicked(Post post) {
-        System.out.println("CLICKED");
+        Intent intent = DetailPostActivity.newInstance(getContext(), post.getContentText());
+        startActivity(intent);
     }
 
 

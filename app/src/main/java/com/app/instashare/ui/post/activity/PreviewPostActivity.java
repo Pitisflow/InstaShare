@@ -2,6 +2,7 @@ package com.app.instashare.ui.post.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -42,6 +43,7 @@ import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Utils;
+import com.google.common.primitives.Chars;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -74,7 +76,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
     private RecyclerView tagsRecycler;
 
-    private Post post;
+    private Post post = null;
     private PreviewPostPresenter presenter;
 
     @Override
@@ -82,12 +84,9 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        post = null;
-
-
-        if (getIntent().getExtras() != null && getIntent().hasExtra("post"))
+        if (getIntent().getExtras() != null && getIntent().hasExtra(EXTRA_POST))
         {
-            post = getIntent().getParcelableExtra("post");
+            post = getIntent().getParcelableExtra(EXTRA_POST);
         }
 
 
@@ -101,6 +100,13 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (presenter != null)
+        {
+            presenter.terminate();
+            presenter = null;
+        }
+
         presenter = new PreviewPostPresenter(getApplicationContext(), this);
         presenter.onInitialize(post);
     }
@@ -125,6 +131,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
         contentTextDown.setMovementMethod(LinkMovementMethod.getInstance());
         contentTextUp.setMovementMethod(LinkMovementMethod.getInstance());
+        userName.setMovementMethod(LinkMovementMethod.getInstance());
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -143,15 +150,21 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
         contentImage.getLayoutParams().width = metrics.widthPixels > metrics.heightPixels ?
                 metrics.heightPixels : metrics.widthPixels;
 
-        contentImage.setOnClickListener(view -> presenter.onImageClicked());
+        contentImage.setOnClickListener(view -> {
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    PreviewPostActivity.this, contentImage, getString(R.string.image_transition));
+            ActivityCompat.startActivity(PreviewPostActivity.this, PhotoViewActivity.newInstance(getApplicationContext(),
+                    post.getMediaURL(), getString(R.string.photoview_post_image), false), options.toBundle());
+        });
     }
 
 
     private void bindRecyclerView()
     {
-        tagsRecycler = findViewById(R.id.tagsRecycler);
+        int spanCount = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 3;
 
-        tagsRecycler.setLayoutManager(new StaggeredGridLayoutManager(3,
+        tagsRecycler = findViewById(R.id.tagsRecycler);
+        tagsRecycler.setLayoutManager(new StaggeredGridLayoutManager(spanCount,
                 StaggeredGridLayoutManager.HORIZONTAL));
     }
 
@@ -236,10 +249,14 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
                 .load(CameraUtils.imageUriFromString(url))
                 .resize(userImage.getLayoutParams().width, userImage.getLayoutParams().height)
                 .into(userImage);
+
+        userImage.setOnClickListener((view) -> {
+            //OPEN PROFILE ACTIVITY
+        });
     }
 
     @Override
-    public void setUserName(String userName) {
+    public void setUserName(CharSequence userName) {
         this.userName.setText(userName);
     }
 
@@ -256,5 +273,14 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     @Override
     public void setTagsRecyclerAdapter(PostRVAdapter tagsRecyclerAdapter) {
         tagsRecycler.setAdapter(tagsRecyclerAdapter);
+    }
+
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 }

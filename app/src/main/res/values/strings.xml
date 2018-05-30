@@ -108,6 +108,12 @@
     <string name="post_setting_radius">Radio search of posts:</string>
     <string name="post_setting_apply">Apply settings</string>
     <string name="post_setting_radius_approximate">Approximate radius: %1$d-%2$dkm</string>
+    <string name="post_comment_write">Write a comment</string>
+    <string name="post_comment_recording_snackbar">Recording audio</string>
+    <string name="post_comment_recording_snackbar_stop">Stop</string>
+    <string name="post_comment_recording_toast">Recording audio, say something!</string>
+    <string name="post_comment_recording_permissions">You must authorize the permission to record an audio.</string>
+
 
 
 
@@ -231,6 +237,7 @@
 
     <!-- File strings -->
     <string name="file_images_sent" translatable="false">Media/InstaShare Images</string>
+    <string name="file_audios_sent" translatable="false">Media/Audios Sent</string>
     <string name="file_provider" translatable="false">com.app.instashare.fileprovider</string>
 
 

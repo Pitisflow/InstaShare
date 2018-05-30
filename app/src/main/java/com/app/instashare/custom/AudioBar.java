@@ -19,6 +19,7 @@ import com.app.instashare.R;
 import com.app.instashare.utils.DateUtils;
 import com.app.instashare.utils.Utils;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -36,6 +37,7 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
     private MediaPlayer player;
     private Handler handler;
     private Runnable runnable;
+    private String file;
 
 
     private int currentIconsColor;
@@ -80,7 +82,7 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
         super.onDetachedFromWindow();
         handler.removeCallbacks(runnable);
 
-        if (!isStopped) {
+        if (!isStopped && player != null) {
             player.stop();
             player.release();
         }
@@ -93,14 +95,24 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
         playPauseButton.setImageDrawable(getContext().getDrawable(playDrawable));
 
         playPauseButton.setOnClickListener(view ->{
-            if (player.isPlaying()) {
+            if (player != null && player.isPlaying()) {
                 pause();
-            } else {
+            } else if (player != null){
                 if (isAsync && !isLoaded && player.getCurrentPosition() == 0) {
                     playPauseButton.setEnabled(false);
                     player.setOnPreparedListener(AudioBar.this);
                     player.prepareAsync();
                 } else if (isAsync){
+                    setPauseIcon();
+                    player.start();
+                    playCycle();
+                }
+
+                if (!isAsync && !isLoaded && player.getCurrentPosition() == 0)
+                {
+                    playPauseButton.setEnabled(false);
+                    player.setOnPreparedListener(AudioBar.this);
+                } else if (!isAsync) {
                     setPauseIcon();
                     player.start();
                     playCycle();
@@ -211,8 +223,15 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
                 this.setVisibility(View.GONE);
                 handler.removeCallbacks(runnable);
                 isStopped = true;
-                player.stop();
-                player.release();
+                isLoaded = false;
+
+                File file = new File(this.file);
+                file.delete();
+
+                if (player != null) {
+                    player.stop();
+                    player.release();
+                }
             });
         }
     }
@@ -220,6 +239,7 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
 
     public void setAsyncFile(String file)
     {
+        this.file = file;
         isAsync = true;
         player = new MediaPlayer();
 

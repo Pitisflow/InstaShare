@@ -26,7 +26,7 @@ public interface PreviewPostView {
 
     void setUserImage(String url);
 
-    void setUserName(String userName);
+    void setUserName(CharSequence userName);
 
     void setDate(String date);
 

@@ -63,7 +63,7 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
     }
 
     //********************************************
-    //ACTIONS FROM VIEW
+    //ACTIONS FROM ACTIVITY
     //********************************************
     public void refreshRecycler()
     {
@@ -197,6 +197,13 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
         this.loadingMore = loadingMore;
     }
 
+    public void needReloadData()
+    {
+        if (UserData.getUser() != null && UserData.getUser().getLocation() != null) {
+            PostInteractor.getClosestPosts(getRadius(), UserData.getUser().getLocation(), false, this);
+        }
+    }
+
     //********************************************
     //IMPLEMENT USERDATA INTERFACE
     //********************************************
@@ -238,9 +245,7 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
 
             Collections.sort(currentPosts, (post, t1) -> t1.getTimestamp().compareTo(post.getTimestamp()));
             for (Post post : currentPosts) {
-                if (!UserData.getHiddenPosts().contains(post.getPostKey()) && !getShowHiddenPosts()){
-                    view.addPost(post);
-                }
+                if (!UserData.getHiddenPosts().contains(post.getPostKey()) || getShowHiddenPosts()) view.addPost(post);
             }
             publicPosts = new ArrayList<>(currentPosts);
         } else if (view != null){
