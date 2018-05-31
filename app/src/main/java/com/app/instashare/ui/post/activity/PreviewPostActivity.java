@@ -39,6 +39,7 @@ import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.PreviewPostPresenter;
 import com.app.instashare.ui.post.view.PreviewPostView;
+import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.CameraUtils;
 import com.app.instashare.utils.Constants;
@@ -273,6 +274,27 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
     @Override
     public void setTagsRecyclerAdapter(PostRVAdapter tagsRecyclerAdapter) {
         tagsRecycler.setAdapter(tagsRecyclerAdapter);
+    }
+
+    @Override
+    public void openNewPostActivity(String postKey) {
+        Intent intent = DetailPostActivity.newInstance(getApplicationContext(), postKey);
+        startActivity(intent);
+    }
+
+    @Override
+    public void openNewUserActivity(String userKey) {
+        Intent intent = UserProfileActivity.newInstance(userKey, getApplicationContext());
+        startActivity(intent);
+    }
+
+    @Override
+    public void setUserImageClick(boolean isClickable, String userKey) {
+        if (isClickable) userImage.setOnClickListener((view) ->{
+            Intent intent = UserProfileActivity.newInstance(userKey, getApplicationContext());
+            startActivity(intent);
+        });
+        else userImage.setOnClickListener(null);
     }
 
 

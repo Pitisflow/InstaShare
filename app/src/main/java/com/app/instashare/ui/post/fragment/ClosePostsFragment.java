@@ -39,6 +39,7 @@ import com.app.instashare.ui.post.activity.PublicPostsSettings;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.ClosePostsPresenter;
 import com.app.instashare.ui.post.view.ClosePostsView;
+import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.utils.Constants;
 import com.github.clans.fab.FloatingActionButton;
 
@@ -447,7 +448,8 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
 
     @Override
     public void onUserClicked(String userKey) {
-        System.out.println(userKey);
+        Intent intent = UserProfileActivity.newInstance(userKey, getContext());
+        startActivity(intent);
     }
 
     @Override

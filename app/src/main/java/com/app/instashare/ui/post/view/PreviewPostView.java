@@ -3,6 +3,7 @@ package com.app.instashare.ui.post.view;
 import android.net.Uri;
 
 import com.app.instashare.adapter.PostRVAdapter;
+import com.app.instashare.ui.post.model.Post;
 
 /**
  * Created by Pitisflow on 1/5/18.
@@ -33,4 +34,10 @@ public interface PreviewPostView {
     void setDistance(String distance);
 
     void setTagsRecyclerAdapter(PostRVAdapter tagsRecyclerAdapter);
+
+    void openNewPostActivity(String postKey);
+
+    void openNewUserActivity(String userKey);
+
+    void setUserImageClick(boolean isClickable, String userKey);
 }

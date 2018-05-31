@@ -17,6 +17,7 @@ import com.app.instashare.interactor.PostInteractor;
 import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.other.activity.WebViewActivity;
+import com.app.instashare.ui.post.activity.DetailPostActivity;
 import com.app.instashare.ui.post.activity.PreviewPostActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.PreviewPostView;
@@ -108,9 +109,7 @@ public class PreviewPostPresenter {
 
             SpannableString ss = Utils.getSpannableFromString(words[words.length - 1],
                 context.getResources().getColor(R.color.colorPrimary), false, true,
-                () -> {
-                    //OPEN POST
-                });
+                () -> view.openNewPostActivity(post.getContentText()));
 
             words[words.length - 1] = "";
 
@@ -131,15 +130,12 @@ public class PreviewPostPresenter {
         if (isAnonymous) view.setUserName(context.getString(R.string.post_anonymous));
         else {
             SpannableString username = Utils.getSpannableFromString(user.getUsername(),
-                    context.getResources().getColor(R.color.black), false, false, new Utils.SpannableAction() {
-                        @Override
-                        public void onSpannableClicked() {
-                            //OPEN PROFILE ACTIVITY
-                        }
-                    });
+                    context.getResources().getColor(R.color.black), false, false, () ->
+                            view.openNewUserActivity(post.getUser().getUserKey()));
 
             view.setUserName(username);
             view.setUserImage(user.getMainImage());
+            view.setUserImageClick(true, post.getUser().getUserKey());
         }
     }
 

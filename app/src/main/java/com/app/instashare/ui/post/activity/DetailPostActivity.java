@@ -40,6 +40,7 @@ import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.DetailActivityPresenter;
 import com.app.instashare.ui.post.view.DetailPostView;
+import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Utils;
 
@@ -60,16 +61,13 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     public static Intent newInstance(Context context, Post post){
         Intent intent = new Intent(context, DetailPostActivity.class);
         intent.putExtra(EXTRA_POST, post);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         return intent;
     }
 
-
     public static Intent newInstance(Context context, String postKey){
         Intent intent = new Intent(context, DetailPostActivity.class);
         intent.putExtra(EXTRA_POST_KEY, postKey);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         return intent;
     }
@@ -623,6 +621,7 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
     @Override
     public void onUserClicked(String userKey) {
-        System.out.println("USER: " + userKey);
+        Intent intent = UserProfileActivity.newInstance(userKey, getApplicationContext());
+        startActivity(intent);
     }
 }

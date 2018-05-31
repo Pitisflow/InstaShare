@@ -1,5 +1,6 @@
 package com.app.instashare.ui.user.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,19 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 
 public class UserProfileActivity extends AppCompatActivity {
+
+    private static final String EXTRA_USER_KEY = "userKey";
+
+    public static Intent newInstance(String userKey, Context context)
+    {
+        Intent intent = new Intent(context, UserProfileActivity.class);
+        intent.putExtra(EXTRA_USER_KEY, userKey);
+
+        return intent;
+    }
+
+
+
 
     private Button button;
 
