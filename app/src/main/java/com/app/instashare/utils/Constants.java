@@ -12,6 +12,7 @@ public class Constants {
     public static final int CARD_USER_BASIC = 10001;
     public static final int CARD_POST = 20001;
     public static final int CARD_POST_TAG = 20002;
+    public static final int CARD_POST_COMMENT = 20003;
     public static final int CARD_LOADING = 99999;
 
 
@@ -92,7 +93,6 @@ public class Constants {
     public static final String POST_CONTENT_TEXT_K = "contentText";
     public static final String POST_CONTENT_IMAGE_K = "mediaURL";
     public static final String POST_USER_K = "user";
-    public static final String POST_TIMESTAMP_K = "timestamp";
     public static final String POST_TYPE_K = "type";
     public static final String POST_ALIGNUP_K = "isAlignUp";
     public static final String POST_ANONYMOUS_K = "anonymous";
@@ -109,10 +109,19 @@ public class Constants {
     public static final String POSTS_SAVED_T = "posts-saved";
     public static final String POSTS_REPORTED_T = "posts-reported";
     public static final String POSTS_HIDDEN_T = "posts-hidden";
+    public static final String POST_STORAGE_AUDIO = "audios";
 
 
     //Report tree keys
     public static final String POST_REPORT_K = "report";
+
+
+    //Comment tree keys
+    public static final String COMMENTS_T = "comments";
+    public static final String COMMENT_USER_K = "user";
+    public static final String COMMENT_TEXT_K = "commentText";
+    public static final String COMMENT_AUDIO_K = "audioURL";
+    public static final String COMMENT_POST_KEY_K = "postKey";
 
 
 
@@ -121,4 +130,5 @@ public class Constants {
     //General keys
     public static final String GENERAL_IMAGES = "images";
     public static final String GENERAL_LOCATION_K = "location";
+    public static final String GENERAL_TIMESTAMP_K = "timestamp";
 }

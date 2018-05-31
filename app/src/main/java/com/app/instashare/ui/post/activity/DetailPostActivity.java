@@ -4,56 +4,44 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.text.method.LinkMovementMethod;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.custom.AudioBar;
+import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.DetailActivityPresenter;
-import com.app.instashare.ui.post.presenter.PreviewPostPresenter;
 import com.app.instashare.ui.post.view.DetailPostView;
-import com.app.instashare.ui.post.view.PreviewPostView;
-import com.app.instashare.utils.CameraUtils;
+import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Utils;
-import com.google.android.gms.location.LocationServices;
-import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by Pitisflow on 30/5/18.
  */
 
-public class DetailPostActivity extends PreviewPostActivity implements DetailPostView{
+public class DetailPostActivity extends PreviewPostActivity implements DetailPostView,
+        PostRVAdapter.OnCommentInteraction {
 
     private static final String EXTRA_POST = "post";
     private static final String EXTRA_POST_KEY = "postKey";
@@ -81,11 +69,13 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
     private Button likeButton;
     private Button shareButton;
-
     private EditText commentET;
     private AudioBar commentAudioBar;
     private ImageButton commentAudioRecord;
     private ImageButton commentSend;
+    private RecyclerView recyclerView;
+    private PostRVAdapter adapter;
+    private NestedScrollView nestedScrollView;
 
     private Snackbar snackbar;
 
@@ -93,6 +83,10 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     private DetailActivityPresenter presenter;
     private String postKey;
     private String audioState;
+    private boolean isUploading = false;
+    private boolean isLoading = false;
+    private Parcelable recyclerState = null;
+    private ArrayList<Parcelable> recyclerItemsState = null;
 
 
     private static final int PERMISSION_CODE_RECORD = 2000;
@@ -113,11 +107,18 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
             audioState = savedInstanceState.getString("audioState");
         }
 
+        if (savedInstanceState != null)
+        {
+            recyclerItemsState = savedInstanceState.getParcelableArrayList("recyclerItems");
+            recyclerState = savedInstanceState.getParcelable("recycler");
+        }
+
 
         bindCommentButtonView();
         bindLikeButtonView();
         bindShareButtonView();
         bindCommentView();
+        bindCommentsRecyclerView();
     }
 
 
@@ -131,6 +132,13 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
         if (audioState != null) {
             commentAudioBar.setVisibility(View.VISIBLE);
             commentAudioBar.setAsyncFile(audioState);
+        }
+
+        if (recyclerItemsState != null && recyclerState != null) {
+            for (Object comment : recyclerItemsState) {
+                ((PostRVAdapter) recyclerView.getAdapter()).addCard(comment, Constants.CARD_POST_COMMENT);
+            }
+            recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
         }
     }
 
@@ -155,14 +163,29 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
             outState.putParcelable("post", getPost());
         }
 
+        if (adapter != null)
+        {
+            ArrayList<Comment> comments = new ArrayList<>();
+            for (Object comment : adapter.getItemList())
+            {
+                if (comment instanceof Comment) comments.add((Comment) comment);
+            }
 
-        if (audioState != null && commentAudioBar.getVisibility() == View.VISIBLE) {
+            outState.putParcelableArrayList("recyclerItems", comments);
+            outState.putParcelable("recycler", recyclerView.getLayoutManager().onSaveInstanceState());
+        }
+
+
+        if (audioState != null && commentAudioBar.getVisibility() == View.VISIBLE && !isUploading) {
             outState.putString("audioState", audioState);
         } else audioState = null;
     }
 
 
 
+    //********************************************
+    //BIND VIEWS
+    //********************************************
 
     private void bindShareButtonView()
     {
@@ -236,8 +259,48 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
 
         });
+
+        commentSend.setOnClickListener((view) -> presenter.onCommentPressed(commentET.getText().toString(), audioState));
     }
 
+
+    private void bindCommentsRecyclerView()
+    {
+        LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        adapter = new PostRVAdapter(getApplicationContext());
+        adapter.setCommentListener(this);
+        recyclerView = findViewById(R.id.recycler);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(manager);
+
+
+        nestedScrollView = findViewById(R.id.nestedScrollView);
+        nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if(v.getChildAt(v.getChildCount() - 1) != null)
+            {
+                if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
+                        scrollY > oldScrollY)
+                {
+                    int visibleItemCount = (recyclerView.getLayoutManager()).getChildCount();
+                    int totalItemCount = (recyclerView.getLayoutManager()).getChildCount();
+                    int pastVisiblesItems = (recyclerView.getLayoutManager()).getChildCount();
+
+                    if ((visibleItemCount + pastVisiblesItems) >= totalItemCount && !isLoading)
+                    {
+                        presenter.onDownloadMoreComments();
+                    }
+                }
+            }
+        });
+    }
+
+
+
+
+
+    //********************************************
+    //OTHERS
+    //********************************************
 
     private void startRecording()
     {
@@ -258,9 +321,9 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
 
 
-
-
-
+    //********************************************
+    //PERMISSIONS
+    //********************************************
 
     @SuppressLint("MissingPermission")
     @Override
@@ -305,6 +368,23 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     }
 
     @Override
+    public void enableSendButton(boolean enabled) {
+        commentSend.setEnabled(enabled);
+        isUploading = !enabled;
+    }
+
+    @Override
+    public void enableLoading(boolean enabled) {
+        if (enabled) {
+            adapter.addCard(null, Constants.CARD_LOADING);
+            isLoading = true;
+        } else {
+            adapter.removeLastCard();
+            isLoading = false;
+        }
+    }
+
+    @Override
     public void setLikeButton(int color, Drawable drawable) {
         likeButton.setTextColor(color);
         likeButton.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
@@ -324,10 +404,41 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     }
 
     @Override
+    public void addComment(Comment comment) {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null && this.getCurrentFocus() != null) {
+            imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+        }
+
+        adapter.addCard(comment, Constants.CARD_POST_COMMENT);
+        if (comment.isNew()) nestedScrollView.fullScroll(View.FOCUS_DOWN);
+    }
+
+    @Override
     public void focusCommentET() {
         commentET.requestFocus();
-        commentAudioBar.setVisibility(View.VISIBLE);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        if (imm != null) imm.showSoftInput(this.getCurrentFocus(), 0);
+    }
+
+    @Override
+    public void resetComment() {
+        commentAudioBar.reset();
+        commentET.setText("");
+        audioState = null;
+    }
+
+    //********************************************
+    //IMPLEMENTS POSTRVADAPTER
+    //********************************************
+
+    @Override
+    public void onOptionsClicked(Comment comment) {
+        System.out.println("OPTIONS");
+    }
+
+    @Override
+    public void onUserClicked(String userKey) {
+        System.out.println("USER: " + userKey);
     }
 }

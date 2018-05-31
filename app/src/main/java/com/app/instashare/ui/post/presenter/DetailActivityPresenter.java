@@ -11,6 +11,7 @@ import com.app.instashare.R;
 import com.app.instashare.interactor.PostInteractor;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.singleton.UserData;
+import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.DetailPostView;
 import com.app.instashare.utils.AudioUtils;
@@ -20,13 +21,19 @@ import com.app.instashare.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 /**
  * Created by Pitisflow on 30/5/18.
  */
 
-public class DetailActivityPresenter implements PostInteractor.OnDownloadSinglePost, UserData.OnUserDataFetched{
+public class DetailActivityPresenter implements PostInteractor.OnDownloadSinglePost,
+        UserData.OnUserDataFetched,
+        PostInteractor.OnUploadingComment,
+        PostInteractor.OnDownloadComments{
 
     private DetailPostView view;
     private Context context;
@@ -34,6 +41,10 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
 
     private Map<String, Object> location;
     private Post post;
+    private Comment uploadingComment;
+    private ArrayList<Comment> currentComments;
+
+
     private MediaRecorder recorder;
     private String audioFile;
 
@@ -60,6 +71,16 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
         } else {
             checkPostStatus(post);
             this.post = post;
+        }
+
+        if (currentComments == null) {
+            currentComments = new ArrayList<>();
+
+            if (postKey != null) {
+                PostInteractor.downloadCommentsFromPost(postKey, System.currentTimeMillis(), this);
+            } else if (post != null) {
+                PostInteractor.downloadCommentsFromPost(post.getPostKey(), System.currentTimeMillis(), this);
+            }
         }
 
 
@@ -164,6 +185,29 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
         }
     }
 
+    public void onDownloadMoreComments()
+    {
+        if (currentComments != null) {
+            PostInteractor.downloadCommentsFromPost(post.getPostKey(), setEndAt(currentComments), this);
+        }
+    }
+
+
+    public void onCommentPressed(String commentText, String commentAudioURL)
+    {
+        String comment = null;
+        if (commentText != null) comment = commentText.trim();
+
+        if ((comment != null && comment.length() != 0) || commentAudioURL != null) {
+            Comment commentToSend = generateComment(comment, commentAudioURL);
+
+            if (commentToSend != null){
+                uploadingComment = commentToSend;
+                PostInteractor.publishComment(commentToSend, post.getPostKey(), this);
+            }
+        }
+    }
+
 
     //********************************************
     //OTHERS
@@ -229,6 +273,27 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
     }
 
 
+    private Comment generateComment(String commentText, String commentAudio)
+    {
+        if (UserData.getUser() != null && post != null)
+        {
+            Comment comment = new Comment();
+            comment.setAudioURL(commentAudio);
+            comment.setCommentText(commentText);
+            comment.setTimestamp(System.currentTimeMillis());
+            comment.setPostKey(post.getPostKey());
+            comment.setUser(UserData.getUser().getBasicInfo());
+            comment.setNew(true);
+
+            return comment;
+        } else return null;
+    }
+
+
+    private long setEndAt(ArrayList<Comment> comments)
+    {
+        return comments.get(comments.size() - 1).getTimestamp() - 1;
+    }
 
 
     //********************************************
@@ -245,7 +310,7 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
 
 
     //********************************************
-    //IMPLEMENTS POSTINTERACTOR INTERFACE
+    //IMPLEMENTS POSTINTERACTOR INTERFACE (post)
     //********************************************
 
     @Override
@@ -255,6 +320,53 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
         if (this.post != null) {
             checkPostStatus(post);
             view.onPostDownloaded(post);
+        }
+    }
+
+    //****************************************************
+    //IMPLEMENTS POSTINTERACTOR INTERFACE (comment upload)
+    //****************************************************
+
+    @Override
+    public void preparingUpload() {
+        view.enableSendButton(false);
+    }
+
+    @Override
+    public void uploadCompleted() {
+        if (view != null) {
+            view.resetComment();
+            view.enableSendButton(true);
+            view.addComment(uploadingComment);
+        }
+
+        Toast.makeText(context, context.getString(R.string.post_comment_upload_successful), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void uploadFailed() {
+        if (view != null) view.enableSendButton(true);
+        Toast.makeText(context, context.getString(R.string.post_comment_upload_audio_fail), Toast.LENGTH_SHORT).show();
+    }
+
+
+    //******************************************************
+    //IMPLEMENTS POSTINTERACTOR INTERFACE (comments dowload)
+    //******************************************************
+
+    @Override
+    public void preparingDownload() {
+        view.enableLoading(true);
+    }
+
+    @Override
+    public void downloadCompleted(ArrayList<Comment> comments) {
+        if (view != null) view.enableLoading(false);
+
+        for (int i = comments.size() - 1; i >= 0; i --)
+        {
+            currentComments.add(comments.get(i));
+            if (view != null) view.addComment(comments.get(i));
         }
     }
 }

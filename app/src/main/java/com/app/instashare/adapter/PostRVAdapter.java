@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.app.instashare.R;
+import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
+import com.app.instashare.ui.view_holders.CommentViewHolder;
 import com.app.instashare.ui.view_holders.LoadingViewHolder;
 import com.app.instashare.ui.view_holders.PostViewHolder;
 import com.app.instashare.ui.view_holders.TagViewHolder;
@@ -28,6 +30,7 @@ public class PostRVAdapter extends BaseRVAdapter {
     private boolean isDeletableTag;
     private OnDeleteTagListener deleteTagListener;
     private OnPostInteraction postListener;
+    private OnCommentInteraction commentListener;
 
 
     public PostRVAdapter() {
@@ -63,6 +66,13 @@ public class PostRVAdapter extends BaseRVAdapter {
 
                 return new TagViewHolder(itemView);
 
+            case Constants.CARD_POST_COMMENT:
+                itemView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.item_comment, parent, false);
+
+                return new CommentViewHolder(itemView);
+
             case Constants.CARD_LOADING:
                 itemView = LayoutInflater
                         .from(parent.getContext())
@@ -89,6 +99,10 @@ public class PostRVAdapter extends BaseRVAdapter {
 
             case Constants.CARD_POST_TAG:
                 ((TagViewHolder) holder).bind((String) getItemList().get(position), deleteTagListener, isDeletableTag);
+                break;
+
+            case Constants.CARD_POST_COMMENT:
+                ((CommentViewHolder) holder).bind((Comment) getItemList().get(position), context, commentListener);
                 break;
 
             case Constants.CARD_LOADING:
@@ -121,7 +135,14 @@ public class PostRVAdapter extends BaseRVAdapter {
         postListener = null;
     }
 
+    public void setCommentListener(OnCommentInteraction commentListener) {
+        this.commentListener = commentListener;
+    }
 
+    public void removeCommentListener()
+    {
+        commentListener = null;
+    }
 
 
 
@@ -147,5 +168,13 @@ public class PostRVAdapter extends BaseRVAdapter {
         void onOptionsClicked(Post post, View view);
 
         void onPostLongClicked(Post post);
+    }
+
+
+    public interface OnCommentInteraction
+    {
+        void onOptionsClicked(Comment comment);
+
+        void onUserClicked(String userKey);
     }
 }

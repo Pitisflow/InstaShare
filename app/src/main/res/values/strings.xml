@@ -113,6 +113,8 @@
     <string name="post_comment_recording_snackbar_stop">Stop</string>
     <string name="post_comment_recording_toast">Recording audio, say something!</string>
     <string name="post_comment_recording_permissions">You must authorize the permission to record an audio.</string>
+    <string name="post_comment_upload_audio_fail">Failure to upload the audio.</string>
+    <string name="post_comment_upload_successful">Successful comment!</string>
 
 
 

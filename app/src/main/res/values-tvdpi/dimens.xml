@@ -45,6 +45,7 @@
     <!-- Items general dimens -->
     <dimen name="item_margin">3dp</dimen>
     <dimen name="item_round_image">43dp</dimen>
+    <dimen name="item_round_image_small">32dp</dimen>
 
 
 </resources>

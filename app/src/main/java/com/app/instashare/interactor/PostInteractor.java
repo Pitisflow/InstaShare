@@ -1,6 +1,9 @@
 package com.app.instashare.interactor;
 
+import android.net.Uri;
+
 import com.app.instashare.singleton.DatabaseSingleton;
+import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.model.Report;
 import com.app.instashare.ui.user.model.UserBasic;
@@ -17,7 +20,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.Transaction;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +36,11 @@ public class PostInteractor {
 
     public static final String POST_TYPE_SHARED = "shared";
     public static final int LIMIT_POSTS = 5;
+    public static final int LIMIT_COMMENTS = 7;
 
 
     //********************************************
-    //UPLOAD POST
+    //UPLOAD POST AND COMMENTS
     //********************************************
 
 
@@ -69,6 +75,46 @@ public class PostInteractor {
     }
 
 
+    public static void publishComment(Comment comment, String postKey, OnUploadingComment uploadingComment)
+    {
+        uploadingComment.preparingUpload();
+
+        if (UserInteractor.getUserKey() != null) {
+            String path = Utils.createChild(Constants.COMMENTS_T, postKey);
+            String audioURL = comment.getAudioURL();
+            String pushKey = DatabaseSingleton.getDbInstance().push().getKey();
+
+            comment.setAudioURL(null);
+            DatabaseSingleton.getDbInstance().child(path).child(pushKey).setValue(comment, (databaseError, databaseReference) -> {
+                if (databaseError == null && audioURL != null) uploadAudio(audioURL, postKey, pushKey, uploadingComment);
+                else uploadingComment.uploadCompleted();
+            });
+        }
+    }
+
+
+    private static void uploadAudio(String audioURL, String postKey, String pushKey, OnUploadingComment uploadingComment)
+    {
+        String path = Utils.createChild(Constants.POSTS_T, postKey, Constants.POST_STORAGE_AUDIO);
+        String databasePath = Utils.createChild(Constants.COMMENTS_T, postKey, pushKey, Constants.COMMENT_AUDIO_K);
+        String [] splitted = audioURL.split("/");
+        String audioName = splitted[splitted.length - 1];
+
+        Uri uri = Uri.fromFile(new File(audioURL));
+        UploadTask task = DatabaseSingleton.getStorageInstance()
+                .child(path)
+                .child(audioName).putFile(uri);
+
+        task.addOnSuccessListener(taskSnapshot -> {
+            if (taskSnapshot.getDownloadUrl() != null) {
+                String downloadURL = taskSnapshot.getDownloadUrl().toString();
+                DatabaseSingleton.getDbInstance().child(databasePath).setValue(downloadURL);
+                uploadingComment.uploadCompleted();
+            }
+        }).addOnFailureListener(e -> uploadingComment.uploadFailed());
+
+    }
+
 
 
     //********************************************
@@ -92,7 +138,7 @@ public class PostInteractor {
 
 
 
-//        Query query = reference.orderBy(Constants.POST_TIMESTAMP_K, Query.Direction.DESCENDING)
+//        Query query = reference.orderBy(Constants.GENERAL_TIMESTAMP_K, Query.Direction.DESCENDING)
 //                .endAt(System.currentTimeMillis());
 
         listener.downloading(isRefreshing);
@@ -122,7 +168,7 @@ public class PostInteractor {
         String path = Utils.createChild(tree, userKey);
 
         listener.downloading();
-        DatabaseSingleton.getDbInstance().child(path).orderByChild(Constants.POST_TIMESTAMP_K)
+        DatabaseSingleton.getDbInstance().child(path).orderByChild(Constants.GENERAL_TIMESTAMP_K)
             .endAt(endAt).limitToLast(LIMIT_POSTS)
             .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -205,6 +251,35 @@ public class PostInteractor {
 
                     }
                 });
+    }
+
+
+    public static void downloadCommentsFromPost(String postKey, long endAt, OnDownloadComments downloadComments)
+    {
+        String path = Utils.createChild(Constants.COMMENTS_T, postKey);
+        downloadComments.preparingDownload();
+
+        DatabaseSingleton.getDbInstance().child(path).orderByChild(Constants.GENERAL_TIMESTAMP_K)
+                .endAt(endAt).limitToLast(LIMIT_COMMENTS).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    ArrayList<Comment> comments = new ArrayList<>();
+                    for (DataSnapshot comment : dataSnapshot.getChildren())
+                    {
+                        comments.add(comment.getValue(Comment.class));
+                    }
+
+                    downloadComments.downloadCompleted(comments);
+                } else downloadComments.downloadCompleted(new ArrayList<>());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -295,7 +370,7 @@ public class PostInteractor {
     public static void addPostToList(Post post, String userKey, String tree)
     {
         Map<String, Object> postRed = new HashMap<>();
-        postRed.put(Constants.POST_TIMESTAMP_K, post.getTimestamp());
+        postRed.put(Constants.GENERAL_TIMESTAMP_K, post.getTimestamp());
         postRed.put(Constants.POST_KEY_K, post.getPostKey());
 
         DatabaseSingleton.getDbInstance().child(tree)
@@ -383,5 +458,21 @@ public class PostInteractor {
     public interface OnDownloadSinglePost
     {
         void downloadCompleted(Post post);
+    }
+
+    public interface OnUploadingComment
+    {
+        void preparingUpload();
+
+        void uploadCompleted();
+
+        void uploadFailed();
+    }
+
+    public interface OnDownloadComments
+    {
+        void preparingDownload();
+
+        void downloadCompleted(ArrayList<Comment> comments);
     }
 }

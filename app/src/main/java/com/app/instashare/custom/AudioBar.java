@@ -236,17 +236,32 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
         }
     }
 
+    public void reset()
+    {
+        this.setVisibility(View.GONE);
+        handler.removeCallbacks(runnable);
+        isStopped = true;
+        isLoaded = false;
+
+        if (player != null) {
+            player.stop();
+            player.release();
+        }
+    }
+
 
     public void setAsyncFile(String file)
     {
-        this.file = file;
-        isAsync = true;
-        player = new MediaPlayer();
+        if (file != null) {
+            this.file = file;
+            isAsync = true;
+            player = new MediaPlayer();
 
-        try {
-            player.setDataSource(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                player.setDataSource(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

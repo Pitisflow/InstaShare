@@ -45,6 +45,7 @@
     <!-- Items general dimens -->
     <dimen name="item_margin">2dp</dimen>
     <dimen name="item_round_image">24dp</dimen>
+    <dimen name="item_round_image_small">18dp</dimen>
 
 
 </resources>

@@ -1,19 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_orange_light"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/miau"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImage"
+        android:layout_width="@dimen/item_round_image_small"
+        android:layout_height="@dimen/item_round_image_small"
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:src="@mipmap/ic_launcher"/>
 
-    <com.app.instashare.custom.AudioBar
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/miau"/>
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:layout_marginEnd="@dimen/general_margin_small"
+        android:padding="@dimen/general_margin_small"
+        android:background="@color/grayBackground">
 
-</RelativeLayout>
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="Pitisflow"/>
+
+        <TextView
+            android:id="@+id/commentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/username"
+            android:layout_marginTop="@dimen/general_margin_small"
+            android:textColor="@color/black"
+            android:text="Zirbus tolerares, tanquam germanus zeta.Burgus de primus fluctui, dignus ignigena!Sunt vigiles fallere bi-color, regius devatioes.Clemens galatae saepe manifestums gluten est."/>
+
+
+        <com.app.instashare.custom.AudioBar
+            android:id="@+id/commentAudio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/commentText"
+            android:layout_marginTop="@dimen/general_margin_medium"/>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/commentAudio"
+            android:layout_alignParentEnd="true"
+            android:text="13:21"/>
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>
