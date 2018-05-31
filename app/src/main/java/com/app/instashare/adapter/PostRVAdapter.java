@@ -173,7 +173,7 @@ public class PostRVAdapter extends BaseRVAdapter {
 
     public interface OnCommentInteraction
     {
-        void onOptionsClicked(Comment comment);
+        void onOptionsClicked(Comment comment, View view);
 
         void onUserClicked(String userKey);
     }

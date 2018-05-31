@@ -54,7 +54,7 @@
                 android:id="@+id/commentText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
                 android:layout_below="@id/username"
                 android:layout_marginTop="@dimen/general_margin_small"
                 android:textColor="@color/black"

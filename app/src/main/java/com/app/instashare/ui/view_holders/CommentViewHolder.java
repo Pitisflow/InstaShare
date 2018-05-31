@@ -9,6 +9,8 @@ import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -54,6 +56,9 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
         commentAudio.setIconsColor(R.color.black);
         commentAudio.setSeekBarColor(R.color.black);
 
+        username.setMovementMethod(LinkMovementMethod.getInstance());
+        commentText.setMovementMethod(LinkMovementMethod.getInstance());
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             commentText.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         }
@@ -71,6 +76,8 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
                 .placeholder(R.mipmap.ic_launcher)
                 .into(userImage);
 
+        userImage.setOnClickListener((view) -> listener.onUserClicked(comment.getUser().getUserKey()));
+
 
         //BINDING TEXT VIEWS
         SpannableString usernameSS = Utils.getSpannableFromString(comment.getUser().getUsername(),
@@ -78,7 +85,8 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
                     listener.onUserClicked(comment.getUser().getUserKey());
                 });
         username.setText(usernameSS);
-        commentText.setText(comment.getCommentText());
+        if (comment.getCommentText() == null || comment.getCommentText().length() == 0) commentText.setVisibility(View.GONE);
+        else commentText.setText(Utils.urlChecker(comment.getCommentText(), context));
         date.setText(DateUtils.getPostDateFromTimestamp(comment.getTimestamp(), context));
 
 
@@ -92,7 +100,7 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
         Drawable drawable = Utils.changeDrawableColor(context.getDrawable(R.drawable.ic_keyboard_arrow_down_black_24),
                 R.color.grayDark, context);
         commentOptions.setImageDrawable(drawable);
-        commentOptions.setOnClickListener((view) -> listener.onOptionsClicked(comment));
+        commentOptions.setOnClickListener((view) -> listener.onOptionsClicked(comment, commentOptions));
 
 
         //OTHER

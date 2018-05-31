@@ -46,8 +46,8 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
     private boolean isStopped = false;
 
 
-    private static final int pauseDrawable = R.drawable.ic_pause_black_36;
-    private static final int playDrawable = R.drawable.ic_play_arrow_black_36;
+    private static final int pauseDrawable = R.drawable.ic_pause_black_24;
+    private static final int playDrawable = R.drawable.ic_play_arrow_black_24;
 
 
     public AudioBar(Context context) {
@@ -126,7 +126,7 @@ public class AudioBar extends RelativeLayout implements MediaPlayer.OnPreparedLi
     private void bindAudioView()
     {
         iconAudio = findViewById(R.id.iconAudio);
-        iconAudio.setImageDrawable(getContext().getDrawable(R.drawable.ic_keyboard_voice_black_36));
+        iconAudio.setImageDrawable(getContext().getDrawable(R.drawable.ic_keyboard_voice_black_24));
     }
 
 

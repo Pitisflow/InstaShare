@@ -15,6 +15,7 @@ public class Comment implements Parcelable {
     private UserBasic user;
     private String commentText;
     private String postKey;
+    private String commentKey;
     private String audioURL;
     private boolean isNew;
     private long timestamp;
@@ -75,6 +76,15 @@ public class Comment implements Parcelable {
         isNew = aNew;
     }
 
+    @Exclude
+    public String getCommentKey() {
+        return commentKey;
+    }
+
+    @Exclude
+    public void setCommentKey(String commentKey) {
+        this.commentKey = commentKey;
+    }
 
     @Override
     public int describeContents() {
@@ -86,6 +96,7 @@ public class Comment implements Parcelable {
         dest.writeParcelable(this.user, flags);
         dest.writeString(this.commentText);
         dest.writeString(this.postKey);
+        dest.writeString(this.commentKey);
         dest.writeString(this.audioURL);
         dest.writeLong(this.timestamp);
     }
@@ -94,11 +105,12 @@ public class Comment implements Parcelable {
         this.user = in.readParcelable(UserBasic.class.getClassLoader());
         this.commentText = in.readString();
         this.postKey = in.readString();
+        this.commentKey = in.readString();
         this.audioURL = in.readString();
         this.timestamp = in.readLong();
     }
 
-    public static final Parcelable.Creator<Comment> CREATOR = new Parcelable.Creator<Comment>() {
+    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
         @Override
         public Comment createFromParcel(Parcel source) {
             return new Comment(source);

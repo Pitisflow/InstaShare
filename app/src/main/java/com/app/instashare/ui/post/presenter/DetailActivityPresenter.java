@@ -2,9 +2,9 @@ package com.app.instashare.ui.post.presenter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.icu.text.SymbolTable;
 import android.media.MediaRecorder;
-import android.widget.Button;
+import android.os.Parcelable;
+import android.view.View;
 import android.widget.Toast;
 
 import com.app.instashare.R;
@@ -22,8 +22,6 @@ import com.app.instashare.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -59,9 +57,19 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
     //INITIALIZING AND TERMINATE
     //********************************************
 
-    public void onInitialize(Post post, String postKey)
+    public void onInitialize(Post post, String postKey, ArrayList<Parcelable> comments)
     {
         UserData.addListener(this);
+
+        currentComments = new ArrayList<>();
+        if (comments != null)
+        {
+            for (Parcelable comment : comments)
+            {
+                if (comment instanceof Comment) currentComments.add((Comment) comment);
+            }
+        }
+
         if (UserData.getUser() != null) {
             location = UserData.getUser().getLocation();
         }
@@ -69,13 +77,11 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
         if (post == null && postKey != null) {
             PostInteractor.downloadSinglePost(postKey, this);
         } else {
-            checkPostStatus(post);
             this.post = post;
+            checkPostStatus(post);
         }
 
-        if (currentComments == null) {
-            currentComments = new ArrayList<>();
-
+        if (currentComments.size() == 0) {
             if (postKey != null) {
                 PostInteractor.downloadCommentsFromPost(postKey, System.currentTimeMillis(), this);
             } else if (post != null) {
@@ -115,11 +121,15 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
             PostInteractor.addPostToList(post, UserInteractor.getUserKey(), Constants.POSTS_LIKED_T);
             PostInteractor.modifyLikes(post.getPostKey(), true);
             post.setLiked(true);
+            post.setNumLikes(post.getNumLikes() + 1);
+            setLikesNumber();
             setButton(true, true);
         } else {
             PostInteractor.removePostFromList(post, UserInteractor.getUserKey(), Constants.POSTS_LIKED_T);
             PostInteractor.modifyLikes(post.getPostKey(), false);
             post.setLiked(false);
+            post.setNumLikes(post.getNumLikes() - 1);
+            setLikesNumber();
             setButton(false, true);
         }
     }
@@ -193,12 +203,12 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
     }
 
 
-    public void onCommentPressed(String commentText, String commentAudioURL)
+    public void onCommentPressed(String commentText, String commentAudioURL, int audioVisibility)
     {
         String comment = null;
         if (commentText != null) comment = commentText.trim();
 
-        if ((comment != null && comment.length() != 0) || commentAudioURL != null) {
+        if ((comment != null && comment.length() != 0) || (commentAudioURL != null && audioVisibility == View.VISIBLE)) {
             Comment commentToSend = generateComment(comment, commentAudioURL);
 
             if (commentToSend != null){
@@ -207,6 +217,58 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
             }
         }
     }
+
+    public void onEditPressed(Comment comment, String text)
+    {
+        String newComment = text.trim();
+        if (newComment.length() != 0) PostInteractor.editComment(comment, newComment, () -> {
+            comment.setCommentText(newComment);
+            view.modifyComment(comment);
+        });
+    }
+
+    public void onDeletePressed(Comment comment)
+    {
+        PostInteractor.deleteComment(comment);
+        PostInteractor.modifyComments(post.getPostKey(), false);
+        post.setNumComments(post.getNumComments() - 1);
+        setCommentsNumber();
+        view.deleteComment();
+    }
+
+    public void onMenuItemPressed(boolean pressed, String list)
+    {
+        if (post != null && UserInteractor.getUserKey() != null) {
+            if (!pressed) {
+                PostInteractor.addPostToList(post, UserInteractor.getUserKey(), list);
+
+                if (list.equals(Constants.POSTS_FAVORITES_T)) view.setFavoriteMenuItemIcon(true);
+                else view.setSaveMenuItemIcon(true);
+            }
+            else {
+                PostInteractor.removePostFromList(post, UserInteractor.getUserKey(), list);
+
+                if (list.equals(Constants.POSTS_FAVORITES_T)) view.setFavoriteMenuItemIcon(false);
+                else view.setSaveMenuItemIcon(false);
+            }
+        }
+    }
+
+    public void onHidePressed()
+    {
+        if (UserInteractor.getUserKey() != null && post != null) {
+            PostInteractor.setPostAsHidden(post, UserInteractor.getUserKey());
+        }
+    }
+
+    public void onReportPressed(String report)
+    {
+        if (UserData.getUser() != null && post != null) {
+            PostInteractor.reportPost(post, report, UserData.getUser().getBasicInfo());
+            Toast.makeText(context, context.getString(R.string.post_report_sent), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 
     //********************************************
@@ -248,6 +310,41 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
                         setButton(false, false);
                     }
                 });
+
+        PostInteractor.checkPostOnList(post, UserInteractor.getUserKey(), Constants.POSTS_SAVED_T,
+                new PostInteractor.OnCheckedList() {
+                    @Override
+                    public void isOnList() {
+                        view.enableSaveMenuItem(true);
+                        view.setSaveMenuItemIcon(true);
+                    }
+
+                    @Override
+                    public void isNotOnlist() {
+                        view.enableSaveMenuItem(true);
+                        view.setSaveMenuItemIcon(false);
+                    }
+                });
+
+
+        PostInteractor.checkPostOnList(post, UserInteractor.getUserKey(), Constants.POSTS_FAVORITES_T,
+                new PostInteractor.OnCheckedList() {
+                    @Override
+                    public void isOnList() {
+                        view.enableFavoriteMenuItem(true);
+                        view.setFavoriteMenuItemIcon(true);
+                    }
+
+                    @Override
+                    public void isNotOnlist() {
+                        view.enableFavoriteMenuItem(true);
+                        view.setFavoriteMenuItemIcon(false);
+                    }
+                });
+
+
+        setLikesNumber();
+        setCommentsNumber();
     }
 
 
@@ -292,7 +389,25 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
 
     private long setEndAt(ArrayList<Comment> comments)
     {
-        return comments.get(comments.size() - 1).getTimestamp() - 1;
+        if (comments != null && comments.size() > 0) return comments.get(comments.size() - 1).getTimestamp() - 1;
+        else return 0;
+    }
+
+
+
+    private void setLikesNumber()
+    {
+        if (post.getNumLikes() == 1) view.setPostLikes(context.getString(R.string.post_likes_single));
+        else if (post.getNumLikes() > 1) view.setPostLikes(context.getString(R.string.post_likes_plural, post.getNumLikes()));
+        else view.setPostLikes("");
+    }
+
+
+    private void setCommentsNumber()
+    {
+        if (post.getNumComments() == 1) view.setPostComments(context.getString(R.string.post_comments_single));
+        else if (post.getNumComments() > 1) view.setPostComments(context.getString(R.string.post_comments_plural, post.getNumComments()));
+        else view.setPostComments("");
     }
 
 
@@ -333,20 +448,25 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
     }
 
     @Override
-    public void uploadCompleted() {
+    public void uploadCompleted(String audioURL) {
+        uploadingComment.setAudioURL(audioURL);
+
         if (view != null) {
             view.resetComment();
             view.enableSendButton(true);
             view.addComment(uploadingComment);
         }
 
-        Toast.makeText(context, context.getString(R.string.post_comment_upload_successful), Toast.LENGTH_SHORT).show();
+        PostInteractor.modifyComments(post.getPostKey(), true);
+        post.setNumComments(post.getNumComments() + 1);
+        setCommentsNumber();
+        Toast.makeText(context, context.getString(R.string.comment_upload_successful), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void uploadFailed() {
         if (view != null) view.enableSendButton(true);
-        Toast.makeText(context, context.getString(R.string.post_comment_upload_audio_fail), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getString(R.string.comment_upload_audio_fail), Toast.LENGTH_SHORT).show();
     }
 
 

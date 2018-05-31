@@ -108,13 +108,25 @@
     <string name="post_setting_radius">Radio search of posts:</string>
     <string name="post_setting_apply">Apply settings</string>
     <string name="post_setting_radius_approximate">Approximate radius: %1$d-%2$dkm</string>
-    <string name="post_comment_write">Write a comment</string>
-    <string name="post_comment_recording_snackbar">Recording audio</string>
-    <string name="post_comment_recording_snackbar_stop">Stop</string>
-    <string name="post_comment_recording_toast">Recording audio, say something!</string>
-    <string name="post_comment_recording_permissions">You must authorize the permission to record an audio.</string>
-    <string name="post_comment_upload_audio_fail">Failure to upload the audio.</string>
-    <string name="post_comment_upload_successful">Successful comment!</string>
+
+
+
+
+    <!-- Comments Strings -->
+    <string name="comment_write">Write a comment</string>
+    <string name="comment_recording_snackbar">Recording audio</string>
+    <string name="comment_recording_snackbar_stop">Stop</string>
+    <string name="comment_recording_toast">Recording audio, say something!</string>
+    <string name="comment_recording_permissions">You must authorize the permission to record an audio.</string>
+    <string name="comment_upload_audio_fail">Failure to upload the audio.</string>
+    <string name="comment_upload_successful">Successful comment!</string>
+    <string name="comment_options_copy">Copy</string>
+    <string name="comment_options_delete">Delete</string>
+    <string name="comment_options_edit">Edit</string>
+    <string name="comment_options_edit_title">Edit your comment</string>
+    <string name="comment_options_edit_cancel">Cancel</string>
+    <string name="comment_options_edit_edit">Edit</string>
+    <string name="comment_options_edit_hint">Write a comment</string>
 
 
 

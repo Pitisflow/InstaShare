@@ -2,6 +2,8 @@ package com.app.instashare.ui.post.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,17 +18,24 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.custom.AudioBar;
+import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.DetailActivityPresenter;
@@ -41,7 +50,8 @@ import java.util.ArrayList;
  */
 
 public class DetailPostActivity extends PreviewPostActivity implements DetailPostView,
-        PostRVAdapter.OnCommentInteraction {
+        PostRVAdapter.OnCommentInteraction,
+        PopupMenu.OnMenuItemClickListener {
 
     private static final String EXTRA_POST = "post";
     private static final String EXTRA_POST_KEY = "postKey";
@@ -69,6 +79,8 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
     private Button likeButton;
     private Button shareButton;
+    private TextView numLikes;
+    private TextView numComments;
     private EditText commentET;
     private AudioBar commentAudioBar;
     private ImageButton commentAudioRecord;
@@ -78,6 +90,7 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     private NestedScrollView nestedScrollView;
 
     private Snackbar snackbar;
+    private Menu menu;
 
 
     private DetailActivityPresenter presenter;
@@ -87,6 +100,9 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     private boolean isLoading = false;
     private Parcelable recyclerState = null;
     private ArrayList<Parcelable> recyclerItemsState = null;
+    private Comment currentCommentSelected;
+    private boolean saveState;
+    private boolean favoriteState;
 
 
     private static final int PERMISSION_CODE_RECORD = 2000;
@@ -119,16 +135,13 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
         bindShareButtonView();
         bindCommentView();
         bindCommentsRecyclerView();
+        bindLikesCommentsView();
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        presenter = new DetailActivityPresenter(this, this);
-        presenter.onInitialize(getPost(), postKey);
-
         if (audioState != null) {
             commentAudioBar.setVisibility(View.VISIBLE);
             commentAudioBar.setAsyncFile(audioState);
@@ -140,6 +153,10 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
             }
             recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
         }
+
+
+        presenter = new DetailActivityPresenter(this, this);
+        presenter.onInitialize(getPost(), postKey, recyclerItemsState);
     }
 
     @Override
@@ -260,7 +277,9 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
         });
 
-        commentSend.setOnClickListener((view) -> presenter.onCommentPressed(commentET.getText().toString(), audioState));
+        commentSend.setOnClickListener((view) ->{
+            presenter.onCommentPressed(commentET.getText().toString(), audioState, commentAudioBar.getVisibility());
+        });
     }
 
 
@@ -294,7 +313,118 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
         });
     }
 
+    private void bindLikesCommentsView()
+    {
+        numLikes = findViewById(R.id.likesNumber);
+        numComments = findViewById(R.id.commentsNumber);
+    }
 
+
+
+
+
+    //********************************************
+    //ACTIVITY MENUS
+    //********************************************
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater findMenuItems = getMenuInflater();
+        findMenuItems.inflate(R.menu.menu_post_detailed, menu);
+
+        this.menu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.favorite:
+                presenter.onMenuItemPressed(favoriteState, Constants.POSTS_FAVORITES_T);
+                break;
+
+            case R.id.save:
+                presenter.onMenuItemPressed(saveState, Constants.POSTS_SAVED_T);
+                break;
+
+            case R.id.report:
+                final EditText input = new EditText(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                input.setHint(getString(R.string.post_report));
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                builder.setView(input);
+                builder.setMessage(getString(R.string.post_report_text));
+                builder.setNegativeButton(getString(R.string.post_report_cancel), null);
+                builder.setPositiveButton(getString(R.string.post_report_send),
+                        (dialogInterface, i) -> presenter.onReportPressed(input.getText().toString()));
+                builder.show();
+                break;
+
+            case R.id.hide:
+                presenter.onHidePressed();
+                break;
+
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
+
+
+
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId())
+        {
+
+            case R.id.copy:
+                if (currentCommentSelected.getCommentText() != null) {
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("simple text", currentCommentSelected.getCommentText());
+                    clipboard.setPrimaryClip(clip);
+                }
+                break;
+
+            case R.id.edit:
+                final EditText input = new EditText(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                input.setHint(getString(R.string.comment_options_edit_hint));
+                input.setText(currentCommentSelected.getCommentText());
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                builder.setView(input);
+                builder.setMessage(getString(R.string.comment_options_edit_title));
+                builder.setNegativeButton(getString(R.string.comment_options_edit_cancel), null);
+                builder.setPositiveButton(getString(R.string.comment_options_edit_edit),
+                        (dialogInterface, i) -> {
+                            presenter.onEditPressed(currentCommentSelected, input.getText().toString());
+                        });
+                builder.show();
+                break;
+
+            case R.id.delete:
+                presenter.onDeletePressed(currentCommentSelected);
+                break;
+        }
+        return false;
+    }
 
 
 
@@ -306,10 +436,10 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     {
         commentAudioRecord.setEnabled(false);
         presenter.onStartRecordingPressed();
-        Toast.makeText(getApplicationContext(), getString(R.string.post_comment_recording_toast), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.comment_recording_toast), Toast.LENGTH_SHORT).show();
 
-        snackbar = Snackbar.make(findViewById(R.id.content), getString(R.string.post_comment_recording_snackbar), Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(R.string.post_comment_recording_snackbar_stop), view -> {
+        snackbar = Snackbar.make(findViewById(R.id.content), getString(R.string.comment_recording_snackbar), Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.comment_recording_snackbar_stop), view -> {
 
                     commentAudioRecord.setEnabled(true);
                     presenter.onStopRecordingPressed();
@@ -335,7 +465,7 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
         {
             startRecording();
         } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.post_comment_recording_permissions), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.comment_recording_permissions), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -385,6 +515,32 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     }
 
     @Override
+    public void enableSaveMenuItem(boolean enabled) {
+        menu.getItem(1).setEnabled(enabled);
+    }
+
+    @Override
+    public void enableFavoriteMenuItem(boolean enabled) {
+        menu.getItem(0).setEnabled(enabled);
+    }
+
+    @Override
+    public void setFavoriteMenuItemIcon(boolean pressed) {
+        favoriteState = pressed;
+
+        if (pressed) menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_24));
+        else menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_white_24));
+    }
+
+    @Override
+    public void setSaveMenuItemIcon(boolean pressed) {
+        saveState = pressed;
+
+        if (pressed) menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_save_white_24));
+        else menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_outline_save_white_24));
+    }
+
+    @Override
     public void setLikeButton(int color, Drawable drawable) {
         likeButton.setTextColor(color);
         likeButton.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
@@ -404,6 +560,16 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     }
 
     @Override
+    public void setPostLikes(String text) {
+        numLikes.setText(text);
+    }
+
+    @Override
+    public void setPostComments(String text) {
+        numComments.setText(text);
+    }
+
+    @Override
     public void addComment(Comment comment) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && this.getCurrentFocus() != null) {
@@ -412,6 +578,16 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
 
         adapter.addCard(comment, Constants.CARD_POST_COMMENT);
         if (comment.isNew()) nestedScrollView.fullScroll(View.FOCUS_DOWN);
+    }
+
+    @Override
+    public void modifyComment(Comment comment) {
+        adapter.modifyCard(currentCommentSelected, comment);
+    }
+
+    @Override
+    public void deleteComment() {
+        adapter.removeCard(currentCommentSelected);
     }
 
     @Override
@@ -433,8 +609,16 @@ public class DetailPostActivity extends PreviewPostActivity implements DetailPos
     //********************************************
 
     @Override
-    public void onOptionsClicked(Comment comment) {
-        System.out.println("OPTIONS");
+    public void onOptionsClicked(Comment comment, View view) {
+        currentCommentSelected = comment;
+
+        PopupMenu popup = new PopupMenu(DetailPostActivity.this, view);
+        popup.setOnMenuItemClickListener(this);
+        MenuInflater inflater = popup.getMenuInflater();
+        if (UserInteractor.getUserKey() != null && UserInteractor.getUserKey().equals(comment.getUser().getUserKey())) {
+            inflater.inflate(R.menu.menu_comment_self, popup.getMenu());
+        } else inflater.inflate(R.menu.menu_comment_foreign, popup.getMenu());
+        popup.show();
     }
 
     @Override

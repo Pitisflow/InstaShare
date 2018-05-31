@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="@dimen/general_margin_small"
+    android:paddingStart="@dimen/general_margin_small"
     tools:parentTag="android.widget.RelativeLayout">
 
 
@@ -13,9 +15,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_margin="@dimen/general_margin_small"
         android:background="@android:color/transparent"
-        tools:src="@drawable/ic_play_arrow_black_36"/>
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/general_margin_small"
+        tools:src="@drawable/ic_play_arrow_black_24"/>
 
 
     <LinearLayout
@@ -23,8 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/playPause"
         android:layout_toStartOf="@id/iconAudio"
-        android:layout_alignTop="@id/playPause"
-        android:layout_alignBottom="@id/playPause"
+        android:layout_alignBaseline="@id/playPause"
+        android:layout_centerVertical="true"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -46,16 +49,14 @@
 
 
 
-
-
-
-
     <ImageView
         android:id="@+id/iconAudio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/general_margin_small"
-        tools:src="@drawable/ic_keyboard_voice_black_36"/>
+        android:layout_alignBaseline="@id/playPause"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/general_margin_small"
+        tools:src="@drawable/ic_keyboard_voice_black_24"/>
 
 </merge>

@@ -72,6 +72,16 @@ public abstract class BaseRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return false;
     }
 
+    public void modifyCard(Object oldCard, Object newCard)
+    {
+        int index = itemList.indexOf(oldCard);
+
+        if (index >= 0) {
+            itemList.set(index, newCard);
+            notifyItemChanged(index);
+        }
+    }
+
     public void removeFirstCard()
     {
         itemList.remove(0);

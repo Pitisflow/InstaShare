@@ -1,6 +1,7 @@
 package com.app.instashare.interactor;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.app.instashare.singleton.DatabaseSingleton;
 import com.app.instashare.ui.post.model.Comment;
@@ -12,6 +13,7 @@ import com.app.instashare.utils.LocationUtils;
 import com.app.instashare.utils.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -26,6 +28,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.internal.Util;
 
 /**
  * Created by Pitisflow on 8/5/18.
@@ -87,7 +91,7 @@ public class PostInteractor {
             comment.setAudioURL(null);
             DatabaseSingleton.getDbInstance().child(path).child(pushKey).setValue(comment, (databaseError, databaseReference) -> {
                 if (databaseError == null && audioURL != null) uploadAudio(audioURL, postKey, pushKey, uploadingComment);
-                else uploadingComment.uploadCompleted();
+                else uploadingComment.uploadCompleted(null);
             });
         }
     }
@@ -108,8 +112,9 @@ public class PostInteractor {
         task.addOnSuccessListener(taskSnapshot -> {
             if (taskSnapshot.getDownloadUrl() != null) {
                 String downloadURL = taskSnapshot.getDownloadUrl().toString();
-                DatabaseSingleton.getDbInstance().child(databasePath).setValue(downloadURL);
-                uploadingComment.uploadCompleted();
+
+                DatabaseSingleton.getDbInstance().child(databasePath).setValue(downloadURL,
+                        (databaseError, databaseReference) -> uploadingComment.uploadCompleted(taskSnapshot.getDownloadUrl().toString()));
             }
         }).addOnFailureListener(e -> uploadingComment.uploadFailed());
 
@@ -159,7 +164,7 @@ public class PostInteractor {
 
                 listener.downloadCompleted(posts, isRefreshing);
             }
-        }).addOnFailureListener(e -> System.out.println(e.getMessage()));
+        }).addOnFailureListener(e -> Log.d("Error", e.getMessage()));
     }
 
 
@@ -268,7 +273,12 @@ public class PostInteractor {
                     ArrayList<Comment> comments = new ArrayList<>();
                     for (DataSnapshot comment : dataSnapshot.getChildren())
                     {
-                        comments.add(comment.getValue(Comment.class));
+                        Comment comment1 = comment.getValue(Comment.class);
+
+                        if (comment1 != null) {
+                            comment1.setCommentKey(comment.getKey());
+                            comments.add(comment1);
+                        }
                     }
 
                     downloadComments.downloadCompleted(comments);
@@ -321,6 +331,26 @@ public class PostInteractor {
             if (post != null) {
                 if (plus) post.setNumShares(post.getNumShares() + 1);
                 else post.setNumShares(post.getNumShares() - 1);
+                transaction.set(document, post);
+            }
+            return null;
+        });
+    }
+
+
+    public static void modifyComments(String postKey, boolean plus)
+    {
+        DocumentReference document = DatabaseSingleton.getFirestoreInstance()
+                .collection(Constants.POSTS_T)
+                .document(postKey);
+
+
+        DatabaseSingleton.getFirestoreInstance().runTransaction((Transaction.Function<Void>) transaction -> {
+            Post post = transaction.get(document).toObject(Post.class);
+
+            if (post != null) {
+                if (plus) post.setNumComments(post.getNumComments() + 1);
+                else post.setNumComments(post.getNumComments() - 1);
                 transaction.set(document, post);
             }
             return null;
@@ -381,6 +411,21 @@ public class PostInteractor {
     public static void removePostFromList(Post post, String userKey, String tree)
     {
         DatabaseSingleton.getDbInstance().child(tree).child(userKey).child(post.getPostKey()).removeValue();
+    }
+
+    public static void editComment(Comment comment, String newComment, OnCommentEditted editted)
+    {
+        String path = Utils.createChild(Constants.COMMENTS_T, comment.getPostKey(),
+                comment.getCommentKey(), Constants.COMMENT_TEXT_K);
+
+        DatabaseSingleton.getDbInstance().child(path).setValue(newComment, (databaseError, databaseReference) -> editted.onComplete());
+    }
+
+
+    public static void deleteComment(Comment comment)
+    {
+        String path = Utils.createChild(Constants.COMMENTS_T, comment.getPostKey(), comment.getCommentKey());
+        DatabaseSingleton.getDbInstance().child(path).removeValue();
     }
 
 
@@ -464,7 +509,7 @@ public class PostInteractor {
     {
         void preparingUpload();
 
-        void uploadCompleted();
+        void uploadCompleted(String audioURL);
 
         void uploadFailed();
     }
@@ -474,5 +519,13 @@ public class PostInteractor {
         void preparingDownload();
 
         void downloadCompleted(ArrayList<Comment> comments);
+    }
+
+
+
+
+    public interface OnCommentEditted
+    {
+        void onComplete();
     }
 }

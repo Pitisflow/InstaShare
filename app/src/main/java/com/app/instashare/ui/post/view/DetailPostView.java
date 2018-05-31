@@ -22,13 +22,29 @@ public interface DetailPostView {
 
     void enableLoading(boolean enabled);
 
+    void enableSaveMenuItem(boolean enabled);
+
+    void enableFavoriteMenuItem(boolean enabled);
+
+    void setFavoriteMenuItemIcon(boolean pressed);
+
+    void setSaveMenuItemIcon(boolean pressed);
+
     void setLikeButton(int color, Drawable drawable);
 
     void setShareButton(int color, Drawable drawable);
 
     void setLocalAudioFile(String file);
 
+    void setPostLikes(String text);
+
+    void setPostComments(String text);
+
     void addComment(Comment comment);
+
+    void modifyComment(Comment comment);
+
+    void deleteComment();
 
     void focusCommentET();
 
