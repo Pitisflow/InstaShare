@@ -10,6 +10,7 @@ public class Constants {
     //Card type IDs
     //********************************************
     public static final int CARD_USER_BASIC = 10001;
+    public static final int CARD_USER_IMAGE = 10002;
     public static final int CARD_POST = 20001;
     public static final int CARD_POST_TAG = 20002;
     public static final int CARD_POST_COMMENT = 20003;
@@ -74,7 +75,7 @@ public class Constants {
 
 
     public static final String USER_IMAGES_T = "users-images";
-    public static final String USER_IMAGES_NAME_T = "name";
+    public static final String USER_IMAGES_NAME_K = "name";
     public static final String USER_FOLLOWING_T = "user-following";
     public static final String USER_FOLLOWERS_T = "user-followers";
 

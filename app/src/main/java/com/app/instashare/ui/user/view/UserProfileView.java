@@ -46,5 +46,7 @@ public interface UserProfileView {
 
     void setNoPostsText(String text);
 
+    void addImage(String imageURL);
+
     void openPhotoActivity(String imageURL);
 }

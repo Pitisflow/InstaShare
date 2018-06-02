@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -28,10 +30,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.instashare.R;
+import com.app.instashare.adapter.UsersRVAdapter;
+import com.app.instashare.custom.SquareImagesDecorator;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.user.presenter.UserProfilePresenter;
 import com.app.instashare.ui.user.view.UserProfileView;
+import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Callback;
@@ -73,15 +78,18 @@ public class UserProfileActivity extends AppCompatActivity implements
     private TextView followersTV;
     private TextView seeMoreImagesTV;
     private TextView viewAllPostsTV;
+    private TextView noImagesTV;
 
 
     private Button follow;
     private Button unFollow;
-
     private LinearLayout followingContainer;
     private LinearLayout followersContainer;
-
     private View transparentBackground;
+
+
+    private RecyclerView recyclerView;
+    private UsersRVAdapter adapter;
 
 
     private UserProfilePresenter presenter;
@@ -135,6 +143,7 @@ public class UserProfileActivity extends AppCompatActivity implements
         bindTextViews();
         bindFollowButtonsView();
         bindFollowContainersView();
+        bindImagesRecyclerView();
     }
 
 
@@ -146,7 +155,7 @@ public class UserProfileActivity extends AppCompatActivity implements
 
         //XAVZI8SPwGZqcWZ4O8ybLsQcfK63
         //I5Bk41RGZQfMHU9xw7UFxSLX10h1
-        userKey = "I5Bk41RGZQfMHU9xw7UFxSLX10h1";
+        userKey = "XAVZI8SPwGZqcWZ4O8ybLsQcfK63";
         presenter.onInitialize(userKey);
         //auth.addAuthStateListener(listener);
     }
@@ -273,6 +282,20 @@ public class UserProfileActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
         }
+    }
+
+
+    private void bindImagesRecyclerView()
+    {
+        noImagesTV = findViewById(R.id.noImages);
+        recyclerView = findViewById(R.id.imagesRecycler);
+        adapter = new UsersRVAdapter(getApplicationContext(), getWindowManager());
+
+        SquareImagesDecorator decorator = new SquareImagesDecorator(getWindowManager(), getResources());
+        recyclerView.addItemDecoration(decorator);
+        recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+        recyclerView.setAdapter(adapter);
+        recyclerView.setNestedScrollingEnabled(false);
     }
 
 
@@ -405,6 +428,7 @@ public class UserProfileActivity extends AppCompatActivity implements
     @Override
     public void enableSeeMoreImages(boolean enabled) {
         if (enabled) seeMoreImagesTV.setOnClickListener(this);
+        else recyclerView.setVisibility(View.GONE);
     }
 
     @Override
@@ -511,12 +535,18 @@ public class UserProfileActivity extends AppCompatActivity implements
 
     @Override
     public void setNoImagesText(String text) {
-
+        noImagesTV.setText(text);
+        noImagesTV.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void setNoPostsText(String text) {
 
+    }
+
+    @Override
+    public void addImage(String imageURL) {
+        adapter.addCard(imageURL, Constants.CARD_USER_IMAGE);
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.app.instashare.ui.user.view.UserProfileView;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.DateUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -130,25 +131,28 @@ public class UserProfilePresenter implements
             if (user.getPrivacy() != null) {
                 privacy = user.getPrivacy();
 
-                if (privacy.containsKey(Constants.USER_PRIVACY_FOLLOWERS_K) && !(Boolean) privacy.get(Constants.USER_PRIVACY_FOLLOWERS_K)) {
+                if (privacy.containsKey(Constants.USER_PRIVACY_FOLLOWERS_K) && !(boolean) privacy.get(Constants.USER_PRIVACY_FOLLOWERS_K)) {
                     view.enableSeeFollowers(false);
                 } else view.enableSeeFollowers(true);
 
-                if (privacy.containsKey(Constants.USER_PRIVACY_FOLLOWINGS_K) && !(Boolean) privacy.get(Constants.USER_PRIVACY_FOLLOWINGS_K)) {
+                if (privacy.containsKey(Constants.USER_PRIVACY_FOLLOWINGS_K) && !(boolean) privacy.get(Constants.USER_PRIVACY_FOLLOWINGS_K)) {
                     view.enableSeeFollowing(false);
                 } else view.enableSeeFollowing(true);
 
-                if (privacy.containsKey(Constants.USER_PRIVACY_IMAGES_K) && !(Boolean) privacy.get(Constants.USER_PRIVACY_IMAGES_K)) {
+                if (privacy.containsKey(Constants.USER_PRIVACY_IMAGES_K) && !(boolean) privacy.get(Constants.USER_PRIVACY_IMAGES_K)) {
                     view.enableSeeMoreImages(false);
+                    view.setNoImagesText(context.getString(R.string.profile_no_images));
                 } else view.enableSeeMoreImages(true);
 
-                if (privacy.containsKey(Constants.USER_PRIVACY_POSTS_K) && !(Boolean) privacy.get(Constants.USER_PRIVACY_POSTS_K)) {
+                if (privacy.containsKey(Constants.USER_PRIVACY_POSTS_K) && !(boolean) privacy.get(Constants.USER_PRIVACY_POSTS_K)) {
                     view.enableViewAllPosts(false);
-                }   view.enableViewAllPosts(true);
+                    view.setNoPostsText(context.getString(R.string.profile_no_posts));
+                } else view.enableViewAllPosts(true);
 
-                if (privacy.containsKey(Constants.USER_PRIVACY_EMAIL_K) && !(Boolean) privacy.get(Constants.USER_PRIVACY_EMAIL_K)) {
+
+                if (privacy.containsKey(Constants.USER_PRIVACY_EMAIL_K) && !(boolean) privacy.get(Constants.USER_PRIVACY_EMAIL_K)) {
                     view.enableEmail(false);
-                }   view.enableEmail(true);
+                } else view.enableEmail(true);
             } else {
                 view.enableSeeFollowers(true);
                 view.enableSeeFollowing(true);
@@ -232,6 +236,26 @@ public class UserProfilePresenter implements
             view.setFollowers(0);
             view.setPostsShared(0);
         }
+
+        UserInteractor.donwloadFirstUserImages(userKey, new UserInteractor.OnUserImagesDownload() {
+            @Override
+            public void downloading() {
+
+            }
+
+            @Override
+            public void downloadCompleted(ArrayList<String> images) {
+                for (String image : images){
+                    view.addImage(image);
+                }
+            }
+
+            @Override
+            public void downloadEmpty() {
+                view.enableSeeMoreImages(false);
+                view.setNoImagesText(context.getString(R.string.profile_no_images));
+            }
+        });
     }
 
 

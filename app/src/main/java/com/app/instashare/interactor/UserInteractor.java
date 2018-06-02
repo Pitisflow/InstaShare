@@ -1,8 +1,6 @@
 package com.app.instashare.interactor;
 
-import android.content.Context;
 import android.location.Location;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.app.instashare.singleton.DatabaseSingleton;
@@ -12,7 +10,6 @@ import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,15 +19,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.internal.Util;
 
 /**
  * Created by Pitisflow on 15/4/18.
@@ -151,6 +143,40 @@ public class UserInteractor {
 
 
 
+    public static void donwloadFirstUserImages(String userKey, OnUserImagesDownload download)
+    {
+        String path = Utils.createChild(Constants.USER_IMAGES_T, userKey);
+
+        DatabaseSingleton.getDbInstance().child(path).orderByKey().limitToLast(6)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    ArrayList<String> imagesURL = new ArrayList<>();
+
+                    for (DataSnapshot image : dataSnapshot.getChildren()) {
+                        GenericTypeIndicator<HashMap<String, Object>> t = new GenericTypeIndicator<HashMap<String, Object>>(){};
+                        HashMap<String, Object> map = image.getValue(t);
+
+                        if (map != null && map.containsKey(Constants.USER_IMAGES_NAME_K)) {
+                            imagesURL.add((String) map.get(Constants.USER_IMAGES_NAME_K));
+                        }
+                    }
+
+                    download.downloadCompleted(imagesURL);
+                } else download.downloadEmpty();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
 
     //********************************************
     //REGISTERING USER
@@ -267,7 +293,7 @@ public class UserInteractor {
         {
             String storageRoute = Utils.createChild(Constants.USERS_T, getUserKey(), Constants.GENERAL_IMAGES);
             String imagesRoute = Utils.createChild(Constants.USER_IMAGES_T,
-                    getUserKey(), String.valueOf(System.currentTimeMillis()), Constants.USER_IMAGES_NAME_T);
+                    getUserKey(), String.valueOf(System.currentTimeMillis()), Constants.USER_IMAGES_NAME_K);
 
             String mainImageRoute = Utils.createChild(Constants.USERS_T, getUserKey(), Constants.USERS_BASIC_INFO_T, Constants.USER_MAIN_IMAGE_K);
 
@@ -475,5 +501,15 @@ public class UserInteractor {
         void isFollowed();
 
         void isNotFollowed();
+    }
+
+
+    public interface OnUserImagesDownload
+    {
+        void downloading();
+
+        void downloadCompleted(ArrayList<String> images);
+
+        void downloadEmpty();
     }
 }

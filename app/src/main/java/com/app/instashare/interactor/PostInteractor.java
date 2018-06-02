@@ -13,7 +13,6 @@ import com.app.instashare.utils.LocationUtils;
 import com.app.instashare.utils.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -28,8 +27,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.internal.Util;
 
 /**
  * Created by Pitisflow on 8/5/18.
@@ -69,7 +66,7 @@ public class PostInteractor {
 
         String databaseRoute = Utils.createChild(Constants.USER_IMAGES_T,
                 post.getUser().getUserKey(), String.valueOf(System.currentTimeMillis()),
-                Constants.USER_IMAGES_NAME_T);
+                Constants.USER_IMAGES_NAME_K);
 
         ArrayList<String> databaseRoutes = new ArrayList<>();
         if (post.isAnonymous()) databaseRoutes = null;
