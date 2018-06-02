@@ -32,10 +32,15 @@ public class UserChangeBackgroundActivity extends AppCompatActivity implements U
             "http://www.hdfondos.eu/pictures/2012/1219/1/melbourne-australia-world-cities-skyline-cityscape-hdr-rivers-water-canal-night-lights-reflection-color-path-sidewalk-walk-park-sky-stars-scenic-view-window-background-151997.jpg",
             "http://www.historiasdenuestroplaneta.com/imagenes//2013/10/rascacielos-dubai-edificios-mas-alto-mundo.jpg",
             "https://i.ytimg.com/vi/XkEzEXTgab4/hqdefault.jpg",
+            "http://assets4.bigthink.com/system/idea_thumbnails/63901/size_1024/wormholecropped.jpg?1510600578",
             "https://st-listas.20minutos.es/images/2014-07/384245/list_640px.jpg?1405272726",
             "https://cdn.pixabay.com/photo/2015/09/03/07/06/ocean-920085_960_720.jpg",
             "https://www.definicionabc.com/wp-content/uploads/oceano.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/4/42/Palma_Aquarium-La_jungla.jpg"};
+            "https://upload.wikimedia.org/wikipedia/commons/4/42/Palma_Aquarium-La_jungla.jpg",
+            "https://sofiserrano98.files.wordpress.com/2014/03/colombia.jpg",
+            "https://www.proandroid.com/wp-content/uploads/2017/04/E36.jpg",
+            "https://1079638729.rsc.cdn77.org/pic/v2/gallery/preview/doma-ozera-pejzazh-zima-22041.jpg",
+            "https://i.pinimg.com/originals/05/4b/46/054b461eb95830a7f1d6d3108455b29c.jpg"};
 
 
     @Override

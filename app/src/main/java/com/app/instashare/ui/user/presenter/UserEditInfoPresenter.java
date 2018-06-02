@@ -61,6 +61,11 @@ public class UserEditInfoPresenter {
         }
     }
 
+    public void terminate()
+    {
+        view = null;
+    }
+
 
 
     public void updateInformation()

@@ -72,6 +72,7 @@ public class UserProfilePresenter implements
     public void terminate()
     {
         UserData.removeListener(this);
+        view = null;
     }
 
 

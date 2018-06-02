@@ -168,11 +168,16 @@ public class UserProfileActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        presenter.terminate();
         //auth.removeAuthStateListener(listener);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        presenter.terminate();
+        presenter = null;
+    }
 
     //********************************************
     //BINDING VIEWS
@@ -329,25 +334,28 @@ public class UserProfileActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
 
             case R.id.edit:
-                Intent intent = new Intent(getApplicationContext(), UserEditInfoActivity.class);
+                Intent intentInfo = new Intent(getApplicationContext(), UserEditInfoActivity.class);
 
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(UserProfileActivity.this,
+                ActivityOptionsCompat optionsInfo = ActivityOptionsCompat.makeSceneTransitionAnimation(UserProfileActivity.this,
                         Pair.create(nameTV, nameTV.getTransitionName()),
                         Pair.create(emailTV, emailTV.getTransitionName()),
                         Pair.create(yearsTV, yearsTV.getTransitionName()),
                         Pair.create(descriptionTV, descriptionTV.getTransitionName()));
-                ActivityCompat.startActivity(UserProfileActivity.this, intent, options.toBundle());
+                ActivityCompat.startActivity(UserProfileActivity.this, intentInfo, optionsInfo.toBundle());
                 break;
 
             case R.id.background:
-                Intent intent1 = new Intent(getApplicationContext(), UserChangeBackgroundActivity.class);
+                Intent intentBackground = new Intent(getApplicationContext(), UserChangeBackgroundActivity.class);
 
-                ActivityOptionsCompat options2 = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
-                ActivityCompat.startActivity(this, intent1, options2.toBundle());
+                ActivityOptionsCompat optionsBackground = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+                ActivityCompat.startActivity(this, intentBackground, optionsBackground.toBundle());
                 break;
 
             case R.id.privacy:
-                System.out.println("PRIVACY");
+                Intent intentPrivacy = new Intent(getApplicationContext(), UserEditPrivacyActivity.class);
+
+                ActivityOptionsCompat optionsPrivacy = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+                ActivityCompat.startActivity(this, intentPrivacy, optionsPrivacy.toBundle());
                 break;
 
             case R.id.logOut:

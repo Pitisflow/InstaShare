@@ -56,6 +56,8 @@ public class UserEditInfoActivity extends AppCompatActivity implements UserEditI
         super.onDestroy();
 
         presenter.updateInformation();
+        presenter.terminate();
+        presenter = null;
     }
 
     private void bindEditTextViews()

@@ -155,6 +155,13 @@
     <string name="profile_no_posts">The user has not posted anything</string>
     <string name="profile_no_posts_privacy">The user does not want to show their posts</string>
     <string name="profile_change_background_select">Select your favorite image for your background.</string>
+    <string name="profile_edit_privacy">Edit privacy</string>
+    <string name="profile_edit_following">Show following</string>
+    <string name="profile_edit_followers">Show followers</string>
+    <string name="profile_edit_email">Show email</string>
+    <string name="profile_edit_images">Show images</string>
+    <string name="profile_edit_posts">Show posts</string>
+    <string name="profile_edit_privacy_information">Here you can edit your privacy and choose what content you want to show or not show to other users of the application.</string>
 
 
 
