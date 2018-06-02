@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:transitionName="@string/image_transition"
+        android:transitionName="@string/transition_image"
         app:zoomage_restrictBounds="true"
         app:zoomage_animateOnReset="true"
         app:zoomage_autoResetMode="UNDER"

@@ -7,10 +7,10 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,7 +29,6 @@ import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
-import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.user.presenter.UserProfilePresenter;
 import com.app.instashare.ui.user.view.UserProfileView;
@@ -38,10 +36,6 @@ import com.app.instashare.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
-
-import java.util.Map;
 
 import ak.sh.ay.oblique.ObliqueView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -152,7 +146,7 @@ public class UserProfileActivity extends AppCompatActivity implements
 
         //XAVZI8SPwGZqcWZ4O8ybLsQcfK63
         //I5Bk41RGZQfMHU9xw7UFxSLX10h1
-        userKey = "XAVZI8SPwGZqcWZ4O8ybLsQcfK63";
+        userKey = "I5Bk41RGZQfMHU9xw7UFxSLX10h1";
         presenter.onInitialize(userKey);
         //auth.addAuthStateListener(listener);
     }
@@ -236,7 +230,7 @@ public class UserProfileActivity extends AppCompatActivity implements
     {
         emailTV = findViewById(R.id.email);
         completedUserTV = findViewById(R.id.userCompleted);
-        descriptionTV = findViewById(R.id.description);
+        descriptionTV = findViewById(R.id.descriptionET);
         followersTV = findViewById(R.id.followersNum);
         followingTV = findViewById(R.id.followingNum);
         nameTV = findViewById(R.id.name);
@@ -310,7 +304,14 @@ public class UserProfileActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
 
             case R.id.edit:
-                System.out.println("EDIT");
+                Intent intent = new Intent(getApplicationContext(), UserEditInfoActivity.class);
+
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(UserProfileActivity.this,
+                        Pair.create(nameTV, nameTV.getTransitionName()),
+                        Pair.create(emailTV, emailTV.getTransitionName()),
+                        Pair.create(yearsTV, yearsTV.getTransitionName()),
+                        Pair.create(descriptionTV, descriptionTV.getTransitionName()));
+                ActivityCompat.startActivity(UserProfileActivity.this, intent, options.toBundle());
                 break;
 
             case R.id.background:
@@ -521,7 +522,7 @@ public class UserProfileActivity extends AppCompatActivity implements
     @Override
     public void openPhotoActivity(String imageURL) {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                UserProfileActivity.this, profileImage, getString(R.string.image_transition));
+                UserProfileActivity.this, profileImage, getString(R.string.transition_image));
         ActivityCompat.startActivity(UserProfileActivity.this, PhotoViewActivity.newInstance(UserProfileActivity.this,
                 imageURL, getString(R.string.photoview_post_image), false), options.toBundle());
     }

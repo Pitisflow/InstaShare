@@ -440,7 +440,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     public void onImageClicked(String imageUrl, ImageView imageView) {
         if (getActivity() != null && getContext() != null) {
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    getActivity(), imageView, getString(R.string.image_transition));
+                    getActivity(), imageView, getString(R.string.transition_image));
             ActivityCompat.startActivity(getContext(), PhotoViewActivity.newInstance(getContext(),
                     imageUrl, getString(R.string.photoview_post_image), false), options.toBundle());
         }

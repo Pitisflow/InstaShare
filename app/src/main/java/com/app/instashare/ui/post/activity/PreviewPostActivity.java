@@ -3,48 +3,31 @@ package com.app.instashare.ui.post.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.PostRVAdapter;
-import com.app.instashare.adapter.UsersRVAdapter;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.presenter.PreviewPostPresenter;
 import com.app.instashare.ui.post.view.PreviewPostView;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
-import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.CameraUtils;
-import com.app.instashare.utils.Constants;
-import com.app.instashare.utils.Utils;
-import com.google.common.primitives.Chars;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -153,7 +136,7 @@ public class PreviewPostActivity extends AppCompatActivity implements PreviewPos
 
         contentImage.setOnClickListener(view -> {
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    PreviewPostActivity.this, contentImage, getString(R.string.image_transition));
+                    PreviewPostActivity.this, contentImage, getString(R.string.transition_image));
             ActivityCompat.startActivity(PreviewPostActivity.this, PhotoViewActivity.newInstance(getApplicationContext(),
                     post.getMediaURL(), getString(R.string.photoview_post_image), false), options.toBundle());
         });

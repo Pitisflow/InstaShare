@@ -195,7 +195,8 @@
                 android:layout_marginTop="@dimen/general_margin_big"
                 android:layout_centerHorizontal="true"
                 android:textSize="20sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:transitionName="@string/transition_name"/>
 
             <TextView
                 android:id="@+id/numberOfPosts"
@@ -231,30 +232,34 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="@dimen/general_margin_small"
                 android:textColor="@color/black"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:transitionName="@string/transition_birthdate"/>
 
             <TextView
-                android:id="@+id/description"
+                android:id="@+id/descriptionET"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/userCompleted"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="@dimen/general_margin_small"
                 android:layout_marginStart="@dimen/general_margin_small"
+                android:layout_marginEnd="@dimen/general_margin_small"
                 android:textColor="@color/blackInfo"
-                />
+                android:transitionName="@string/transition_description"/>
 
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/description"
                 android:layout_alignParentStart="true"
+                android:layout_below="@id/descriptionET"
                 android:layout_marginStart="@dimen/general_margin_small"
                 android:layout_marginTop="@dimen/general_margin_small"
                 android:textColor="@color/black"
-                android:visibility="gone"/>
+                android:transitionName="@string/transition_email"
+                android:textColorLink="@color/colorPrimary"
+                android:visibility="gone" />
 
 
             <TextView

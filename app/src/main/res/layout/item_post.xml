@@ -78,7 +78,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/general_margin_medium"
             android:adjustViewBounds="true"
-            android:transitionName="@string/image_transition"
+            android:transitionName="@string/transition_image"
             tool:src="@mipmap/ic_launcher"/>
 
 

@@ -270,9 +270,16 @@
 
 
     <!-- Others -->
-    <string name="image_transition" translatable="false">image_transition</string>
+    <string name="transition_image" translatable="false">image_transition</string>
+    <string name="transition_userName" translatable="false">text_username</string>
+    <string name="transition_name" translatable="false">text_name</string>
+    <string name="transition_last_name" translatable="false">text_last_name</string>
+    <string name="transition_email" translatable="false">text_email</string>
+    <string name="transition_description" translatable="false">text_description</string>
+    <string name="transition_birthdate" translatable="false">text_birthdate</string>
     <string name="text_transition" translatable="false">text_transition</string>
     <string name="menu_post" translatable="false">posts_options_remove</string>
+
 
 
     <!-- File strings -->

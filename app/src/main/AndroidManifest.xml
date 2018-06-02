@@ -74,6 +74,8 @@
             android:name=".ui.post.activity.DetailPostActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
+        <activity android:name=".ui.user.activity.UserEditInfoActivity"/>
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"

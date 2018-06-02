@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/descriptionET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="top|start"
+        android:hint="@string/action_write_something"
+        android:maxLength="500"
+        android:minHeight="@dimen/addpost_et_min_height"
+        android:paddingBottom="@dimen/general_margin_small"
+        android:paddingEnd="@dimen/general_margin_small"
+        android:paddingStart="@dimen/general_margin_small"
+        android:paddingTop="@dimen/general_margin_medium"
+        android:transitionName="@string/transition_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/currentLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/general_margin_small"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionET" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_margin_medium"
+        android:background="@color/grayLight"
+        android:paddingBottom="@dimen/item_margin"
+        android:paddingStart="@dimen/general_margin_small"
+        android:paddingTop="@dimen/item_margin"
+        android:text="@string/user_info_email"
+        android:textColor="@color/black"
+        android:textStyle="normal|bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentLength" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:enabled="false"
+        android:transitionName="@string/transition_email"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@color/grayLight"
+        android:paddingBottom="@dimen/item_margin"
+        android:paddingStart="@dimen/general_margin_small"
+        android:paddingTop="@dimen/item_margin"
+        android:text="@string/user_info_name"
+        android:textColor="@color/black"
+        android:textStyle="normal|bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="@string/user_info_name"
+        android:inputType="textPersonName"
+        android:transitionName="@string/transition_name"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@color/grayLight"
+        android:paddingBottom="@dimen/item_margin"
+        android:paddingStart="@dimen/general_margin_small"
+        android:paddingTop="@dimen/item_margin"
+        android:text="@string/user_info_lastName"
+        android:textColor="@color/black"
+        android:textStyle="normal|bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <EditText
+        android:id="@+id/lastName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="@string/user_info_lastName"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@color/grayLight"
+        android:paddingBottom="@dimen/item_margin"
+        android:paddingStart="@dimen/general_margin_small"
+        android:paddingTop="@dimen/item_margin"
+        android:text="@string/user_info_birthdate"
+        android:textColor="@color/black"
+        android:textStyle="normal|bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lastName" />
+
+    <EditText
+        android:id="@+id/birthdate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/general_margin_small"
+        android:layout_marginStart="@dimen/general_margin_small"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:background="@android:color/transparent"
+        android:focusable="false"
+        android:editable="false"
+        android:ems="10"
+        android:hint="@string/user_info_birthdate"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6"
+        android:transitionName="@string/transition_birthdate"/>
+
+</android.support.constraint.ConstraintLayout>
