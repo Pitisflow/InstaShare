@@ -129,6 +129,32 @@
     <string name="comment_options_edit_hint">Write a comment</string>
 
 
+    <!-- Profile Strings -->
+    <string name="profile_menu_privacy">Privacy</string>
+    <string name="profile_menu_background">Change background</string>
+    <string name="profile_menu_logout">Log out</string>
+    <string name="profile_no_name">No name</string>
+    <string name="profile_post_shared_singular">1 post shared</string>
+    <string name="profile_post_shared_plural">%1$d posts shared</string>
+    <string name="profile_follow">Follow</string>
+    <string name="profile_following">Following</string>
+    <string name="profile_followers">Followers</string>
+    <string name="profile_stop_following">Stop following</string>
+    <string name="profile_stop_following_message">Are you sure you want to unfollow this user?</string>
+    <string name="profile_stop_following_cancel">Cancel</string>
+    <string name="profile_completed_name">%1$s · %2$s</string>
+    <string name="profile_age">%1$d years</string>
+    <string name="profile_email">Email: %1$s</string>
+    <string name="profile_no_description">The user has not written a description.</string>
+    <string name="profile_images">Images</string>
+    <string name="profile_see_more">See more</string>
+    <string name="profile_last_post">Last post shared:</string>
+    <string name="profile_view_all">View all</string>
+    <string name="profile_no_images">The user has not uploaded any images</string>
+    <string name="profile_no_images_privacy">The user does not want to show their images</string>
+    <string name="profile_no_posts">The user has not posted anything</string>
+    <string name="profile_no_posts_privacy">The user does not want to show their posts</string>
+
 
 
 

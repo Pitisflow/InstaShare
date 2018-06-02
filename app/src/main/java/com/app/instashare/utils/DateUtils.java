@@ -5,6 +5,7 @@ import android.content.Context;
 import com.app.instashare.R;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -55,5 +56,23 @@ public class DateUtils {
         DateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
 
         return format.format(date);
+    }
+
+
+    public static String getYearsFromStringDate(String date, Context context)
+    {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        long timestamp = 0;
+        long timestampNow = System.currentTimeMillis();
+        try {
+            timestamp= dateFormat.parse(date).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        long difference = timestampNow - timestamp;
+        long years = difference / 1000 / 60 / 60 / 24 / 365;
+
+        return context.getResources().getString(R.string.profile_age, (int) years);
     }
 }

@@ -46,6 +46,8 @@ public class Constants {
     public static final String USERS_BASIC_INFO_T = "basicInfo";
     public static final String USERS_INFO_T = "information";
     public static final String USERS_LOCACATION_T = "location";
+    public static final String USERS_SOCIAL_T = "social";
+    public static final String USERS_PRIVACY_T = "privacy";
 
 
     public static final String USERNAME_K = "username";
@@ -58,10 +60,23 @@ public class Constants {
     public static final String USERNAMES_USERKEY_K = "userKey";
     public static final String USER_LATITUDE_K = "latitude";
     public static final String USER_LONGITUDE_K = "longitude";
+    public static final String USER_POSTS_SHARED_K = "postsShared";
+    public static final String USER_FOLLOWING_K = "following";
+    public static final String USER_FOLLOWERS_K = "followers";
+    public static final String USER_DESCRIPTION_K = "description";
+    public static final String USER_BACKGROUND_K = "backgroundImage";
+    public static final String USER_PRIVACY_FOLLOWERS_K = "showFollowers";
+    public static final String USER_PRIVACY_FOLLOWINGS_K = "showFollowing";
+    public static final String USER_PRIVACY_IMAGES_K = "showImages";
+    public static final String USER_PRIVACY_POSTS_K = "showPosts";
+    public static final String USER_PRIVACY_EMAIL_K = "showEmail";
+
 
 
     public static final String USER_IMAGES_T = "users-images";
     public static final String USER_IMAGES_NAME_T = "name";
+    public static final String USER_FOLLOWING_T = "user-following";
+    public static final String USER_FOLLOWERS_T = "user-followers";
 
 
 

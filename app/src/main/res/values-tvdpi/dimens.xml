@@ -25,6 +25,13 @@
     <dimen name="signup_bottom_sheet_textSize">16sp</dimen>
 
 
+    <!-- User Profile dimens -->
+    <dimen name="profile_background_photo_height">114dp</dimen>
+    <dimen name="profile_background_oblique_margin">32dp</dimen>
+    <dimen name="profile_circle_image">54dp</dimen>
+    <dimen name="profile_self_radius">8dp</dimen>
+
+
 
 
     <!-- Add post Screen dimens -->

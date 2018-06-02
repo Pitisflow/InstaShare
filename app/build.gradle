@@ -40,6 +40,7 @@ dependencies {
     implementation "com.android.support:exifinterface:$supportLibrariesVersion"
     implementation "com.android.support:cardview-v7:$supportLibrariesVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.android.support:palette-v7:$supportLibrariesVersion"
 
 
     //Location and Maps libraries
@@ -63,6 +64,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.jsibbold:zoomage:1.1.0'
     implementation 'com.xw.repo:bubbleseekbar:3.16-lite'
+    implementation 'com.fxn769:oblique:1.0'
 
 
 

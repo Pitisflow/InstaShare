@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.internal.Util;
+
 /**
  * Created by Pitisflow on 15/4/18.
  */
@@ -45,7 +47,9 @@ public class UserInteractor {
 
 
 
-
+    //********************************************
+    //DOWNLOADING USER/S OR FROM USER
+    //********************************************
 
     public static void searchUsersByUsername(String username, final OnBasicInfoFetched onBasicInfoFetched)
     {
@@ -118,8 +122,39 @@ public class UserInteractor {
 
 
 
+    public static void downloadCompleteUser(String userKey, OnCompleteUserDownload userDownload)
+    {
+        userDownload.donwloading();
+
+        DatabaseSingleton.getDbInstance().child(Constants.USERS_T).child(userKey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists())
+                        {
+                            User user = dataSnapshot.getValue(User.class);
+
+                            if (user != null)
+                            {
+                                user.getBasicInfo().setUserKey(userKey);
+                                userDownload.downloadSuccessful(user);
+                            }
+                        } else userDownload.downloadFailed();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
 
+
+
+    //********************************************
+    //REGISTERING USER
+    //********************************************
 
 
     public static void registerUser(FirebaseAuth auth, Map<String, String> information,
@@ -250,13 +285,176 @@ public class UserInteractor {
 
 
 
+
+    //********************************************
+    //SIMPLE OPERATIONS
+    //********************************************
+
+
+    public static void example()
+    {
+        DatabaseSingleton.getDbInstance().child("user-followers").child("example").orderByKey().startAt("follow14").endAt("follow14")
+                .limitToFirst(6).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    System.out.println(dataSnapshot.getChildrenCount());
+
+                    for (DataSnapshot data : dataSnapshot.getChildren())
+                    {
+                        System.out.println(data);
+                    }
+
+                } else System.out.println("egewgwe");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+    public static void checkIsFollowed(String userKey, String myUserkey, OnCheckedFollowedUser following)
+    {
+        String path = Utils.createChild(Constants.USER_FOLLOWING_T, myUserkey, userKey);
+
+        DatabaseSingleton.getDbInstance().child(path).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) following.isFollowed();
+                else following.isNotFollowed();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public static void followUser(String userKey, String myUserKey, boolean unFollow)
+    {
+        String pathFollowing = Utils.createChild(Constants.USER_FOLLOWING_T, myUserKey, userKey);
+        String pathFollowers = Utils.createChild(Constants.USER_FOLLOWERS_T, userKey, myUserKey);
+        String pathUserFollowing = Utils.createChild(Constants.USERS_T, myUserKey, Constants.USERS_SOCIAL_T, Constants.USER_FOLLOWING_K);
+        String pathUserFollowers = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_SOCIAL_T, Constants.USER_FOLLOWERS_K);
+        String pathMyUserInfo = Utils.createChild(Constants.USERS_T, myUserKey, Constants.USERS_SOCIAL_T);
+        String pathHisUserInfo = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_SOCIAL_T);
+
+
+        if (!unFollow) {
+            DatabaseSingleton.getDbInstance().child(pathFollowing).setValue(true);
+            DatabaseSingleton.getDbInstance().child(pathFollowers).setValue(true);
+        } else {
+            DatabaseSingleton.getDbInstance().child(pathFollowing).removeValue();
+            DatabaseSingleton.getDbInstance().child(pathFollowers).removeValue();
+        }
+
+        DatabaseSingleton.getDbInstance().child(pathUserFollowing).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    int value = ((Long) dataSnapshot.getValue()).intValue();
+
+                    Map<String, Object> update = new HashMap<>();
+                    if (!unFollow) update.put(Constants.USER_FOLLOWING_K, value + 1);
+                    else update.put(Constants.USER_FOLLOWING_K, value - 1);
+                    DatabaseSingleton.getDbInstance().child(pathMyUserInfo).updateChildren(update);
+                } else {
+                    Map<String, Object> update = new HashMap<>();
+                    update.put(Constants.USER_FOLLOWING_K, 1);
+                    DatabaseSingleton.getDbInstance().child(pathMyUserInfo).updateChildren(update);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        DatabaseSingleton.getDbInstance().child(pathUserFollowers).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    int value = ((Long) dataSnapshot.getValue()).intValue();
+
+                    Map<String, Object> update = new HashMap<>();
+                    if (!unFollow) update.put(Constants.USER_FOLLOWERS_K, value + 1);
+                    else update.put(Constants.USER_FOLLOWERS_K, value - 1);
+                    DatabaseSingleton.getDbInstance().child(pathHisUserInfo).updateChildren(update);
+                } else {
+                    Map<String, Object> update = new HashMap<>();
+                    update.put(Constants.USER_FOLLOWERS_K, 1);
+                    DatabaseSingleton.getDbInstance().child(pathHisUserInfo).updateChildren(update);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public static void setUserImage(String userKey, String imageURL)
+    {
+        String path = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_BASIC_INFO_T, Constants.USER_MAIN_IMAGE_K);
+        DatabaseSingleton.getDbInstance().child(path).setValue(imageURL);
+    }
+
+    public static void setBackgroundImage(String userKey, String imageURL)
+    {
+        String path = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_INFO_T, Constants.USER_BACKGROUND_K);
+        DatabaseSingleton.getDbInstance().child(path).setValue(imageURL);
+    }
+
+
+    public static void updateUserInfo(String userKey, Map<String, Object> newInfo)
+    {
+        String path = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_INFO_T);
+        DatabaseSingleton.getDbInstance().child(path).updateChildren(newInfo);
+    }
+
+
+    public static void updateUserPrivacy(String userKey, Map<String, Object> newPrivacy)
+    {
+        String path = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_PRIVACY_T);
+        DatabaseSingleton.getDbInstance().child(path).updateChildren(newPrivacy);
+    }
+
+
+
+    //********************************************
+    //USER INTERACTOR INTERFACES
+    //********************************************
+
+    public interface OnCompleteUserDownload
+    {
+        void donwloading();
+
+        void downloadSuccessful(User user);
+
+        void downloadFailed();
+    }
+
+
+
     public interface OnBasicInfoFetched {
 
         void onSearchRefreshed();
 
         void onUserBasicFetched(UserBasic user);
     }
-
 
 
 
@@ -269,5 +467,13 @@ public class UserInteractor {
         void emailInUse();
 
         void usernameInUse();
+    }
+
+
+    public interface OnCheckedFollowedUser
+    {
+        void isFollowed();
+
+        void isNotFollowed();
     }
 }
