@@ -34,6 +34,7 @@ import com.app.instashare.adapter.UsersRVAdapter;
 import com.app.instashare.custom.SquareImagesDecorator;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
+import com.app.instashare.ui.post.activity.PreviewPostActivity;
 import com.app.instashare.ui.user.presenter.UserProfilePresenter;
 import com.app.instashare.ui.user.view.UserProfileView;
 import com.app.instashare.utils.Constants;
@@ -41,6 +42,8 @@ import com.app.instashare.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import ak.sh.ay.oblique.ObliqueView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -94,6 +97,7 @@ public class UserProfileActivity extends AppCompatActivity implements
 
     private UserProfilePresenter presenter;
     private String userKey;
+    private boolean hasImagesCharged = false;
 
 
     private Button button;
@@ -155,7 +159,7 @@ public class UserProfileActivity extends AppCompatActivity implements
 
         //XAVZI8SPwGZqcWZ4O8ybLsQcfK63
         //I5Bk41RGZQfMHU9xw7UFxSLX10h1
-        userKey = "XAVZI8SPwGZqcWZ4O8ybLsQcfK63";
+        userKey = "I5Bk41RGZQfMHU9xw7UFxSLX10h1";
         presenter.onInitialize(userKey);
         //auth.addAuthStateListener(listener);
     }
@@ -175,8 +179,6 @@ public class UserProfileActivity extends AppCompatActivity implements
     //********************************************
 
 
-    //https://upload.wikimedia.org/wikipedia/commons/d/d1/Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg
-    //http://medienportal.univie.ac.at/typo3temp/pics/cd09f0a626.jpg
     private void bindUserImagesView()
     {
         Display display = getWindowManager().getDefaultDisplay();
@@ -338,7 +340,10 @@ public class UserProfileActivity extends AppCompatActivity implements
                 break;
 
             case R.id.background:
-                System.out.println("BACK GROUND");
+                Intent intent1 = new Intent(getApplicationContext(), UserChangeBackgroundActivity.class);
+
+                ActivityOptionsCompat options2 = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+                ActivityCompat.startActivity(this, intent1, options2.toBundle());
                 break;
 
             case R.id.privacy:
@@ -521,7 +526,7 @@ public class UserProfileActivity extends AppCompatActivity implements
                         Palette.from(innerBitmap).generate(palette -> {
                             int mutedColor = palette.getMutedColor(getResources().getColor(R.color.colorPrimary));
 
-                            String hexColor = "#80" + Integer.toHexString(mutedColor).substring(2);
+                            String hexColor = "#59" + Integer.toHexString(mutedColor).substring(2);
                             transparentBackground.setBackgroundColor(Color.parseColor(hexColor));
                         });
                     }
@@ -545,8 +550,11 @@ public class UserProfileActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void addImage(String imageURL) {
-        adapter.addCard(imageURL, Constants.CARD_USER_IMAGE);
+    public void addImages(ArrayList<String> imagesURLs) {
+        if (!hasImagesCharged) {
+            adapter.addCards(new ArrayList<>(imagesURLs), Constants.CARD_USER_IMAGE);
+            hasImagesCharged = true;
+        }
     }
 
     @Override

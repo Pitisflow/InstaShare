@@ -29,6 +29,9 @@ public class UsersRVAdapter extends BaseRVAdapter {
 
     private Context context;
     private WindowManager windowManager;
+    private OnImageClick imageClickListener;
+    private OnUserClick userClickListener;
+
 
 
     public UsersRVAdapter() {
@@ -79,13 +82,30 @@ public class UsersRVAdapter extends BaseRVAdapter {
                 break;
 
             case Constants.CARD_USER_IMAGE:
-                ((ImageViewHolder) holder).bind((String) getItemList().get(position), context, windowManager);
+                ((ImageViewHolder) holder).bind((String) getItemList().get(position), context, windowManager, imageClickListener);
                 break;
 
         }
     }
 
 
+    public void setImageClickListener(OnImageClick imageClickListener) {
+        this.imageClickListener = imageClickListener;
+    }
+
+    public void setUserClickListener(OnUserClick userClickListener) {
+        this.userClickListener = userClickListener;
+    }
+
+    public void removeImageListener()
+    {
+        this.imageClickListener = null;
+    }
+
+    public void removeUserListener()
+    {
+        this.userClickListener = null;
+    }
 
 
 

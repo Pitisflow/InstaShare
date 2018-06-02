@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.app.instashare.R;
+import com.app.instashare.adapter.UsersRVAdapter;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -26,7 +27,7 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public void bind(String imageURL, Context context, WindowManager manager)
+    public void bind(String imageURL, Context context, WindowManager manager, UsersRVAdapter.OnImageClick listener)
     {
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
@@ -45,5 +46,15 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
         Picasso.get().load(imageURL)
                 .resize(0, newHeight)
                 .into(imageView);
+
+        imageView.setOnClickListener(view -> {
+            if (listener != null) listener.imageClicked(imageURL);
+        });
+
+
+        itemView.setOnLongClickListener(view -> {
+            if (listener != null) listener.imageLongClicked(imageURL);
+            return true;
+        });
     }
 }

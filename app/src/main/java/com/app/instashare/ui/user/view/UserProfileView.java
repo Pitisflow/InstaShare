@@ -1,5 +1,7 @@
 package com.app.instashare.ui.user.view;
 
+import java.util.ArrayList;
+
 /**
  * Created by Pitisflow on 1/6/18.
  */
@@ -46,7 +48,7 @@ public interface UserProfileView {
 
     void setNoPostsText(String text);
 
-    void addImage(String imageURL);
+    void addImages(ArrayList<String> imagesURLs);
 
     void openPhotoActivity(String imageURL);
 }

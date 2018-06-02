@@ -76,6 +76,9 @@
 
         <activity android:name=".ui.user.activity.UserEditInfoActivity"/>
 
+        <activity android:name=".ui.user.activity.UserChangeBackgroundActivity"
+            android:theme="@style/AppTheme.Detail"/>
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"

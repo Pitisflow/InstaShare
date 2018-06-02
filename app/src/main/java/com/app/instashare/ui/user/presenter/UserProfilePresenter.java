@@ -245,9 +245,7 @@ public class UserProfilePresenter implements
 
             @Override
             public void downloadCompleted(ArrayList<String> images) {
-                for (String image : images){
-                    view.addImage(image);
-                }
+                view.addImages(images);
             }
 
             @Override
