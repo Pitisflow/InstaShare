@@ -9,6 +9,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.singleton.UserData;
+import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.user.presenter.UserProfilePresenter;
 import com.app.instashare.ui.user.view.UserProfileView;
 import com.app.instashare.utils.Utils;
@@ -218,6 +221,7 @@ public class UserProfileActivity extends AppCompatActivity implements
         backGroundImage.getLayoutParams().height = backImageHeight;
         profileImage.setLayoutParams(profileImageParams);
         profileImage.setCircleBackgroundColor(getResources().getColor(R.color.black));
+        profileImage.setOnClickListener(this);
 
 
         obliqueStart.setLayoutParams(obliqueParamsStart);
@@ -360,6 +364,10 @@ public class UserProfileActivity extends AppCompatActivity implements
             case R.id.seeAllPosts:
                 System.out.println("see more posts");
 
+                break;
+
+            case R.id.profileImage:
+                presenter.onUserImagePressed();
                 break;
         }
     }
@@ -508,5 +516,13 @@ public class UserProfileActivity extends AppCompatActivity implements
     @Override
     public void setNoPostsText(String text) {
 
+    }
+
+    @Override
+    public void openPhotoActivity(String imageURL) {
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                UserProfileActivity.this, profileImage, getString(R.string.image_transition));
+        ActivityCompat.startActivity(UserProfileActivity.this, PhotoViewActivity.newInstance(UserProfileActivity.this,
+                imageURL, getString(R.string.photoview_post_image), false), options.toBundle());
     }
 }

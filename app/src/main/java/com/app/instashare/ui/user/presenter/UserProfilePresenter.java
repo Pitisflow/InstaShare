@@ -98,6 +98,14 @@ public class UserProfilePresenter implements
     }
 
 
+    public void onUserImagePressed()
+    {
+        if (user.getBasicInfo().getMainImage() != null) {
+            view.openPhotoActivity(user.getBasicInfo().getMainImage());
+        }
+    }
+
+
 
 
 
