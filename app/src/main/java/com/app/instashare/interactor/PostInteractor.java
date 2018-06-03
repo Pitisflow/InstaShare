@@ -47,8 +47,28 @@ public class PostInteractor {
 
     public static void publishPost(Post post, OnUploadingPost uploadingPost)
     {
+        String pathPostNumber = Utils.createChild(Constants.USERS_T, post.getUser().getUserKey(), Constants.USERS_SOCIAL_T, Constants.USER_POSTS_SHARED_K);
         uploadingPost.preparingUpload();
 
+
+
+        DatabaseSingleton.getDbInstance().child(pathPostNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if ((dataSnapshot.getValue()) != null) {
+                        int posts = ((Long) dataSnapshot.getValue()).intValue();
+                        posts++;
+                        DatabaseSingleton.getDbInstance().child(pathPostNumber).setValue(posts);
+                    }
+                } else DatabaseSingleton.getDbInstance().child(pathPostNumber).setValue(1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T).add(post)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

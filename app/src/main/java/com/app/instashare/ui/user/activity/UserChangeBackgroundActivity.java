@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.UsersRVAdapter;
@@ -94,7 +95,7 @@ public class UserChangeBackgroundActivity extends AppCompatActivity implements U
     }
 
     @Override
-    public void imageClicked(String imageURL) {
+    public void imageClicked(String imageURL, ImageView imageView) {
         if (UserInteractor.getUserKey() != null) {
             UserInteractor.setBackgroundImage(UserInteractor.getUserKey(), imageURL);
             finish();

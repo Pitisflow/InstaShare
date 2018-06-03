@@ -562,6 +562,6 @@ public class UserProfileActivity extends AppCompatActivity implements
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 UserProfileActivity.this, profileImage, getString(R.string.transition_image));
         ActivityCompat.startActivity(UserProfileActivity.this, PhotoViewActivity.newInstance(UserProfileActivity.this,
-                imageURL, getString(R.string.photoview_post_image), false), options.toBundle());
+                imageURL, getString(R.string.profile_profile_image), false), options.toBundle());
     }
 }

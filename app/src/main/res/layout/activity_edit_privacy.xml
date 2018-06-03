@@ -10,8 +10,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
+        android:elevation="@dimen/elevation_toolbar"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -77,6 +78,7 @@
         android:layout_marginTop="@dimen/general_margin_medium"
         android:text="@string/profile_edit_posts"
         android:textColor="@color/black"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/noImages" />
 
@@ -113,6 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/general_margin_small"
         android:theme="@style/PrimaryColorItem"
+        android:visibility="gone"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent" />
 

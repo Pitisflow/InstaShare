@@ -48,11 +48,11 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
                 .into(imageView);
 
         imageView.setOnClickListener(view -> {
-            if (listener != null) listener.imageClicked(imageURL);
+            if (listener != null) listener.imageClicked(imageURL, imageView);
         });
 
 
-        itemView.setOnLongClickListener(view -> {
+        imageView.setOnLongClickListener(view -> {
             if (listener != null) listener.imageLongClicked(imageURL);
             return true;
         });

@@ -22,7 +22,21 @@ import com.app.instashare.utils.Constants;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment {
 
+    private static final String EXTRA_MENU = "menu";
+
+    public static BottomSheetFragment newInstance(int idMenu, Context context)
+    {
+        BottomSheetFragment fragment = new BottomSheetFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_MENU, idMenu);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     private NavigationView.OnNavigationItemSelectedListener listener;
+    private int idMenu;
 
 
     @Override
@@ -39,7 +53,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         NavigationView navigationView = (NavigationView) inflater.inflate(R.layout.fragment_bottom_sheet, container, false);
-        navigationView.inflateMenu(R.menu.menu_camera_gallery);
+
+        if (getArguments() != null && getArguments().containsKey(EXTRA_MENU)) {
+            idMenu = getArguments().getInt(EXTRA_MENU);
+            navigationView.inflateMenu(idMenu);
+        } else navigationView.inflateMenu(R.menu.menu_camera_gallery);
         navigationView.setNavigationItemSelectedListener(item -> {
             dismiss();
             return listener.onNavigationItemSelected(item);

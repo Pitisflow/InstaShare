@@ -31,6 +31,10 @@ public class UserImagesPresenter implements UserInteractor.OnUserImagesDownload{
     }
 
 
+    public void onNewMainImageSelected(String imageURL, String userKey) {
+        UserInteractor.setUserImage(userKey, imageURL);
+    }
+
 
     @Override
     public void downloading() {

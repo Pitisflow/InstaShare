@@ -131,7 +131,7 @@ public class UsersRVAdapter extends BaseRVAdapter {
 
     public interface OnImageClick
     {
-        void imageClicked(String imageURL);
+        void imageClicked(String imageURL, ImageView imageView);
 
         void imageLongClicked(String imageURL);
     }
