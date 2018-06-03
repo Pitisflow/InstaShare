@@ -318,7 +318,6 @@
     <!-- File strings -->
     <string name="file_images_sent" translatable="false">Media/InstaShare Images</string>
     <string name="file_audios_sent" translatable="false">Media/Audios Sent</string>
-    <string name="file_provider" translatable="false">com.app.instashare.fileprovider</string>
 
 
 

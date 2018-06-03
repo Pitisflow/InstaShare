@@ -32,9 +32,10 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
     private ArrayList<Post> savedPosts;
     private ArrayList<Post> favoritedPosts;
     private ArrayList<Post> followingPosts;
-    private ArrayList<Post> temp;
+    private ArrayList<Post> temp = new ArrayList<>();
     private boolean loadingMore = false;
     private AtomicInteger control = new AtomicInteger();
+    private AtomicInteger controlNoPosts = new AtomicInteger();
     private int postShowing = ClosePostsFragment.SHOWING_PUBLIC;
     private long endAt = System.currentTimeMillis();
     private boolean isFollowing;
@@ -394,6 +395,7 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
     @Override
     public void downloadFollowingNumber(int number) {
         control.getAndSet(number);
+        controlNoPosts.getAndSet(number);
         temp = new ArrayList<>();
     }
 
@@ -421,6 +423,18 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
             }
 
             followingPosts = new ArrayList<>(currentPosts);
-        } else temp.addAll(posts);
+            if (followingPosts.size() == 0) {
+                view.enableLoadingView(false, false, null);
+            }
+        } else if (posts != null) temp.addAll(posts);
+    }
+
+    @Override
+    public void noPosts() {
+        controlNoPosts.getAndSet(controlNoPosts.decrementAndGet());
+
+        if (controlNoPosts.intValue() == 0) {
+            view.enableLoadingView(false, false, context.getString(R.string.post_error_no_post));
+        }
     }
 }

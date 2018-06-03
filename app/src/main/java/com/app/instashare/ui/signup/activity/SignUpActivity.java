@@ -370,22 +370,13 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView,
         birthdateET.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_date_range_black_24dp), null);
 
         birthdateET.setInputType(InputType.TYPE_NULL);
-        birthdateET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        birthdateET.setOnClickListener((view) -> {
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                birthdateState = charSequence.toString();
-                presenter.onBirthdateChanged(charSequence.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            DatePickerDialog dialog = new DatePickerDialog(SignUpActivity.this, SignUpActivity.this,
+                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH));
+            dialog.show();
         });
 
 

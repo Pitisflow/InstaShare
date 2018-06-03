@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.instashare.BuildConfig;
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.singleton.UserData;
@@ -39,6 +40,7 @@ import com.app.instashare.ui.base.presenter.MainPresenter;
 import com.app.instashare.ui.base.view.MainView;
 import com.app.instashare.ui.chat.fragment.ChatRoomsFragment;
 import com.app.instashare.ui.notification.fragment.NotificationsFragment;
+import com.app.instashare.ui.other.fragment.DownloadPremiumFragment;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.utils.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -218,7 +220,11 @@ public class MainActivity extends AppCompatActivity implements MainView,
 
             case R.id.notifications:
                 isChecked = getCheckedItem(R.id.notifications);
-                fragment = new NotificationsFragment();
+                if (BuildConfig.FLAVOR.equals("free")) {
+                    fragment = new DownloadPremiumFragment();
+                } else {
+                    fragment = new NotificationsFragment();
+                }
                 break;
 
             case R.id.chats:

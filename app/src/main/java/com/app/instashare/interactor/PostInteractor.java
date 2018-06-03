@@ -347,6 +347,9 @@ public class PostInteractor {
                         downloadUserPosts(f, listener);
                     }
                     listener.downloadFollowingNumber(following.size());
+                } else {
+                    listener.downloadFollowingNumber(1);
+                    downloadUserPosts(userKey, listener);
                 }
 
             }
@@ -380,8 +383,10 @@ public class PostInteractor {
                             }
                         }
 
+
                         listener.downloadFollowingCompleted(posts);
-                    }
+                        if (posts.size() == 0) listener.noPosts();
+                    } else listener.noPosts();
                 });
     }
 
@@ -631,6 +636,8 @@ public class PostInteractor {
         void downloadFollowingNumber(int number);
 
         void downloadFollowingCompleted(ArrayList<Post> posts);
+
+        void noPosts();
     }
 
 
