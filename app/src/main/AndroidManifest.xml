@@ -82,6 +82,9 @@
         <activity android:name=".ui.user.activity.UserEditPrivacyActivity"
             android:theme="@style/AppTheme.Detail"/>
 
+        <activity android:name=".ui.user.activity.UserListedActivity"
+            android:screenOrientation="portrait"/>
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"

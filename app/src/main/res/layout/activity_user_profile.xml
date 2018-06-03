@@ -24,6 +24,7 @@
                 android:background="@drawable/shape_shadow_down"
                 android:elevation="@dimen/elevation_toolbar"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                android:transitionName="@string/transition_userName"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:titleTextAppearance="@style/ToolbarTitle" />
 
@@ -64,6 +65,7 @@
                 android:id="@+id/profileImage"
                 android:layout_width="@dimen/item_round_image"
                 android:layout_height="@dimen/item_round_image"
+                android:transitionName="@string/transition_image"
                 app:civ_border_width="1dp"
                 app:civ_border_color="@color/white"/>
 

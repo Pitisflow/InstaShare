@@ -24,11 +24,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.internal.Util;
+
 /**
  * Created by Pitisflow on 15/4/18.
  */
 
 public class UserInteractor {
+
+    private static final int MAX_USERS_PER_PAGE = 20;
+
 
     public static String getUserKey() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -173,6 +178,35 @@ public class UserInteractor {
 
             }
         });
+    }
+
+
+    public static void downloadUsersFromList(String list, String userKey, OnUserListFetched listFetched)
+    {
+        String path = Utils.createChild(list, userKey);
+        listFetched.onSearchRefreshed();
+
+        DatabaseSingleton.getDbInstance().child(path).orderByKey().limitToFirst(MAX_USERS_PER_PAGE)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists())
+                        {
+                            listFetched.numOfUsers(((Long) dataSnapshot.getChildrenCount()).intValue());
+
+                            for (DataSnapshot user : dataSnapshot.getChildren())
+                            {
+                                String userKey = (String) user.getKey();
+                                fetchUserBasicInfo(userKey, listFetched);
+                            }
+                        } else listFetched.numOfUsers(0);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
 
@@ -325,12 +359,12 @@ public class UserInteractor {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())
                 {
-                    System.out.println(dataSnapshot.getChildrenCount());
-
-                    for (DataSnapshot data : dataSnapshot.getChildren())
-                    {
-                        System.out.println(data);
-                    }
+//                    //System.out.println(dataSnapshot.getChildrenCount());
+//
+//                    for (DataSnapshot data : dataSnapshot.getChildren())
+//                    {
+//                        System.out.println(data);
+//                    }
 
                 } else System.out.println("egewgwe");
             }
@@ -448,7 +482,21 @@ public class UserInteractor {
     public static void updateUserInfo(String userKey, Map<String, Object> newInfo)
     {
         String path = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_INFO_T);
+        String pathName = Utils.createChild(Constants.USERS_T, userKey, Constants.USERS_BASIC_INFO_T, Constants.USER_NAME_K);
+
+        String name = "";
+
+        if (newInfo.containsKey(Constants.USER_NAME_K) && newInfo.get(Constants.USER_NAME_K) != null) {
+            name += (String) newInfo.get(Constants.USER_NAME_K);
+        }
+
+        if (newInfo.containsKey(Constants.USER_LAST_NAME_K) && newInfo.get(Constants.USER_LAST_NAME_K) != null) {
+            if (name.length() != 0) name += " ";
+            name += (String) newInfo.get(Constants.USER_LAST_NAME_K);
+        }
+
         DatabaseSingleton.getDbInstance().child(path).updateChildren(newInfo);
+        DatabaseSingleton.getDbInstance().child(pathName).setValue(name);
     }
 
 
@@ -482,6 +530,10 @@ public class UserInteractor {
         void onUserBasicFetched(UserBasic user);
     }
 
+
+    public interface OnUserListFetched extends OnBasicInfoFetched {
+        void numOfUsers(int num);
+    }
 
 
     public interface OnRegistrationProcess{

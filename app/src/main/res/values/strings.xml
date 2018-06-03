@@ -274,6 +274,7 @@
     <!-- Error Strings -->
     <string name="error_refused_afinelocation">It is necessary to access the location of the device to continue.</string>
     <string name="error_disabled_location">It is necessary to activate the location to continue.</string>
+    <string name="error_profile_charging">Error when downloading the user profile.</string>
 
 
 

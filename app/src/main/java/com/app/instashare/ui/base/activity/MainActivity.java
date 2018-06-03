@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.app.instashare.R;
+import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.base.fragment.MainFragment;
 import com.app.instashare.ui.base.presenter.MainPresenter;
 import com.app.instashare.ui.base.view.MainView;
@@ -172,8 +173,10 @@ public class MainActivity extends AppCompatActivity implements MainView,
                 return false;
 
             case R.id.profile:
-                Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                startActivity(intent);
+                if (UserInteractor.getUserKey() != null) {
+                    Intent intent = UserProfileActivity.newInstance(UserInteractor.getUserKey(), getApplicationContext());
+                    startActivity(intent);
+                }
                 break;
         }
 

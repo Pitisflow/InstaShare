@@ -91,6 +91,15 @@ public class UserEditPrivacyActivity extends AppCompatActivity implements UserEd
 
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+
+
+
+    @Override
     public void currentShowFollowingState(boolean state) {
         showFollowing.setChecked(state);
     }

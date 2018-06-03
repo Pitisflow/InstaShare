@@ -1,6 +1,7 @@
 package com.app.instashare.ui.user.presenter;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
@@ -310,7 +311,7 @@ public class UserProfilePresenter implements
 
     @Override
     public void downloadFailed() {
-        //Something
+        Toast.makeText(context, context.getString(R.string.error_profile_charging), Toast.LENGTH_SHORT);
     }
 
 

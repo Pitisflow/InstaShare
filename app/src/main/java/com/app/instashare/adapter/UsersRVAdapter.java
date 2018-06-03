@@ -14,8 +14,11 @@ import com.app.instashare.R;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.ui.view_holders.BasicUserViewHolder;
 import com.app.instashare.ui.view_holders.ImageViewHolder;
+import com.app.instashare.ui.view_holders.LoadingViewHolder;
 import com.app.instashare.utils.Constants;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -66,6 +69,13 @@ public class UsersRVAdapter extends BaseRVAdapter {
 
                 return new ImageViewHolder(itemView);
 
+            case Constants.CARD_LOADING:
+                itemView = LayoutInflater
+                        .from(parent.getContext())
+                        .inflate(R.layout.item_loading_more, parent, false);
+
+                return new LoadingViewHolder(itemView);
+
             default:
                 return null;
         }
@@ -78,11 +88,16 @@ public class UsersRVAdapter extends BaseRVAdapter {
         switch (holder.getItemViewType())
         {
             case Constants.CARD_USER_BASIC:
-                ((BasicUserViewHolder) holder).bind((UserBasic) getItemList().get(position));
+                ((BasicUserViewHolder) holder).bind((UserBasic) getItemList().get(position), userClickListener);
                 break;
 
             case Constants.CARD_USER_IMAGE:
                 ((ImageViewHolder) holder).bind((String) getItemList().get(position), context, windowManager, imageClickListener);
+                break;
+
+            case Constants.CARD_LOADING:
+                LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+                loadingViewHolder.getProgressBar().setIndeterminate(true);
                 break;
 
         }
@@ -111,7 +126,7 @@ public class UsersRVAdapter extends BaseRVAdapter {
 
     public interface OnUserClick
     {
-        void userClicked(String userKey);
+        void userClicked(String userKey, CircleImageView image, TextView username, TextView name);
     }
 
     public interface OnImageClick

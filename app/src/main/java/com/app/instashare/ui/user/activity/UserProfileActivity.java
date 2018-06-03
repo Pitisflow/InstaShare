@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -35,6 +36,7 @@ import com.app.instashare.custom.SquareImagesDecorator;
 import com.app.instashare.interactor.UserInteractor;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
 import com.app.instashare.ui.post.activity.PreviewPostActivity;
+import com.app.instashare.ui.signin.activity.SignInActivity;
 import com.app.instashare.ui.user.presenter.UserProfilePresenter;
 import com.app.instashare.ui.user.view.UserProfileView;
 import com.app.instashare.utils.Constants;
@@ -112,33 +114,22 @@ public class UserProfileActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-//        button = findViewById(R.id.log_out);
-//
-//
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                auth.signOut();
-//            }
-//        });
-//
-//
-//
-//        auth = FirebaseAuth.getInstance();
-//        listener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                if (firebaseAuth.getCurrentUser() == null) {
-//                    Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//                    finish();
-//                    startActivity(intent);
-//                }
-//            }
-//        };
+        auth = FirebaseAuth.getInstance();
+        listener = firebaseAuth -> {
+            if (firebaseAuth.getCurrentUser() == null) {
+                Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                finish();
+                startActivity(intent);
+            }
+        };
+
+        if (getIntent().getExtras() != null && (getIntent().hasExtra(EXTRA_USER_KEY))) {
+            userKey = getIntent().getStringExtra(EXTRA_USER_KEY);
+        }
 
         presenter = new UserProfilePresenter(getApplicationContext(), this);
 
@@ -157,18 +148,15 @@ public class UserProfileActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
 
-        //XAVZI8SPwGZqcWZ4O8ybLsQcfK63
-        //I5Bk41RGZQfMHU9xw7UFxSLX10h1
-        userKey = "I5Bk41RGZQfMHU9xw7UFxSLX10h1";
         presenter.onInitialize(userKey);
-        //auth.addAuthStateListener(listener);
+        auth.addAuthStateListener(listener);
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        //auth.removeAuthStateListener(listener);
+        auth.removeAuthStateListener(listener);
     }
 
     @Override
@@ -359,7 +347,7 @@ public class UserProfileActivity extends AppCompatActivity implements
                 break;
 
             case R.id.logOut:
-                System.out.println("LOG OUTÇ");
+                auth.signOut();
                 break;
         }
         return true;
@@ -378,11 +366,13 @@ public class UserProfileActivity extends AppCompatActivity implements
         switch (view.getId())
         {
             case R.id.followersContainer:
-                System.out.println("FOLLOWERS");
+                Intent intentFollowers = UserListedActivity.newInstance(Constants.USER_FOLLOWERS_T, userKey, getApplicationContext());
+                startActivity(intentFollowers);
                 break;
 
             case R.id.followingContainer:
-                System.out.println("FOLLOWING");
+                Intent intentFollowing = UserListedActivity.newInstance(Constants.USER_FOLLOWING_T, userKey, getApplicationContext());
+                startActivity(intentFollowing);
                 break;
 
             case R.id.followButton:

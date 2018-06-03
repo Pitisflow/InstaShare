@@ -1,10 +1,12 @@
 package com.app.instashare.ui.view_holders;
 
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.app.instashare.R;
+import com.app.instashare.adapter.UsersRVAdapter;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.squareup.picasso.Picasso;
 
@@ -30,15 +32,20 @@ public class BasicUserViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public void bind(UserBasic user)
+    public void bind(UserBasic user, UsersRVAdapter.OnUserClick listener)
     {
         Picasso.get()
                 .load(user.getMainImage())
                 .resize(userImage.getLayoutParams().width, userImage.getLayoutParams().height)
+                .placeholder(R.mipmap.ic_launcher)
                 .into(userImage);
 
         username.setText(user.getUsername());
         name.setText(user.getName());
+
+        itemView.setOnClickListener(view -> {
+            if (listener != null) listener.userClicked(user.getUserKey(), userImage, username, name);
+        });
     }
 
 }
