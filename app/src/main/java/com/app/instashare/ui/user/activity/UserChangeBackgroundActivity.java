@@ -46,7 +46,7 @@ public class UserChangeBackgroundActivity extends AppCompatActivity implements U
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_background);
+        setContentView(R.layout.activity_change_backgound);
 
 
         ConstraintLayout content = findViewById(R.id.content);

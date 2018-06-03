@@ -162,6 +162,8 @@
     <string name="profile_edit_images">Show images</string>
     <string name="profile_edit_posts">Show posts</string>
     <string name="profile_edit_privacy_information">Here you can edit your privacy and choose what content you want to show or not show to other users of the application.</string>
+    <string name="profile_images_no_images">No images</string>
+    <string name="profile_user_images">User images</string>
 
 
 

@@ -384,8 +384,10 @@ public class UserProfileActivity extends AppCompatActivity implements
                 break;
 
             case R.id.seeMoreImages:
-                System.out.println("See more IMAGES");
+                Intent intentImages = UserImagesActivity.newInstance(userKey, getApplicationContext());
 
+                ActivityOptionsCompat optionsBackground = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+                ActivityCompat.startActivity(this, intentImages, optionsBackground.toBundle());
                 break;
 
             case R.id.seeAllPosts:

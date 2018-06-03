@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/noImages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/general_margin_medium"
@@ -78,7 +78,7 @@
         android:text="@string/profile_edit_posts"
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/noImages" />
 
     <Switch
         android:id="@+id/showFollowing"
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/general_margin_small"
         android:theme="@style/PrimaryColorItem"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+        app:layout_constraintBaseline_toBaselineOf="@+id/noImages"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Switch

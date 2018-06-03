@@ -1,5 +1,6 @@
 package com.app.instashare.interactor;
 
+import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 
@@ -210,6 +211,37 @@ public class UserInteractor {
     }
 
 
+
+    public static void downloadUserImages(String userKey, OnUserImagesDownload onUserImagesDownload)
+    {
+        String path = Utils.createChild(Constants.USER_IMAGES_T, userKey);
+
+
+        System.out.println(path);
+        DatabaseSingleton.getDbInstance().child(path)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists())
+                        {
+                            ArrayList<String> imagesURLs = new ArrayList<>();
+
+                            for (DataSnapshot imageURL : dataSnapshot.getChildren()) {
+                                GenericTypeIndicator<HashMap<String, Object>> t = new GenericTypeIndicator<HashMap<String, Object>>(){};
+                                HashMap<String, Object> map = imageURL.getValue(t);
+
+                                imagesURLs.add((String) map.get(Constants.USER_IMAGES_NAME_K));
+                            }
+                            onUserImagesDownload.downloadCompleted(imagesURLs);
+                        } else onUserImagesDownload.downloadEmpty();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
 
     //********************************************
