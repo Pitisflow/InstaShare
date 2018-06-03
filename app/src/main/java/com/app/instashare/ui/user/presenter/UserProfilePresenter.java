@@ -82,8 +82,8 @@ public class UserProfilePresenter implements
 
     public void onFollowPressed()
     {
-        if (UserInteractor.getUserKey() != null && userKey != null) {
-            UserInteractor.followUser(userKey, UserInteractor.getUserKey(),false);
+        if (UserData.getUser() != null && userKey != null) {
+            UserInteractor.followUser(userKey, UserData.getUser().getBasicInfo(),false);
             view.enableFollowButton(true, true);
             view.setFollowers(followers + 1);
         }
@@ -92,8 +92,8 @@ public class UserProfilePresenter implements
 
     public void onUnFollowPressed()
     {
-        if (UserInteractor.getUserKey() != null && userKey != null) {
-            UserInteractor.followUser(userKey, UserInteractor.getUserKey(),true);
+        if (UserData.getUser() != null && userKey != null) {
+            UserInteractor.followUser(userKey, UserData.getUser().getBasicInfo(),true);
             view.enableFollowButton(true, false);
             view.setFollowers(followers - 1);
         }

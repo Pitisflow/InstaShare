@@ -213,7 +213,7 @@ public class DetailActivityPresenter implements PostInteractor.OnDownloadSingleP
 
             if (commentToSend != null){
                 uploadingComment = commentToSend;
-                PostInteractor.publishComment(commentToSend, post.getPostKey(), this);
+                PostInteractor.publishComment(commentToSend, post.getPostKey(), post.getUser().getUserKey(), this);
             }
         }
     }

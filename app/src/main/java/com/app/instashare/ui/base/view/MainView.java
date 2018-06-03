@@ -13,4 +13,10 @@ public interface MainView {
     void setUsername(String username);
 
     void setName(String name);
+
+    void updateNotificationsIcon(int num);
+
+    void hideNotificationsNumber();
+
+    String getNavigationText();
 }

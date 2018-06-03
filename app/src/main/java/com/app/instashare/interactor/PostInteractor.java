@@ -5,9 +5,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.app.instashare.singleton.DatabaseSingleton;
+import com.app.instashare.singleton.UserData;
+import com.app.instashare.ui.notification.model.Notification;
 import com.app.instashare.ui.post.model.Comment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.model.Report;
+import com.app.instashare.ui.user.model.User;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.LocationUtils;
@@ -102,7 +105,7 @@ public class PostInteractor {
     }
 
 
-    public static void publishComment(Comment comment, String postKey, OnUploadingComment uploadingComment)
+    public static void publishComment(Comment comment, String postKey, String receiverKey, OnUploadingComment uploadingComment)
     {
         uploadingComment.preparingUpload();
 
@@ -115,6 +118,11 @@ public class PostInteractor {
             DatabaseSingleton.getDbInstance().child(path).child(pushKey).setValue(comment, (databaseError, databaseReference) -> {
                 if (databaseError == null && audioURL != null) uploadAudio(audioURL, postKey, pushKey, uploadingComment);
                 else uploadingComment.uploadCompleted(null);
+
+                if (!UserInteractor.getUserKey().equals(receiverKey)){
+                    NotificationInteractor.sendNotification(UserData.getUser().getBasicInfo(),
+                            receiverKey, postKey, Constants.NOTIFICATION_TYPE_COMMENT);
+                }
             });
         }
     }
@@ -488,6 +496,17 @@ public class PostInteractor {
 
         DatabaseSingleton.getDbInstance().child(tree)
                 .child(userKey).child(post.getPostKey()).setValue(postRed);
+
+
+        if (tree.equals(Constants.POSTS_LIKED_T) && !UserInteractor.getUserKey().equals(post.getUser().getUserKey())){
+            NotificationInteractor.sendNotification(UserData.getUser().getBasicInfo(), userKey,
+                    post.getPostKey(), Constants.NOTIFICATION_TYPE_LIKE);
+        }
+
+        if (tree.equals(Constants.POSTS_SHARED_T) && !UserInteractor.getUserKey().equals(post.getUser().getUserKey())) {
+            NotificationInteractor.sendNotification(UserData.getUser().getBasicInfo(), userKey,
+                    post.getPostKey(), Constants.NOTIFICATION_TYPE_SHARE);
+        }
     }
 
 

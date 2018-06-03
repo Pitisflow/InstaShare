@@ -141,6 +141,13 @@ public class Constants {
 
 
 
+    //Notification tree keys
+    public static final String NOTIFICATION_TYPE_LIKE = "like";
+    public static final String NOTIFICATION_TYPE_COMMENT = "comment";
+    public static final String NOTIFICATION_TYPE_SHARE = "share";
+    public static final String NOTIFICATION_TYPE_FOLLOW = "follow";
+    public static final String NOTIFICATIONS_T = "notifications";
+    public static final String NOTIFICATION_READ_K = "read";
 
 
     //General keys

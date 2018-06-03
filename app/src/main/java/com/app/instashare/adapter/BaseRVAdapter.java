@@ -116,10 +116,12 @@ public abstract class BaseRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     {
         int index = itemList.indexOf(card);
 
-        itemList.remove(index);
-        itemTypeList.remove(index);
+        if (index != -1) {
+            itemList.remove(index);
+            itemTypeList.remove(index);
 
-        notifyItemRemoved(index);
+            notifyItemRemoved(index);
+        }
     }
 
 

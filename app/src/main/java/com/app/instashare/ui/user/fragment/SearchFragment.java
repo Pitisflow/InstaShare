@@ -1,5 +1,6 @@
 package com.app.instashare.ui.user.fragment;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.icu.text.SymbolTable;
@@ -7,7 +8,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +25,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.app.instashare.R;
 import com.app.instashare.adapter.UsersRVAdapter;
 import com.app.instashare.singleton.DatabaseSingleton;
+import com.app.instashare.ui.user.activity.UserListedActivity;
+import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.ui.user.presenter.SearchPresenter;
 import com.app.instashare.ui.user.view.SearchView;
@@ -39,15 +46,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.content.Context.WINDOW_SERVICE;
 
 /**
  * Created by Pitisflow on 17/4/18.
  */
 
-public class SearchFragment extends Fragment implements SearchView{
+public class SearchFragment extends Fragment implements SearchView, UsersRVAdapter.OnUserClick{
 
     private RecyclerView recyclerView;
+    private UsersRVAdapter adapter;
     private EditText editText;
     private SearchPresenter presenter;
 
@@ -95,10 +105,12 @@ public class SearchFragment extends Fragment implements SearchView{
 
     private void bindRecyclerView(View view)
     {
+        adapter = new UsersRVAdapter(getContext(), null);
+        adapter.setUserClickListener(this);
         recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT_PORTRAIT));
 
-        recyclerView.setAdapter(new UsersRVAdapter());
+        recyclerView.setAdapter(adapter);
     }
 
 
@@ -132,6 +144,7 @@ public class SearchFragment extends Fragment implements SearchView{
         super.onDestroyView();
 
         presenter = null;
+        adapter.removeUserListener();
     }
 
 
@@ -201,5 +214,17 @@ public class SearchFragment extends Fragment implements SearchView{
         if (recyclerView.getAdapter() != null && recyclerView.getAdapter() instanceof UsersRVAdapter) {
             ((UsersRVAdapter) recyclerView.getAdapter()).addCard(user, Constants.CARD_USER_BASIC);
         }
+    }
+
+    @Override
+    public void userClicked(String userKey, CircleImageView image, TextView username, TextView name) {
+        Intent intentProfile = UserProfileActivity.newInstance(userKey, getContext());
+
+        ActivityOptionsCompat optionsInfo = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                Pair.create(image, image.getTransitionName()),
+                Pair.create(username, username.getTransitionName()),
+                Pair.create(name, name.getTransitionName()));
+
+        ActivityCompat.startActivity(getActivity(), intentProfile, optionsInfo.toBundle());
     }
 }

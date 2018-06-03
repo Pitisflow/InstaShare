@@ -349,6 +349,10 @@ public class UserProfileActivity extends AppCompatActivity implements
             case R.id.logOut:
                 auth.signOut();
                 break;
+
+            case android.R.id.home:
+                onBackPressed();
+                break;
         }
         return true;
     }

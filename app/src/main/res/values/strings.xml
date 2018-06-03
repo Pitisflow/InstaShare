@@ -191,6 +191,21 @@
 
 
 
+    <!-- Notifications Strings -->
+    <string name="notification_shared">has shared your</string>
+    <string name="notification_liked">has liked your</string>
+    <string name="notification_commented">has commented your</string>
+    <string name="notification_follow">has begun to follow you</string>
+    <string name="notification_post">post</string>
+    <string name="notification_remove">Remove notification</string>
+    <string name="notification_remove_text">Are you sure you want to delete this notification?</string>
+    <string name="notification_confirm">Confirm</string>
+    <string name="notification_cancel">Cancel</string>
+
+
+    <!-- Chats Strings -->
+    <string name="chats_coming_soon">Coming soon!</string>
+
 
 
     <!-- Tags Strings -->
@@ -276,6 +291,8 @@
     <string name="photoview_post_image">Post image</string>
 
 
+    <!-- Download Premium Screen Strings -->
+    <string name="download_premium">If you want to use this functionality, download the premium version</string>
 
     <!-- Error Strings -->
     <string name="error_refused_afinelocation">It is necessary to access the location of the device to continue.</string>
@@ -286,6 +303,7 @@
 
     <!-- Others -->
     <string name="transition_image" translatable="false">image_transition</string>
+    <string name="transition_image_user" translatable="false">image_transition_user</string>
     <string name="transition_userName" translatable="false">text_username</string>
     <string name="transition_name" translatable="false">text_name</string>
     <string name="transition_last_name" translatable="false">text_last_name</string>

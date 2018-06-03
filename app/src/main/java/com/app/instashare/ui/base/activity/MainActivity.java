@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.base.fragment.MainFragment;
 import com.app.instashare.ui.base.presenter.MainPresenter;
 import com.app.instashare.ui.base.view.MainView;
+import com.app.instashare.ui.chat.fragment.ChatRoomsFragment;
 import com.app.instashare.ui.notification.fragment.NotificationsFragment;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.utils.LocationUtils;
@@ -165,6 +167,13 @@ public class MainActivity extends AppCompatActivity implements MainView,
     }
 
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        drawerLayout.openDrawer(GravityCompat.START);
+        return super.onSupportNavigateUp();
+    }
+
+
 
     private void bindNavigationView()
     {
@@ -199,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
         Fragment fragment = null;
         boolean isChecked = false;
 
+
         switch (item.getItemId())
         {
             case R.id.posts:
@@ -213,7 +223,8 @@ public class MainActivity extends AppCompatActivity implements MainView,
 
             case R.id.chats:
                 isChecked = getCheckedItem(R.id.chats);
-                return false;
+                fragment = new ChatRoomsFragment();
+                break;
 
             case R.id.profile:
                 if (UserInteractor.getUserKey() != null) {
@@ -379,5 +390,29 @@ public class MainActivity extends AppCompatActivity implements MainView,
     @Override
     public void setName(String name) {
         this.name.setText(name);
+    }
+
+    @Override
+    public void updateNotificationsIcon(int num) {
+        View actionView = navigationView.getMenu().findItem(R.id.notifications).getActionView();
+
+        if (num > 0) actionView.setVisibility(View.VISIBLE);
+        else actionView.setVisibility(View.GONE);
+
+        TextView numNotif = actionView.findViewById(R.id.drawer_num_notifications);
+        numNotif.setText(String.valueOf(num));
+    }
+
+    @Override
+    public void hideNotificationsNumber() {
+        View actionView = navigationView.getMenu().findItem(R.id.notifications).getActionView();
+        actionView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public String getNavigationText() {
+        View actionView = navigationView.getMenu().findItem(R.id.notifications).getActionView();
+        TextView numNotif = actionView.findViewById(R.id.drawer_num_notifications);
+        return numNotif.getText().toString();
     }
 }

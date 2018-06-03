@@ -431,8 +431,9 @@ public class UserInteractor {
     }
 
 
-    public static void followUser(String userKey, String myUserKey, boolean unFollow)
+    public static void followUser(String userKey, UserBasic user, boolean unFollow)
     {
+        String myUserKey = user.getUserKey();
         String pathFollowing = Utils.createChild(Constants.USER_FOLLOWING_T, myUserKey, userKey);
         String pathFollowers = Utils.createChild(Constants.USER_FOLLOWERS_T, userKey, myUserKey);
         String pathUserFollowing = Utils.createChild(Constants.USERS_T, myUserKey, Constants.USERS_SOCIAL_T, Constants.USER_FOLLOWING_K);
@@ -444,6 +445,8 @@ public class UserInteractor {
         if (!unFollow) {
             DatabaseSingleton.getDbInstance().child(pathFollowing).setValue(true);
             DatabaseSingleton.getDbInstance().child(pathFollowers).setValue(true);
+
+            NotificationInteractor.sendNotification(user, userKey, null, Constants.NOTIFICATION_TYPE_FOLLOW);
         } else {
             DatabaseSingleton.getDbInstance().child(pathFollowing).removeValue();
             DatabaseSingleton.getDbInstance().child(pathFollowers).removeValue();
