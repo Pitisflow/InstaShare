@@ -5,4 +5,12 @@ package com.app.instashare.ui.base.view;
  */
 
 public interface MainView {
+
+    void setUserImage(String imageURL);
+
+    void setBackgroundImage(String imageURL);
+
+    void setUsername(String username);
+
+    void setName(String name);
 }

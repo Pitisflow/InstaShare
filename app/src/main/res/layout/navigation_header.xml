@@ -1,8 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@android:color/holo_orange_light">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@id/name"
+        android:scaleType="centerCrop"/>
+
+
+    <View
+        android:id="@+id/transparentBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@id/name"/>
+
+
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImage"
+        android:layout_width="@dimen/item_round_image"
+        android:layout_height="@dimen/item_round_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/general_margin_big"
+        android:layout_marginStart="@dimen/general_margin_medium"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/white"
+        app:civ_circle_background_color="@color/black"/>
+
+
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/userImage"
+        android:layout_marginTop="@dimen/general_margin_medium"
+        android:layout_marginStart="@dimen/general_margin_medium"
+        android:textColor="@color/white"
+        android:text="Pitisflow"/>
+
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username"
+        android:layout_marginTop="@dimen/general_margin_small"
+        android:layout_marginStart="@dimen/general_margin_medium"
+        android:paddingBottom="@dimen/general_margin_small"
+        android:textColor="@color/white"
+        android:text="Javier Garcia Antunez"/>
 
 </RelativeLayout>

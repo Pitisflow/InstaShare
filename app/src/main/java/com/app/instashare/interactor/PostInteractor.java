@@ -1,6 +1,7 @@
 package com.app.instashare.interactor;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.app.instashare.singleton.DatabaseSingleton;
@@ -11,6 +12,8 @@ import com.app.instashare.ui.user.model.UserBasic;
 import com.app.instashare.utils.Constants;
 import com.app.instashare.utils.LocationUtils;
 import com.app.instashare.utils.Utils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -20,6 +23,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.storage.UploadTask;
 
@@ -27,6 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.internal.Util;
 
 /**
  * Created by Pitisflow on 8/5/18.
@@ -312,6 +318,66 @@ public class PostInteractor {
 
 
 
+    public static void downloadFollowingPosts(String userKey, OnDownloadFollowingPosts listener)
+    {
+        String followersPath = Utils.createChild(Constants.USER_FOLLOWING_T, userKey);
+        listener.downloadingFollowing();
+
+        DatabaseSingleton.getDbInstance().child(followersPath).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ArrayList<String> following = new ArrayList<>();
+
+
+                    for (DataSnapshot userKey : dataSnapshot.getChildren()) {
+                        following.add(userKey.getKey());
+                    }
+                    following.add(userKey);
+
+                    for (String f : following) {
+                        downloadUserPosts(f, listener);
+                    }
+                    listener.downloadFollowingNumber(following.size());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private static void downloadUserPosts(String userKey, OnDownloadFollowingPosts listener)
+    {
+        CollectionReference reference = DatabaseSingleton.getFirestoreInstance().collection(Constants.POSTS_T);
+
+        reference.whereEqualTo(Constants.POST_USER_K + "." + Constants.USERNAMES_USERKEY_K, userKey)
+                .whereEqualTo(Constants.POST_PUBLIC_K, false).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                    {
+                        ArrayList<Post> posts = new ArrayList<>();
+
+                        for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                            Post post = documentSnapshot.toObject(Post.class);
+
+                            if (post != null) {
+                                post.setPostKey(documentSnapshot.getId());
+                                post.setLocationMap(new HashMap<>(LocationUtils.getMapFromGeoPoint(post.getLocation())));
+                                posts.add(post);
+                            }
+                        }
+
+                        listener.downloadFollowingCompleted(posts);
+                    }
+                });
+    }
+
+
     //********************************************
     //TRANSACTIONS
     //********************************************
@@ -539,6 +605,14 @@ public class PostInteractor {
     }
 
 
+    public interface OnDownloadFollowingPosts
+    {
+        void downloadingFollowing();
+
+        void downloadFollowingNumber(int number);
+
+        void downloadFollowingCompleted(ArrayList<Post> posts);
+    }
 
 
     public interface OnCommentEditted

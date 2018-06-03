@@ -26,6 +26,8 @@ public class UserListedPresenter implements UserInteractor.OnUserListFetched{
     private ArrayList<UserBasic> temp;
     private String typeList;
     private String userKey;
+    private String starAt = "";
+    private boolean isLoadingMore = false;
     private AtomicInteger control = new AtomicInteger();
 
 
@@ -42,7 +44,6 @@ public class UserListedPresenter implements UserInteractor.OnUserListFetched{
 
         currentUsers = new ArrayList<>();
 
-        System.out.println("HER123124E");
         if (users != null)
         {
             for (Parcelable user : users)
@@ -51,7 +52,6 @@ public class UserListedPresenter implements UserInteractor.OnUserListFetched{
             }
         }
 
-        System.out.println("HER123124E  " + currentUsers.size());
 
         if (currentUsers.size() == 0)
         {
@@ -67,7 +67,9 @@ public class UserListedPresenter implements UserInteractor.OnUserListFetched{
 
     public void onDownloadMoreUsers()
     {
-        //DOWNLOAD MORE
+        view.setIsLoading(true);
+        isLoadingMore = true;
+        UserInteractor.downloadMoreUsersFromList(typeList, this.userKey, starAt, this);
     }
 
 
@@ -77,7 +79,7 @@ public class UserListedPresenter implements UserInteractor.OnUserListFetched{
 
     @Override
     public void onSearchRefreshed() {
-        view.setIsLoading(true);
+        if (!isLoadingMore) view.setIsLoading(true);
     }
 
     @Override
@@ -89,9 +91,11 @@ public class UserListedPresenter implements UserInteractor.OnUserListFetched{
             currentUsers.addAll(temp);
 
             view.setIsLoading(false);
+            if (temp.size() >= 20 ) isLoadingMore = false;
             for (UserBasic u : temp) {
-                view.addUser(u);
+                if (!starAt.equals(user.getUserKey())) view.addUser(u);
             }
+            starAt = user.getUserKey();
         } else temp.add(user);
     }
 

@@ -50,7 +50,6 @@ public class UserProfilePresenter implements
     {
         this.userKey = userKey;
 
-        UserInteractor.example();
         UserData.addListener(this);
         if (userKey.equals(UserInteractor.getUserKey()))
         {

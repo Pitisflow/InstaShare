@@ -13,6 +13,7 @@ import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.post.fragment.ClosePostsFragment;
 import com.app.instashare.ui.post.model.Post;
 import com.app.instashare.ui.post.view.ClosePostsView;
+import com.app.instashare.ui.user.model.User;
 import com.app.instashare.utils.Constants;
 
 import java.util.ArrayList;
@@ -24,16 +25,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 public class ClosePostsPresenter extends BaseListedPostPresenter implements UserData.OnUserDataFetched,
-        PostInteractor.OnDowloadingPosts, PostInteractor.OnDownloadingPostPerPost {
+        PostInteractor.OnDowloadingPosts, PostInteractor.OnDownloadingPostPerPost,
+        PostInteractor.OnDownloadFollowingPosts{
 
     private ArrayList<Post> publicPosts;
     private ArrayList<Post> savedPosts;
     private ArrayList<Post> favoritedPosts;
+    private ArrayList<Post> followingPosts;
     private ArrayList<Post> temp;
     private boolean loadingMore = false;
     private AtomicInteger control = new AtomicInteger();
     private int postShowing = ClosePostsFragment.SHOWING_PUBLIC;
     private long endAt = System.currentTimeMillis();
+    private boolean isFollowing;
 
 
     public ClosePostsPresenter(Context context, ClosePostsView view) {
@@ -55,6 +59,31 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
                     false, this);
         }
     }
+
+    public void onInitialize(ArrayList<Parcelable> posts, boolean isFollowing)
+    {
+        currentPosts = new ArrayList<>();
+        this.isFollowing = isFollowing;
+        if (posts != null)
+        {
+            for (Parcelable post : posts)
+            {
+                if (post instanceof Post) currentPosts.add((Post) post);
+            }
+        }
+        if (UserData.getUser() != null && UserData.getUser().getLocation() != null)
+        {
+            location = UserData.getUser().getLocation();
+            locationUpdated = true;
+        }
+
+        UserData.addListener(this);
+
+        if (location != null && currentPosts.size() == 0){
+            PostInteractor.downloadFollowingPosts(UserInteractor.getUserKey(), this);
+        }
+    }
+
 
     @Override
     public void terminate() {
@@ -213,8 +242,12 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
         {
             location = UserData.getUser().getLocation();
             if (!locationUpdated) {
-                PostInteractor.getClosestPosts(getRadius(), UserData.getUser().getLocation(),
+                if (!isFollowing) PostInteractor.getClosestPosts(getRadius(), UserData.getUser().getLocation(),
                         false, this);
+
+                if (isFollowing) {
+                    PostInteractor.downloadFollowingPosts(UserInteractor.getUserKey(), this);
+                }
             }
             locationUpdated = true;
         }
@@ -343,5 +376,51 @@ public class ClosePostsPresenter extends BaseListedPostPresenter implements User
         } else {
             temp.add(post);
         }
+    }
+
+
+    //********************************************
+    //IMPLEMENTS POSTINTERACTOR INTERFACE FOR LIST
+    //********************************************
+
+    @Override
+    public void downloadingFollowing() {
+        if (view != null) {
+            view.enableLoadingView(true, true, context.getString(R.string.post_loading));
+            view.changePosts(new ArrayList<>());
+        }
+    }
+
+    @Override
+    public void downloadFollowingNumber(int number) {
+        control.getAndSet(number);
+        temp = new ArrayList<>();
+    }
+
+    @Override
+    public void downloadFollowingCompleted(ArrayList<Post> posts) {
+        control.getAndSet(control.decrementAndGet());
+        if (control.intValue() == 0 && view != null)
+        {
+            view.enableLoadingView(false, false, null);
+            temp.addAll(posts);
+            Collections.sort(temp, (p, t1) -> t1.getTimestamp().compareTo(p.getTimestamp()));
+
+            if (currentPosts != null && currentPosts.size() != 0 && !loadingMore)
+            {
+                currentPosts = new ArrayList<>(temp);
+                view.changePosts(new ArrayList<>(currentPosts));
+            } else
+            {
+                view.enableLoading(false);
+                currentPosts.addAll(currentPosts.size(), temp);
+                for (Post p : temp)
+                {
+                    if (!UserData.getHiddenPosts().contains(p.getPostKey()) || getShowHiddenPosts()) view.addPost(p);
+                }
+            }
+
+            followingPosts = new ArrayList<>(currentPosts);
+        } else temp.addAll(posts);
     }
 }

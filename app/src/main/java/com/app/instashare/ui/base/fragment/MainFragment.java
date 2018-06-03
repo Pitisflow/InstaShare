@@ -41,7 +41,7 @@ public class MainFragment extends Fragment {
 
         fragments = new ArrayList<>();
         fragments.add(new ClosePostsFragment());
-        fragments.add(new FollowingPostsFragment());
+        fragments.add(ClosePostsFragment.newInstance(true));
         fragments.add(new SearchFragment());
     }
 

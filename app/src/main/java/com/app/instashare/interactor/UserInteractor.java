@@ -211,13 +211,40 @@ public class UserInteractor {
     }
 
 
+    public static void downloadMoreUsersFromList(String list, String userKey, String startAt, OnUserListFetched listFetched)
+    {
+        String path = Utils.createChild(list, userKey);
+        listFetched.onSearchRefreshed();
+
+        DatabaseSingleton.getDbInstance().child(path).orderByKey().limitToFirst(MAX_USERS_PER_PAGE).startAt(startAt)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists())
+                        {
+                            listFetched.numOfUsers(((Long) dataSnapshot.getChildrenCount()).intValue());
+
+                            for (DataSnapshot user : dataSnapshot.getChildren())
+                            {
+                                String userKey = (String) user.getKey();
+                                fetchUserBasicInfo(userKey, listFetched);
+                            }
+                        } else listFetched.numOfUsers(0);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
 
     public static void downloadUserImages(String userKey, OnUserImagesDownload onUserImagesDownload)
     {
         String path = Utils.createChild(Constants.USER_IMAGES_T, userKey);
 
-
-        System.out.println(path);
         DatabaseSingleton.getDbInstance().child(path)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -382,31 +409,6 @@ public class UserInteractor {
     //SIMPLE OPERATIONS
     //********************************************
 
-
-    public static void example()
-    {
-        DatabaseSingleton.getDbInstance().child("user-followers").child("example").orderByKey().startAt("follow14").endAt("follow14")
-                .limitToFirst(6).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists())
-                {
-//                    //System.out.println(dataSnapshot.getChildrenCount());
-//
-//                    for (DataSnapshot data : dataSnapshot.getChildren())
-//                    {
-//                        System.out.println(data);
-//                    }
-
-                } else System.out.println("egewgwe");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
 
 

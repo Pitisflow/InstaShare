@@ -226,9 +226,7 @@ public class UserListedActivity extends AppCompatActivity implements
 
     @Override
     public void loadMoreCards() {
-        if (presenter != null) {
-            presenter.onDownloadMoreUsers();
-        }
+        if (presenter != null) presenter.onDownloadMoreUsers();
     }
 
 }

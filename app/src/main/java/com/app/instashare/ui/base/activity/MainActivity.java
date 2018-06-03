@@ -6,7 +6,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.media.Image;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,14 +20,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.instashare.R;
 import com.app.instashare.interactor.UserInteractor;
+import com.app.instashare.singleton.UserData;
 import com.app.instashare.ui.base.fragment.MainFragment;
 import com.app.instashare.ui.base.presenter.MainPresenter;
 import com.app.instashare.ui.base.view.MainView;
@@ -40,15 +49,28 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements MainView,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        LocationUtils.LocationStatus{
+        LocationUtils.LocationStatus {
 
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+
+    private TextView username;
+    private TextView name;
+    private CircleImageView userImage;
+    private ImageView backgroundImage;
+    private View transparentBackground;
+
 
 
     private GoogleApiClient apiClient;
@@ -83,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
         bindToolbarView();
         bindDrawerView();
         bindNavigationView();
+        bindNavigationHeaderView();
     }
 
 
@@ -123,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements MainView,
     private void bindDrawerView()
     {
         drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
 
@@ -146,6 +170,25 @@ public class MainActivity extends AppCompatActivity implements MainView,
     {
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(this::onItemSelected);
+    }
+
+
+    private void bindNavigationHeaderView()
+    {
+        View navHeader = navigationView.getHeaderView(0);
+
+        userImage = navHeader.findViewById(R.id.userImage);
+        backgroundImage = navHeader.findViewById(R.id.backgroundImage);
+        username = navHeader.findViewById(R.id.username);
+        name = navHeader.findViewById(R.id.name);
+        transparentBackground = navHeader.findViewById(R.id.transparentBackground);
+
+        userImage.setOnClickListener(view -> {
+            if (UserInteractor.getUserKey() != null) {
+                Intent intent = UserProfileActivity.newInstance(UserInteractor.getUserKey(), getApplicationContext());
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -230,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements MainView,
 
 
 
-
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -289,10 +331,53 @@ public class MainActivity extends AppCompatActivity implements MainView,
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
             fragmentTransactionDone = true;
         }
+
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     @Override
     public void statusUnavailable() {
         finish();
+    }
+
+
+
+    @Override
+    public void setUserImage(String imageURL) {
+        Picasso.get().load(imageURL)
+                .resize(userImage.getLayoutParams().width, userImage.getLayoutParams().height)
+                .into(userImage);
+    }
+
+    @Override
+    public void setBackgroundImage(String imageURL) {
+        Picasso.get().load(imageURL)
+                .into(backgroundImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap innerBitmap = ((BitmapDrawable) backgroundImage.getDrawable()).getBitmap();
+                        Palette.from(innerBitmap).generate(palette -> {
+                            int mutedColor = palette.getMutedColor(getResources().getColor(R.color.colorPrimary));
+
+                            String hexColor = "#59" + Integer.toHexString(mutedColor).substring(2);
+                            transparentBackground.setBackgroundColor(Color.parseColor(hexColor));
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username.setText(username);
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name.setText(name);
     }
 }

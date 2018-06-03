@@ -2,16 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/filter"
-        android:title=""
-        android:icon="@drawable/ic_filter_list_white_24"
-        app:showAsAction="ifRoom"/>
-
 
     <item
         android:id="@+id/location"
-        android:title=""
-        android:icon="@drawable/ic_location_searching_white_24"
-        app:showAsAction="ifRoom"/>
+        android:title="@string/post_settings"/>
 </menu>

@@ -33,6 +33,7 @@ import com.app.instashare.adapter.PostRVAdapter;
 import com.app.instashare.custom.MyScrollListener;
 import com.app.instashare.ui.base.activity.MainActivity;
 import com.app.instashare.ui.other.activity.PhotoViewActivity;
+import com.app.instashare.ui.other.fragment.BottomSheetFragment;
 import com.app.instashare.ui.post.activity.AddPostActivity;
 import com.app.instashare.ui.post.activity.DetailPostActivity;
 import com.app.instashare.ui.post.activity.PublicPostsSettings;
@@ -42,6 +43,7 @@ import com.app.instashare.ui.post.view.ClosePostsView;
 import com.app.instashare.ui.user.activity.UserProfileActivity;
 import com.app.instashare.utils.Constants;
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
 
@@ -53,6 +55,20 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         PostRVAdapter.OnPostInteraction,
         PopupMenu.OnMenuItemClickListener,
         MyScrollListener.OnScrollChanged {
+
+    private static final String IS_FOLLOWING = "isFollowing";
+
+    public static ClosePostsFragment newInstance(boolean isFollowing)
+    {
+        ClosePostsFragment fragment = new ClosePostsFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(IS_FOLLOWING, isFollowing);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
 
     private SwipeRefreshLayout refresher;
     private RecyclerView recyclerView;
@@ -72,6 +88,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     private int postsShowingState = SHOWING_PUBLIC;
     private boolean isLoading = false;
     private boolean downloadCompleted = false;
+    private boolean isFollowing = false;
 
 
 
@@ -102,13 +119,19 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
             downloadCompleted = savedInstanceState.getBoolean("downloadCompleted", false);
         }
 
+
+        if (getArguments() != null && getArguments().containsKey(IS_FOLLOWING)) {
+            isFollowing = true;
+        }
+
         presenter = new ClosePostsPresenter(getContext(), this);
 
         bindFabButtons(view);
         bindRecyclerView(view);
         bindLoadingView(view);
 
-        presenter.onInitialize(recyclerItemsState);
+        if (!isFollowing) presenter.onInitialize(recyclerItemsState);
+        else presenter.onInitialize(recyclerItemsState, true);
     }
 
 
@@ -201,6 +224,9 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         FloatingActionButton fabFavorites = view.findViewById(R.id.favorites);
         FloatingActionButton fabSaved = view.findViewById(R.id.saved);
         FloatingActionButton fabPublic = view.findViewById(R.id.allPosts);
+        FloatingActionMenu floatingActionMenu = view.findViewById(R.id.floatingMenu);
+
+        if (isFollowing) floatingActionMenu.setVisibility(View.GONE);
 
         fabAdd.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), AddPostActivity.class);
@@ -248,6 +274,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
         recyclerView.setAdapter(adapter);
 
         refresher.setOnRefreshListener(() -> presenter.refreshRecycler());
+        if (isFollowing) refresher.setEnabled(false);
     }
 
 
@@ -277,7 +304,7 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
     //********************************************
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_home_options, menu);
+        if (!isFollowing) inflater.inflate(R.menu.menu_home_options, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -289,10 +316,6 @@ public class ClosePostsFragment extends Fragment implements ClosePostsView,
             case R.id.location:
                 Intent intent = new Intent(getContext(), PublicPostsSettings.class);
                 startActivityForResult(intent, 1);
-                break;
-
-            case R.id.filter:
-                System.out.println("Filter");
                 break;
         }
 

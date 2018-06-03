@@ -5,18 +5,22 @@
         <item
             android:id="@+id/posts"
             android:title="@string/drawer_menu_posts"
+            android:icon="@drawable/baseline_home_black_24"
             android:checked="true"/>
 
         <item
             android:id="@+id/notifications"
+            android:icon="@drawable/baseline_notifications_black_24"
             android:title="@string/drawer_menu_notifications"/>
 
         <item
             android:id="@+id/chats"
+            android:icon="@drawable/baseline_chat_bubble_black_24"
             android:title="@string/drawer_menu_chats"/>
 
         <item
             android:id="@+id/profile"
+            android:icon="@drawable/baseline_person_black_24"
             android:title="@string/drawer_menu_profile"/>
 
     </group>

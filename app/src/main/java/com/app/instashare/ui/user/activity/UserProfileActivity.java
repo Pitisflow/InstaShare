@@ -391,8 +391,6 @@ public class UserProfileActivity extends AppCompatActivity implements
                 break;
 
             case R.id.seeAllPosts:
-                System.out.println("see more posts");
-
                 break;
 
             case R.id.profileImage:
